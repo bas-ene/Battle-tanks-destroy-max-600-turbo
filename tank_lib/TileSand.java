@@ -5,7 +5,7 @@ package tank_lib;
  */
 public class TileSand implements Tile {
 	private TileTypes type = TileTypes.SAND;
-	private float speedMultiplier = 0.0f;
+	private float speedMultiplier = 0.5f;
 
 	public TileSand() {
 
