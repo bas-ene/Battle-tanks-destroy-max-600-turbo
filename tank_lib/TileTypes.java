@@ -8,5 +8,6 @@ enum TileTypes {
 	RUBBLE,
 	GRASS,
 	SAND,
+	WATER,
 	UNKNOWN,
 }

@@ -27,13 +27,16 @@ public class TileUnknown implements Tile {
 		possibleTypes.add(TileTypes.GRASS);
 		boolean couldBeBuilding = true;
 		boolean couldBeSand = true;
+		boolean couldBeWater = true;
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 3; j++) {
 				if (tps[i][j] == TileTypes.SAND) {
 					couldBeBuilding = false;
+					couldBeWater = false;
 				}
 				if (tps[i][j] == TileTypes.BUILDING) {
 					couldBeSand = false;
+					couldBeWater = false;
 				}
 			}
 		}
@@ -41,11 +44,19 @@ public class TileUnknown implements Tile {
 			possibleTypes.add(TileTypes.BUILDING);
 		if (couldBeSand)
 			possibleTypes.add(TileTypes.SAND);
+		if (couldBeWater)
+			possibleTypes.add(TileTypes.WATER);
 		return possibleTypes;
 
 	}
 
+	@Override
 	public TileTypes getTileType() {
-		return this.type;
+		return type;
+	}
+
+	@Override
+	public float getSpeedMultiplier() {
+		return speedMultiplier;
 	}
 }

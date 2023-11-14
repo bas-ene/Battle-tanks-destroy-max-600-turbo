@@ -10,8 +10,18 @@ public class Map {
 
 	public Map() {
 		try {
-			map = new Tile[10][10];
+			map = new Tile[settings.DEFAULT_MAP_SIZE][settings.DEFAULT_MAP_SIZE];
 			generateMap(10, 10);
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+			map = null;
+		}
+	}
+
+	public Map(int nRows, int nCols) {
+		try {
+			map = new Tile[nRows][nCols];
+			generateMap(nRows, nCols);
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 			map = null;
@@ -28,6 +38,7 @@ public class Map {
 		Point spawnPointP2 = new Point((int) (Math.random() * 10), (int) (Math.random() * 10));
 		map[(int) spawnPointP1.getX()][(int) spawnPointP1.getY()] = new TileGrass();
 		map[(int) spawnPointP2.getX()][(int) spawnPointP2.getY()] = new TileGrass();
+
 		for (int i = 0; i < nRows; i++) {
 			for (int j = 0; j < nCols; j++) {
 				if (map[i][j].getTileType() != TileTypes.UNKNOWN)
@@ -41,42 +52,28 @@ public class Map {
 
 	private void buildTile(int x, int y, TileTypes type) {
 		switch (type) {
-			case TileTypes.GRASS:
+			case GRASS:
 				this.map[x][y] = new TileGrass();
 				break;
-			case TileTypes.BUILDING:
+			case BUILDING:
 				this.map[x][y] = new TileBuilding();
 				break;
-			case TileTypes.SAND:
+			case SAND:
 				this.map[x][y] = new TileSand();
 				break;
-			case TileTypes.RUBBLE:
+			case RUBBLE:
 				this.map[x][y] = new TileRubble();
+			case WATER:
+				this.map[x][y] = new TileWater();
 			default:
 				break;
 		}
 
 	}
 
-	@Override
-	public String toString() {
-		// TODO Auto-generated method stub
-		String s = "";
-		for (int i = 0; i < map.length; i++) {
-			for (int j = 0; j < map[0].length; j++) {
-				s += map[i][j].getTileType() + "   ";
-			}
-			s += "\r\n";
-		}
-		return s;
-	}
-
 	public TileTypes[][] getSquare(int i, int j) throws Exception {
-		System.out.println("TEST\n");
-		System.out.println(map.length);
 		if (i < 0 || j < 0 || i >= map.length || j >= map[0].length)
 			throw new Exception("Cell not valid");
-		System.out.println("SIUM");
 		var square = new TileTypes[][] {
 				{ TileTypes.UNKNOWN, TileTypes.UNKNOWN, TileTypes.UNKNOWN },
 				{ TileTypes.UNKNOWN, map[i][j].getTileType(), TileTypes.UNKNOWN },
@@ -117,4 +114,43 @@ public class Map {
 
 		return square;
 	}
+
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		String s = "";
+		for (int i = 0; i < map.length; i++) {
+			for (int j = 0; j < map[0].length; j++) {
+				s += map[i][j].getTileType().toString().charAt(0) + " ";
+			}
+			s += "\r\n";
+		}
+		return s;
+	}
+
+	public byte[] bitify() {
+		byte[] bytes = new byte[map.length * map[0].length];
+		for (int i = 0; i < map.length; i++) {
+			for (int j = 0; j < map[0].length; j++) {
+				byte type;
+				switch (map[i][j].getTileType()) {
+					case GRASS:
+						type = (byte) 1;
+						break;
+					case BUILDING:
+						type = (byte) 2;
+						break;
+					case SAND:
+						type = (byte) 3;
+						break;
+					default:
+						type = (byte) 0;
+						break;
+				}
+				bytes[i * map.length + j] = type;
+			}
+		}
+		return bytes;
+	}
+
 }

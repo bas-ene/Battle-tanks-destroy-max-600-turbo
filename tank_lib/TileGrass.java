@@ -11,7 +11,13 @@ public class TileGrass implements Tile {
 
 	}
 
+	@Override
 	public TileTypes getTileType() {
 		return type;
+	}
+
+	@Override
+	public float getSpeedMultiplier() {
+		return speedMultiplier;
 	}
 }

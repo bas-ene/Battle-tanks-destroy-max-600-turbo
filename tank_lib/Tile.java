@@ -8,4 +8,6 @@ public interface Tile {
 	float speedMultiplier = 0.0f;
 
 	TileTypes getTileType();
+
+	float getSpeedMultiplier();
 }

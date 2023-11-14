@@ -1,13 +1,13 @@
 package tank_lib;
 
 /**
- * TileBuilding
+ * TileWater
  */
-public class TileBuilding implements Tile {
-	private TileTypes type = TileTypes.BUILDING;
-	private float speedMultiplier = 0.0f;
+public class TileWater implements Tile {
+	private TileTypes type = TileTypes.WATER;
+	private float speedMultiplier = 0.3f;
 
-	public TileBuilding() {
+	public TileWater() {
 
 	}
 
