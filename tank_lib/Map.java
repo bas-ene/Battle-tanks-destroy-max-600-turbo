@@ -28,6 +28,31 @@ public class Map {
 		}
 	}
 
+	public Map(byte[] byteArray, int nRows, int nCols) {
+		map = new Tile[nRows][nCols];
+		for (int i = 0; i < nRows; i++) {
+			for (int j = 0; j < nCols; i++) {
+				switch (byteArray[i * nRows + j]) {
+					case 1:
+						buildTile(i, j, TileTypes.GRASS);
+						break;
+					case 2:
+						buildTile(i, j, TileTypes.BUILDING);
+						break;
+					case 3:
+						buildTile(i, j, TileTypes.SAND);
+						break;
+					case 4:
+						buildTile(i, j, TileTypes.WATER);
+						break;
+					default:
+						break;
+				}
+			}
+		}
+
+	}
+
 	public void generateMap(int nRows, int nCols) throws Exception {
 		for (int i = 0; i < nRows; i++) {
 			for (int j = 0; j < nCols; j++) {
@@ -142,6 +167,9 @@ public class Map {
 						break;
 					case SAND:
 						type = (byte) 3;
+						break;
+					case WATER:
+						type = (byte) 4;
 						break;
 					default:
 						type = (byte) 0;
