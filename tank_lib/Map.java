@@ -1,13 +1,24 @@
 package tank_lib;
 
 import java.util.ArrayList;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * Map
  */
-public class Map {
-	private Tile[][] map;
+import java.io.File;
 
+
+public class Map {
+		//TODO: remove this function from here
+		public boolean doesFileExist(String path) {
+			File file = new File(path);
+			return file.exists();
+		}
+	
+	private Tile[][] map;	
+	
 	public Map() {
 		try {
 			map = new Tile[settings.DEFAULT_MAP_SIZE][settings.DEFAULT_MAP_SIZE];
@@ -31,7 +42,7 @@ public class Map {
 	public Map(byte[] byteArray, int nRows, int nCols) {
 		map = new Tile[nRows][nCols];
 		for (int i = 0; i < nRows; i++) {
-			for (int j = 0; j < nCols; i++) {
+			for (int j = 0; j < nCols; j++) {
 				switch (byteArray[i * nRows + j]) {
 					case 1:
 						buildTile(i, j, TileTypes.GRASS);
@@ -180,5 +191,40 @@ public class Map {
 		}
 		return bytes;
 	}
+	//Renders the map in a JFrame
+	public void renderMap() {
+		System.out.println(doesFileExist("tank_lib/tilesjpg/TileGrass.jpg"));
+		JFrame frame = new JFrame();
+		frame.setLayout(new GridLayout(map.length, map[0].length));
 
+		for (int i = 0; i < map.length; i++) {
+			for (int j = 0; j < map[i].length; j++) {
+				JLabel label = new JLabel();
+				switch (map[i][j].getTileType()) {
+					case GRASS:
+						label.setIcon(new ImageIcon("tank_lib/tilesjpg/TileGrass.jpg"));
+						break;
+					case RUBBLE:
+						label.setIcon(new ImageIcon("tank_lib/tilesjpg/TileRubble.jpg"));
+						break;
+					case SAND:
+						label.setIcon(new ImageIcon("tank_lib/tilesjpg/TileS1and.jpg"));
+						break;
+					case WATER:
+						label.setIcon(new ImageIcon("tank_lib/tilesjpg/TileWater.jpg"));
+						break;
+					case BUILDING:
+						label.setIcon(new ImageIcon("tank_lib/tilesjpg/TileBuilding.jpg"));
+						break;
+					default:
+						label.setIcon(new ImageIcon("tank_lib/tilesjpg/TileUnknown.jpg"));
+						break;
+				}
+				frame.add(label);
+			}
+		}
+
+		frame.pack();
+		frame.setVisible(true);
+	}
 }
