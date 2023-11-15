@@ -53,6 +53,14 @@ public class Point {
 		return y;
 	}
 
+	public void moveX(double delta) {
+		x += delta;
+	}
+
+	public void moveY(double delta) {
+		y += delta;
+	}
+
 	/**
 	 * Calcola la distanza da un altro punto, non puo` assumere valori negativi.
 	 * 
