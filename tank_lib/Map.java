@@ -1,10 +1,15 @@
 package tank_lib;
 
 import java.util.ArrayList;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * Map
  */
+import java.io.File;
+
+
 public class Map {
 	// ! Matrice che contiene le celle che compongono la mappa
 	/**
@@ -66,7 +71,7 @@ public class Map {
 		}
 		map = new Tile[nRows][nCols];
 		for (int i = 0; i < nRows; i++) {
-			for (int j = 0; j < nCols; i++) {
+			for (int j = 0; j < nCols; j++) {
 				switch (byteArray[i * nRows + j]) {
 					case 1:
 						buildTile(i, j, TileTypes.GRASS);
@@ -268,5 +273,4 @@ public class Map {
 		}
 		return bytes;
 	}
-
 }
