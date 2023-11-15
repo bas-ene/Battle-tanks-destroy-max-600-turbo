@@ -6,8 +6,21 @@ import java.util.ArrayList;
  * Map
  */
 public class Map {
+	// ! Matrice che contiene le celle che compongono la mappa
+	/**
+	 * Questa matrice vera riempita dal costrutttore con i parametri passati al
+	 * costruttore (o con quelli di default) da tutte celle UKNOWN, o da decidere,
+	 * il cui tipo, tramite un algoritmo di Wave Function Collapse (WFC), verra`
+	 * determinato in modo procedurale.
+	 *
+	 */
 	private Tile[][] map;
 
+	// ! Costruttore di default
+	/**
+	 * Costruttore di default, la dimensione della mappa verra` quindi determinata
+	 * da le impostazioni in {@link settings}
+	 */
 	public Map() {
 		try {
 			map = new Tile[settings.DEFAULT_MAP_SIZE][settings.DEFAULT_MAP_SIZE];
@@ -18,6 +31,13 @@ public class Map {
 		}
 	}
 
+	// ! Costruttore parametrico
+	/**
+	 * Se uno dei parametri e` negativo map sara` null.
+	 * 
+	 * @param nRows Numero di righe che avra` la mappa
+	 * @param nCols Numero di colonne che avra` la mappa
+	 */
 	public Map(int nRows, int nCols) {
 		try {
 			map = new Tile[nRows][nCols];
@@ -28,7 +48,22 @@ public class Map {
 		}
 	}
 
+	// ! Costruttore parametrico
+	/**
+	 * Costruttore orientato alla comunicazione tcp, in modo da poter convertire
+	 * direttamente un vettore di byte in una mappa.
+	 * Se uno dei parametri e` negativo, o se la lunghezza dell'array non e`
+	 * corretta, mappa sara` null.
+	 * 
+	 * @param byteArray Vettore di byte, un byte rappresenta il tipo di una cella
+	 * @param nRows     Numero di righe che avra` la mappa
+	 * @param nCols     Numero di colonne che avra` la mappa
+	 */
 	public Map(byte[] byteArray, int nRows, int nCols) {
+		if (nRows <= 0 || nCols <= 0 || byteArray.length != nRows * nCols) {
+			map = null;
+			return;
+		}
 		map = new Tile[nRows][nCols];
 		for (int i = 0; i < nRows; i++) {
 			for (int j = 0; j < nCols; i++) {
@@ -53,6 +88,14 @@ public class Map {
 
 	}
 
+	// ! Genera mappa tramite WFC
+	/**
+	 * Genera una mappa di dimensioni nRows * nCols tramite WFC, i vincoli sono
+	 * definiti in {@link TileUnknown}
+	 * 
+	 * @param nRows Numero di righe della mappa
+	 * @param nCols Numero di colonne della mappa
+	 */
 	public void generateMap(int nRows, int nCols) throws Exception {
 		for (int i = 0; i < nRows; i++) {
 			for (int j = 0; j < nCols; j++) {
@@ -75,28 +118,44 @@ public class Map {
 		}
 	}
 
-	private void buildTile(int x, int y, TileTypes type) {
+	// ! Costruisce un tipo di tile in un punto della mappa.
+	/**
+	 * @param i    Posizione della riga della cella
+	 * @param j    Posizione della colonna della cella
+	 * @param type Tipo della cella da costruire.
+	 */
+	private void buildTile(int i, int j, TileTypes type) {
 		switch (type) {
 			case GRASS:
-				this.map[x][y] = new TileGrass();
+				this.map[i][j] = new TileGrass();
 				break;
 			case BUILDING:
-				this.map[x][y] = new TileBuilding();
+				this.map[i][j] = new TileBuilding();
 				break;
 			case SAND:
-				this.map[x][y] = new TileSand();
+				this.map[i][j] = new TileSand();
 				break;
 			case RUBBLE:
-				this.map[x][y] = new TileRubble();
+				this.map[i][j] = new TileRubble();
 			case WATER:
-				this.map[x][y] = new TileWater();
+				this.map[i][j] = new TileWater();
 			default:
 				break;
 		}
 
 	}
 
-	public TileTypes[][] getSquare(int i, int j) throws Exception {
+	// ! Ritorna una matrice 3*3 che contiene i tipi delle celle attorno a quella
+	// posizionata in i,j (compresa).
+	/**
+	 * @param i Riga della cella.
+	 * @param j Colonna della cella.
+	 * @throws Exception quando o i o j non sono valide (negative o oltre le
+	 *                   dimensioni della mappa)
+	 * @return {@link TileTypes}[3][3] Tipo delle cellule vicine,
+	 *         {@link TileUnknown} se ai bordi
+	 */
+	TileTypes[][] getSquare(int i, int j) throws Exception {
 		if (i < 0 || j < 0 || i >= map.length || j >= map[0].length)
 			throw new Exception("Cell not valid");
 		var square = new TileTypes[][] {
@@ -140,9 +199,34 @@ public class Map {
 		return square;
 	}
 
+	/**
+	 * @return numero di righe
+	 */
+	public int getHeight() {
+		return map.length;
+	}
+
+	/**
+	 * 
+	 * @return numero di colonne
+	 */
+	public int getWidth() {
+		return map[0].length;
+	}
+
+	/**
+	 * Ritorna l'oggetto con interfaccia Tile in posizione i,j
+	 * 
+	 * @param i
+	 * @param j
+	 * @return Tile in posizione i,j
+	 */
+	public Tile getTile(int i, int j) {
+		return map[i][j];
+	}
+
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
 		String s = "";
 		for (int i = 0; i < map.length; i++) {
 			for (int j = 0; j < map[0].length; j++) {
@@ -153,6 +237,10 @@ public class Map {
 		return s;
 	}
 
+	// ! Trasforma map in un array di byte per la connessione tcp
+	/**
+	 * @return byte[]
+	 */
 	public byte[] bitify() {
 		byte[] bytes = new byte[map.length * map[0].length];
 		for (int i = 0; i < map.length; i++) {

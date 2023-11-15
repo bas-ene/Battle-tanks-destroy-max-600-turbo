@@ -1,5 +1,7 @@
 package tank_lib;
 
+import java.awt.Color;
+
 /**
  * TileSand
  */
@@ -21,4 +23,8 @@ public class TileSand implements Tile {
 		return speedMultiplier;
 	}
 
+	@Override
+	public Color getColor() {
+		return Color.YELLOW;
+	}
 }

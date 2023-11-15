@@ -3,7 +3,7 @@ package tank_lib;
 /**
  * TileTipes
  */
-enum TileTypes {
+public enum TileTypes {
 	BUILDING,
 	RUBBLE,
 	GRASS,

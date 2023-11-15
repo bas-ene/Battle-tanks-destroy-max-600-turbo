@@ -1,5 +1,6 @@
 package tank_lib;
 
+import java.awt.Color;
 import java.util.ArrayList;
 
 /**
@@ -30,9 +31,8 @@ public class TileUnknown implements Tile {
 		boolean couldBeWater = true;
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 3; j++) {
-				if (tps[i][j] == TileTypes.SAND) {
+				if (tps[i][j] == TileTypes.SAND || tps[i][j] == TileTypes.WATER) {
 					couldBeBuilding = false;
-					couldBeWater = false;
 				}
 				if (tps[i][j] == TileTypes.BUILDING) {
 					couldBeSand = false;
@@ -58,5 +58,10 @@ public class TileUnknown implements Tile {
 	@Override
 	public float getSpeedMultiplier() {
 		return speedMultiplier;
+	}
+
+	@Override
+	public Color getColor() {
+		return Color.BLACK;
 	}
 }

@@ -1,5 +1,7 @@
 package tank_lib;
 
+import java.awt.Color;
+
 /**
  * TileBuilding
  */
@@ -20,4 +22,10 @@ public class TileBuilding implements Tile {
 	public float getSpeedMultiplier() {
 		return speedMultiplier;
 	}
+
+	@Override
+	public Color getColor() {
+		return Color.GRAY;
+	}
+
 }

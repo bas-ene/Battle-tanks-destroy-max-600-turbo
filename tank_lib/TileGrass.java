@@ -1,5 +1,7 @@
 package tank_lib;
 
+import java.awt.Color;
+
 /**
  * TileGrass
  */
@@ -19,5 +21,10 @@ public class TileGrass implements Tile {
 	@Override
 	public float getSpeedMultiplier() {
 		return speedMultiplier;
+	}
+
+	@Override
+	public Color getColor() {
+		return Color.GREEN;
 	}
 }
