@@ -9,6 +9,13 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+import java.awt.Font;
+import java.awt.Image;
+import java.awt.RenderingHints;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.JFrame;
 
@@ -38,7 +45,7 @@ public class BattleFrame extends JFrame {
      * Funzione helper che setta vari paramentri del Frame
      */
     private void initFrame() {
-        this.setSize(new Dimension(map.getWidth() * settings.TILE_SIZE, map.getHeight() * settings.TILE_SIZE));
+        this.setPreferredSize(new Dimension(map.getWidth() * settings.TILE_SIZE, map.getHeight() * settings.TILE_SIZE));
         pack();
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -47,12 +54,34 @@ public class BattleFrame extends JFrame {
         requestFocus();
     }
 
+    private Image offScreenImageDrawed = null;
+    private Graphics offScreenGraphicsDrawed = null;
+
     /**
      * Metodo che renderizza il frame
      */
     @Override
     public void paint(Graphics g) {
-        g.clearRect(0, 0, this.getWidth(), this.getHeight());
+        // super.paint(g);
+        final Dimension d = getSize();
+        if (offScreenImageDrawed == null) {
+            // Double-buffer: clear the offscreen image.
+            offScreenImageDrawed = createImage(d.width, d.height);
+        }
+        g.clearRect(0, 0, this.getWidth(), this.getHeight()); // super.paint(g);
+        offScreenGraphicsDrawed = offScreenImageDrawed.getGraphics();
+        offScreenGraphicsDrawed.setColor(Color.white);
+        offScreenGraphicsDrawed.fillRect(0, 0, d.width, d.height);
+        renderOffScreen(offScreenImageDrawed.getGraphics());
+        g.drawImage(offScreenImageDrawed, 0, 0, null);
+
+    }
+
+    /**
+     * @brief Metodo per double buffer
+     * 
+     */
+    public void renderOffScreen(final Graphics g) {
         for (int i = 0; i < map.getHeight(); i++) {
             for (int j = 0; j < map.getWidth(); j++) {
                 // draw map
@@ -69,7 +98,7 @@ public class BattleFrame extends JFrame {
         tx.rotate(p1.getAngleRotationRadian());
         Shape transTank = tx.createTransformedShape(tank);
         g2d.setColor(Color.MAGENTA);
-        g2d.draw(transTank);
+        g2d.fill(transTank);
         moveTank(p1);
 
         tank = new Rectangle((int) (p2.getPosition().getX() - p2.getWidth() / 2),
@@ -80,7 +109,7 @@ public class BattleFrame extends JFrame {
 
         transTank = tx.createTransformedShape(tank);
         g2d.setColor(Color.WHITE);
-        g2d.draw(transTank);
+        g2d.fill(transTank);
         moveTank(p2);
     }
 
@@ -88,8 +117,8 @@ public class BattleFrame extends JFrame {
         System.out.println(pX.getAngleRotationRadian());
         System.out.println(pX.getPosition().getX());
         System.out.println(pX.getPosition().getY());
-        pX.rotateBy(1);
-        pX.moveBy(5);
+        pX.rotateBy(Math.PI/2);
+        pX.moveBy(1);
     }
 
 }

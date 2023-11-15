@@ -14,7 +14,7 @@ public class Client {
 		while (true) {
 			f.paint(f.getGraphics());
 			try {
-				Thread.sleep(100);
+				Thread.sleep(66);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
