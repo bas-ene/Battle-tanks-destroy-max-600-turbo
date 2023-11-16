@@ -1,6 +1,7 @@
 package client;
 
 import tank_lib.*;
+import tank_lib.map_lib.Map;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -9,14 +10,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.awt.Font;
 import java.awt.Image;
-import java.awt.RenderingHints;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-
 import javax.swing.JFrame;
 
 /**
@@ -114,11 +108,13 @@ public class BattleFrame extends JFrame {
     }
 
     private void moveTank(Tank pX) {
-        System.out.println(pX.getAngleRotationRadian());
-        System.out.println(pX.getPosition().getX());
-        System.out.println(pX.getPosition().getY());
-        pX.rotateBy(Math.PI/2);
-        pX.moveBy(1);
+        // System.out.println(pX.getAngleRotationRadian());
+        // System.out.println(pX.getPosition().getX());
+        // System.out.println(pX.getPosition().getY());
+        // pX.rotateBy(Math.PI/2);
+        System.out.println(pX.getUsername());
+        System.out.println(map.getTile(pX.getPosition()).getTileType());
+        pX.moveBy(map.getTile(pX.getPosition()).getSpeedMultiplier() * 10);
     }
 
 }

@@ -1,15 +1,15 @@
-package tank_lib;
+package tank_lib.map_lib;
 
 import java.awt.Color;
 
 /**
- * TileRubble
+ * TileBuilding
  */
-public class TileRubble implements Tile {
-	private TileTypes type = TileTypes.RUBBLE;
-	private float speedMultiplier = 0.75f;
+public class TileBuilding implements Tile {
+	private TileTypes type = TileTypes.BUILDING;
+	private float speedMultiplier = 0.05f;
 
-	public TileRubble() {
+	public TileBuilding() {
 
 	}
 
@@ -25,6 +25,7 @@ public class TileRubble implements Tile {
 
 	@Override
 	public Color getColor() {
-		return Color.ORANGE;
+		return Color.GRAY;
 	}
+
 }

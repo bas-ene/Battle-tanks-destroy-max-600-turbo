@@ -1,14 +1,7 @@
-package tank_lib;
+package tank_lib.map_lib;
 
 import java.util.ArrayList;
-import javax.swing.*;
-import java.awt.*;
-
-/**
- * Map
- */
-import java.io.File;
-
+import tank_lib.Point;
 
 public class Map {
 	// ! Matrice che contiene le celle che compongono la mappa
@@ -228,6 +221,10 @@ public class Map {
 	 */
 	public Tile getTile(int i, int j) {
 		return map[i][j];
+	}
+
+	public Tile getTile(Point p) {
+		return map[(int) (p.getX() / settings.TILE_SIZE)][(int) (p.getY() / settings.TILE_SIZE)];
 	}
 
 	@Override

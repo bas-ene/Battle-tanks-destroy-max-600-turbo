@@ -1,14 +1,18 @@
 package client;
+
 import java.io.*;
 import java.net.*;
-import tank_lib.*;
+
+import tank_lib.Point;
+import tank_lib.Tank;
+import tank_lib.map_lib.Map;
 
 /**
  * Client
  */
 public class Client {
 	public static void main(String[] args) {
-		/* 
+
 		Map m = new Map(20, 20);
 		Tank p1 = new Tank(new Point(250, 250), "you");
 		Tank p2 = new Tank(new Point(100, 100), "enemy");
@@ -22,9 +26,9 @@ public class Client {
 				e.printStackTrace();
 			}
 		}
-		*/
-		Client client = new Client();
-		client.startConnection("localhost", 12345);
+
+		// Client client = new Client();
+		// client.startConnection("localhost", 12345);
 	}
 
 	public void startConnection(String ip, int port) {

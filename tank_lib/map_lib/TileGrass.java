@@ -1,4 +1,4 @@
-package tank_lib;
+package tank_lib.map_lib;
 
 import java.awt.Color;
 
@@ -7,7 +7,7 @@ import java.awt.Color;
  */
 public class TileGrass implements Tile {
 	private TileTypes type = TileTypes.GRASS;
-	private float speedMultiplier = 0.0f;
+	private float speedMultiplier = 1.0f;
 
 	public TileGrass() {
 

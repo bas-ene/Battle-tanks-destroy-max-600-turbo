@@ -1,4 +1,4 @@
-package tank_lib;
+package tank_lib.map_lib;
 
 import java.awt.Color;
 

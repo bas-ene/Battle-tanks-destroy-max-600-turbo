@@ -1,6 +1,8 @@
 package server;
+
 import java.io.*;
 import java.net.*;
+
 /**
  * Server
  */
@@ -18,6 +20,7 @@ public class Server {
 
 			// To send a message
 			out.println("Hello, client!");
+			serverSocket.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
