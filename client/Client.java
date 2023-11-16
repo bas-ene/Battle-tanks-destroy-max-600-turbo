@@ -11,6 +11,8 @@ import tank_lib.*;
  * Client
  */
 public class Client {
+
+
 	public static void main(String[] args) {
 		/* 
 		Map m = new Map(20, 20);
@@ -47,15 +49,19 @@ public class Client {
 			f.addKeyListener(new KeyAdapter() {
 				public void keyPressed(KeyEvent e) {
 					if (e.getKeyChar() == 'w') {
+						f.moveTank(f.p1);
 						out.println("START_MOVING");
 						System.out.println("START_MOVING");
 					} else if (e.getKeyChar() == 's') {
+						f.moveTankBack(f.p1);
 						out.println("START_BACK");
 						System.out.println("START_BACK");
 					} else if (e.getKeyChar() == 'a') {
+						f.rotateTankLeft(f.p1);
 						out.println("START_LEFT");
 						System.out.println("START_LEFT");
 					} else if (e.getKeyChar() == 'd') {
+						f.rotateTankRight(f.p1);
 						out.println("START_RIGHT");
 						System.out.println("START_RIGHT");
 					}
