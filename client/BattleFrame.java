@@ -41,8 +41,8 @@ public class BattleFrame extends JFrame {
         this.setSize(new Dimension(map.getWidth() * settings.TILE_SIZE, map.getHeight() * settings.TILE_SIZE));
         pack();
         setVisible(true);
+        setResizable(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setResizable(false);
         setFocusable(true);
         requestFocus();
     }
