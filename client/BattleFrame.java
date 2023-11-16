@@ -90,21 +90,25 @@ public class BattleFrame extends JFrame {
         Rectangle tank = new Rectangle((int) (p1.getPosition().getX() - p1.getWidth() / 2),
                 (int) (p1.getPosition().getY() - p1.getHeight() / 2), p1.getWidth(), p1.getHeight());
         tx.rotate(p1.getAngleRotationRadian());
+        tx.translate(-p1.getPosition().getX(), -p1.getPosition().getY());
         Shape transTank = tx.createTransformedShape(tank);
         g2d.setColor(Color.MAGENTA);
         g2d.fill(transTank);
-        moveTank(p1);
+        // moveTank(p1);
 
         tank = new Rectangle((int) (p2.getPosition().getX() - p2.getWidth() / 2),
                 (int) (p2.getPosition().getY() - p2.getHeight() / 2), p2.getWidth(),
                 p2.getHeight());
         tx = new AffineTransform();
+        // translate to origin, rotate, then translate back
+        tx.translate(p2.getPosition().getX(), p2.getPosition().getY());
         tx.rotate(p2.getAngleRotationRadian());
+        tx.translate(-p2.getPosition().getX(), -p2.getPosition().getY());
 
         transTank = tx.createTransformedShape(tank);
         g2d.setColor(Color.WHITE);
         g2d.fill(transTank);
-        moveTank(p2);
+        // moveTank(p2);
     }
 
     private void moveTank(Tank pX) {
@@ -117,4 +121,14 @@ public class BattleFrame extends JFrame {
         pX.moveBy(map.getTile(pX.getPosition()).getSpeedMultiplier() * 10);
     }
 
+    public void rotateTankRight(Tank pX) {
+
+        pX.rotateBy(-0.1);
+
+    }
+
+    public void rotateTankLeft(Tank pX) {
+
+        pX.rotateBy(0.1);
+    }
 }
