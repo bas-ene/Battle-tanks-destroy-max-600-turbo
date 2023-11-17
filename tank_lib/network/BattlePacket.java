@@ -14,6 +14,7 @@ public class BattlePacket {
     }
 
     public BattlePacket(byte[] packetBytes) {
+        this.packetBytes = packetBytes;
     }
 
     public PacketTypes getPacketType() {
@@ -21,7 +22,7 @@ public class BattlePacket {
     }
 
     public byte[] bitify() {
-        return null;
+        return packetBytes;
     }
 
 }

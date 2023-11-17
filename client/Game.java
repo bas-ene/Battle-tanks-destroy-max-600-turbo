@@ -11,7 +11,6 @@ import tank_lib.network.BattlePacket;
 
 public class Game extends Thread {
     BattleFrame battleFrame;
-    BattleKey keyHandler;
     Map map;
     Tank p1;
     Tank p2;
@@ -20,10 +19,6 @@ public class Game extends Thread {
 
     public Game(BattleFrame battleFrame, Map map, Tank p1, Tank p2, ThreadNetwork threadNetwork) {
         this.battleFrame = battleFrame;
-        this.keyHandler = new BattleKey();
-        this.battleFrame.addKeyListener(keyHandler);
-        this.battleFrame.setFocusable(true);
-        this.battleFrame.requestFocusInWindow();
         this.map = map;
         this.p1 = p1;
         this.p2 = p2;
@@ -45,7 +40,7 @@ public class Game extends Thread {
         this.threadNetwork.start();
         // Start the game loop
         while (true) {
-            KeyEvent k = this.keyHandler.getLastEvent();
+            KeyEvent k = this.battleFrame.getLastEvent();
             if (k == null) {
                 continue;
             }
@@ -53,7 +48,7 @@ public class Game extends Thread {
             String keyChar = String.valueOf(k.getKeyChar());
             System.out.println(keyChar);
 
-            byte[] keyBytes = keyChar.getBytes();
+            byte[] keyBytes = (keyChar + "\n").getBytes();
             this.threadNetwork.addPacketToSend(new BattlePacket(keyBytes));
 
             // long now = System.nanoTime();

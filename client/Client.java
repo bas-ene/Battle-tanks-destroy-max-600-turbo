@@ -24,16 +24,19 @@ public class Client {
 		// // TODO Auto-generated catch block
 		// e.printStackTrace();
 		// }
-
+		Game game;
 		try {
 			Socket socket = new Socket();
 			socket.bind(new InetSocketAddress("localhost", 12345));
 			socket.connect(new InetSocketAddress("localhost", 23456), 0);
-			Game game = new Game(f, m, p1, p2, new ThreadNetwork(socket));
+			game = new Game(f, m, p1, p2, new ThreadNetwork(socket));
 			ThreadPaint threadPaint = new ThreadPaint(f);
 			threadPaint.start();
 			game.start();
+			game.join();
+
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 		}
 	}
 

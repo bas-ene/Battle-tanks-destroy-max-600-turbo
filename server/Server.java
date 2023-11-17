@@ -18,7 +18,11 @@ public class Server {
 				PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
 
 				String request;
-				while ((request = in.readLine()) != null) {
+				while (true) {
+					request = in.readLine();
+					if (request == null) {
+						continue;
+					}
 					System.out.println("Client says: " + request);
 					// To send a message
 					out.println("Hello, client!");
@@ -26,6 +30,7 @@ public class Server {
 			}
 			// serverSocket.close();
 		} catch (IOException e) {
+			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
 	}

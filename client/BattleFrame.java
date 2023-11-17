@@ -9,6 +9,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.Image;
 import javax.swing.JFrame;
@@ -19,6 +20,7 @@ import javax.swing.JFrame;
 public class BattleFrame extends JFrame {
     Map map;
     Tank p1, p2;
+    BattleKey keyHandler = new BattleKey();
 
     /**
      * Costrutture parametrico
@@ -32,7 +34,7 @@ public class BattleFrame extends JFrame {
         this.p1 = p1;
         this.p2 = p2;
         this.initFrame();
-
+        this.addKeyListener(keyHandler);
     }
 
     /**
@@ -130,5 +132,9 @@ public class BattleFrame extends JFrame {
     public void rotateTankLeft(Tank pX) {
 
         pX.rotateBy(0.1);
+    }
+
+    public KeyEvent getLastEvent() {
+        return this.keyHandler.getLastEvent();
     }
 }

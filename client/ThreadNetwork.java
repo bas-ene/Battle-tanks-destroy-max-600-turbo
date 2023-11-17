@@ -46,16 +46,17 @@ public class ThreadNetwork extends Thread {
                 }
             }
             // riccevi pacchetti
-            try {
-                int bytesRead = inputStream.read(buffer);
-                if (bytesRead != -1) {
-                    byte[] packetBytes = Arrays.copyOf(buffer, bytesRead);
-                    BattlePacket receivedPacket = new BattlePacket(packetBytes); // replace with actual constructor
-                    addPacketReceived(receivedPacket);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            // try {
+            // int bytesRead = inputStream.read(buffer);
+            // if (bytesRead != -1) {
+            // byte[] packetBytes = Arrays.copyOf(buffer, bytesRead);
+            // BattlePacket receivedPacket = new BattlePacket(packetBytes); // replace with
+            // actual constructor
+            // addPacketReceived(receivedPacket);
+            // }
+            // } catch (IOException e) {
+            // e.printStackTrace();
+            // }
         }
     }
 
