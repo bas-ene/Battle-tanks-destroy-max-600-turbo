@@ -9,8 +9,8 @@ import java.net.*;
 public class Server {
 	public static void main(String[] args) {
 		try {
-			ServerSocket serverSocket = new ServerSocket(12345);
-			System.out.println("Server started and listening on port 12345");
+			ServerSocket serverSocket = new ServerSocket(23456);
+			System.out.println("Server started and listening on port 23456");
 
 			while (true) {
 				Socket clientSocket = serverSocket.accept();
@@ -24,6 +24,7 @@ public class Server {
 					out.println("Hello, client!");
 				}
 			}
+			// serverSocket.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

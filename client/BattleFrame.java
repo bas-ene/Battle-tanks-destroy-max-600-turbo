@@ -45,7 +45,7 @@ public class BattleFrame extends JFrame {
         setResizable(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setFocusable(true);
-        requestFocus();
+
     }
 
     private Image offScreenImageDrawed = null;
