@@ -54,7 +54,7 @@ public class Game extends Thread {
             }
             System.out.println(k.getKeyChar());
             handleMovement(k);
-
+            sendMovement(k);
             // handle shooting
 
             // sends the packet to the server
@@ -65,31 +65,40 @@ public class Game extends Thread {
         // cleanup();
     }
 
+    private void sendMovement(KeyEvent k) {
+        // send the movement to the server
+        if (k != null)
+            this.threadNetwork.addPacketToSend(new BattlePacket(new byte[] { (byte) k.getKeyChar(), (byte) '\n' }));
+    }
+
     private void handleMovement(KeyEvent k) {
         // wasd movement
         float speedMultiplier = map.getTile(p1.getPosition()).getSpeedMultiplier();
         float mov = (settings.TANK_SPEED_TILES_S * settings.TILE_SIZE_PX * speedMultiplier) * 1 / 30;
+        // rotation per tick
+        double rotation = 2 * Math.PI * settings.TANK_ROTATION_SPEED_RPM * 1 / 30;
         System.out.println(mov);
+        System.out.println(rotation);
         if (k != null) {
             switch (k.getKeyChar()) {
                 case 'w':
-                    this.p1.setRotation(Math.PI / 2);
+                    p1.moveBy(mov);
                     break;
                 case 'a':
-                    this.p1.setRotation(Math.PI);
+                    rotation *= -1;
+                    p1.rotateBy(rotation);
                     break;
                 case 's':
-                    this.p1.setRotation(3 * Math.PI / 2);
+                    mov *= -1;
+                    p1.moveBy(mov);
                     break;
                 case 'd':
-                    this.p1.setRotation(0);
+                    p1.rotateBy(rotation);
                     break;
                 default:
                     break;
             }
         }
-        this.p1.moveBy(mov);
-
     }
 
     private void handlePacket(BattlePacket battlePacket) {
