@@ -43,11 +43,11 @@ public class BattleFrame extends JFrame {
         this.setPreferredSize(
                 new Dimension(map.getWidth() * settings.TILE_SIZE_PX, map.getHeight() * settings.TILE_SIZE_PX));
         pack();
-        setVisible(true);
         setResizable(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setFocusable(true);
-
+        this.setBackground(Color.BLACK);
+        setVisible(true);
     }
 
     private Image offScreenImageDrawed = null;
@@ -64,7 +64,8 @@ public class BattleFrame extends JFrame {
             // Double-buffer: clear the offscreen image.
             offScreenImageDrawed = createImage(d.width, d.height);
         }
-        g.clearRect(0, 0, this.getWidth(), this.getHeight()); // super.paint(g);
+        // g.clearRect(0, 0, this.getWidth(), this.getHeight()); 
+        super.paint(g);
         offScreenGraphicsDrawed = offScreenImageDrawed.getGraphics();
         offScreenGraphicsDrawed.setColor(Color.white);
         offScreenGraphicsDrawed.fillRect(0, 0, d.width, d.height);

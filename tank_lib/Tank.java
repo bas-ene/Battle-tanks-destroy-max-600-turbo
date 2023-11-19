@@ -54,4 +54,16 @@ public class Tank {
 		this.position.moveY(-Math.sin(angleRotationRadian) * pixels);
 
 	}
+
+	public void setX(double x) {
+		this.position.setX(x);
+	}
+
+	public void setY(double y) {
+		this.position.setY(y);
+	}
+
+	public Point getPositionInMap() {
+		return new Point(this.position.getX(), this.position.getY() - settings.TITLE_BAR_HEIGHT);
+	}
 }

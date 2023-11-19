@@ -7,6 +7,7 @@ import tank_lib.Bullet;
 import tank_lib.Tank;
 import tank_lib.settings;
 import tank_lib.map_lib.Map;
+import tank_lib.map_lib.TileTypes;
 import tank_lib.network.BattlePacket;
 
 public class Game extends Thread {
@@ -52,9 +53,13 @@ public class Game extends Thread {
             if (k == null) {
                 continue;
             }
-            System.out.println(k.getKeyChar());
+            // System.out.println(k.getKeyChar());
+            handleClipping();
+
             handleMovement(k);
             sendMovement(k);
+            handleClipping();
+
             // handle shooting
 
             // sends the packet to the server
@@ -65,6 +70,32 @@ public class Game extends Thread {
         // cleanup();
     }
 
+    private void handleClipping() {
+        // check if the tank is outside the map
+        if (p1.getPosition().getX() < p1.getHeight() / 2) {
+            p1.getPosition().setX(p1.getHeight());
+        }
+        if (p1.getPosition().getX() > battleFrame.getWidth() - p1.getHeight() / 2) {
+            p1.getPosition().setX(battleFrame.getWidth() - p1.getWidth());
+        }
+        if (p1.getPosition().getY() < settings.TITLE_BAR_HEIGHT + p1.getHeight() / 2) {
+            p1.getPosition().setY(p1.getHeight());
+        }
+        if (p1.getPosition().getY() > battleFrame.getHeight() - p1.getHeight() / 2) {
+            p1.getPosition().setY(battleFrame.getHeight() - p1.getHeight());
+        }
+        // check if the tank is inside a building
+        // if it is, move it outside
+        // if it is not, do nothing
+        System.out.println(p1.getPosition().getX() + " " + p1.getPosition().getY());
+        System.out.println(map.getTile(p1.getPositionInMap()));
+        if (map.getTile(p1.getPositionInMap()).getTileType() == TileTypes.BUILDING) {
+            // move the tank outside the building
+            System.out.println("CLIIPPATO");
+        }
+
+    }
+
     private void sendMovement(KeyEvent k) {
         // send the movement to the server
         if (k != null)
@@ -73,12 +104,12 @@ public class Game extends Thread {
 
     private void handleMovement(KeyEvent k) {
         // wasd movement
-        float speedMultiplier = map.getTile(p1.getPosition()).getSpeedMultiplier();
+        float speedMultiplier = map.getTile(p1.getPositionInMap()).getSpeedMultiplier();
         float mov = (settings.TANK_SPEED_TILES_S * settings.TILE_SIZE_PX * speedMultiplier) * 1 / 30;
         // rotation per tick
         double rotation = 2 * Math.PI * settings.TANK_ROTATION_SPEED_RPM * 1 / 30;
-        System.out.println(mov);
-        System.out.println(rotation);
+        // System.out.println(mov);
+        // System.out.println(rotation);
         if (k != null) {
             switch (k.getKeyChar()) {
                 case 'w':

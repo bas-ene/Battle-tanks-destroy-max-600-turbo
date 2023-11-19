@@ -225,7 +225,10 @@ public class Map {
 	}
 
 	public Tile getTile(Point p) {
-		return map[(int) (p.getX() / settings.TILE_SIZE)][(int) (p.getY() / settings.TILE_SIZE)];
+		if (p.getX() < 0 || p.getY() < 0 || p.getX() > map[0].length * settings.TILE_SIZE
+				|| p.getY() > map.length * settings.TILE_SIZE)
+			return null;
+		return map[(int) ((int) p.getY() / settings.TILE_SIZE)][(int) ((int) p.getX() / settings.TILE_SIZE)];
 	}
 
 	@Override
