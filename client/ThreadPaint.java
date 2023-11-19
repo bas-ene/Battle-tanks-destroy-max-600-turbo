@@ -17,7 +17,7 @@ public class ThreadPaint extends Thread{
 
             // 30 FPS
             try {
-                Thread.sleep(66);
+                Thread.sleep(33);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
