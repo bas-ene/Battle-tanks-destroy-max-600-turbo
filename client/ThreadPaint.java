@@ -2,7 +2,7 @@ package client;
 
 import java.awt.Graphics;
 
-public class ThreadPaint extends Thread {
+public class ThreadPaint extends Thread{
     BattleFrame battleFrame;
 
     public ThreadPaint(BattleFrame battleFrame) {

@@ -11,13 +11,15 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
+import java.io.Serializable;
 import java.awt.Image;
 import javax.swing.JFrame;
+import java.io.Serializable;
 
 /**
  * BattleFrame
  */
-public class BattleFrame extends JFrame {
+public class BattleFrame extends JFrame  implements Serializable {
     Map map;
     Tank p1, p2;
     BattleKey keyHandler = new BattleKey();
@@ -136,5 +138,15 @@ public class BattleFrame extends JFrame {
 
     public KeyEvent getLastEvent() {
         return this.keyHandler.getLastEvent();
+    }
+    
+    public void moveTankForward(Tank pX) {
+
+        pX.moveBy(1);
+    }
+    
+    public void moveTankBack(Tank pX) {
+
+        pX.moveBy(-1);
     }
 }

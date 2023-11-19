@@ -44,9 +44,9 @@ public class Game extends Thread {
             if (k == null) {
                 continue;
             }
-            System.out.println(k.getKeyChar());
+            //System.out.println(k.getKeyChar());
             String keyChar = String.valueOf(k.getKeyChar());
-            System.out.println(keyChar);
+           // System.out.println(keyChar);
 
             byte[] keyBytes = (keyChar + "\n").getBytes();
             this.threadNetwork.addPacketToSend(new BattlePacket(keyBytes));
