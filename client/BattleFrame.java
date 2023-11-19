@@ -78,30 +78,40 @@ public class BattleFrame extends JFrame {
      * 
      */
     public void renderOffScreen(final Graphics g) {
+        Graphics2D g2d = (Graphics2D) g;
+
+        // renderizza la mappa
         for (int i = 0; i < map.getHeight(); i++) {
             for (int j = 0; j < map.getWidth(); j++) {
                 // draw map
-                g.setColor(map.getTile(i, j).getColor());
-                g.fillRect(j * settings.TILE_SIZE_PX, i * settings.TILE_SIZE_PX + settings.TITLE_BAR_HEIGHT,
+                g2d.setColor(map.getTile(i, j).getColor());
+                g2d.fillRect(j * settings.TILE_SIZE_PX, i * settings.TILE_SIZE_PX + settings.TITLE_BAR_HEIGHT,
                         settings.TILE_SIZE_PX, settings.TILE_SIZE_PX);
             }
         }
 
         // draw tanks
-        Graphics2D g2d = (Graphics2D) g;
-        AffineTransform tx = new AffineTransform();
-        Rectangle tank = new Rectangle((int) (p1.getPosition().getX() - p1.getWidth() / 2),
-                (int) (p1.getPosition().getY() - p1.getHeight() / 2), p1.getWidth(), p1.getHeight());
+        AffineTransform tx = g2d.getTransform();
 
+        // Draw tank 1
         g2d.setColor(Color.RED);
-        g2d.fill(tank);
+        AffineTransform tank1Transform = new AffineTransform();
+        tank1Transform.translate(p1.getPosition().getX(), p1.getPosition().getY());
+        tank1Transform.rotate(p1.getAngleRotationRadian());
+        tank1Transform.translate(-p1.getWidth() / 2, -p1.getHeight() / 2);
+        g2d.setTransform(tank1Transform);
+        g2d.fillRect(0, 0, p1.getWidth(), p1.getHeight());
 
-        tank = new Rectangle((int) (p2.getPosition().getX() - p2.getWidth() / 2),
-                (int) (p2.getPosition().getY() - p2.getHeight() / 2), p2.getWidth(),
-                p2.getHeight());
-
+        // Draw tank 2
         g2d.setColor(Color.BLACK);
-        g2d.fill(tank);
+        AffineTransform tank2Transform = new AffineTransform();
+        tank2Transform.translate(p2.getPosition().getX(), p2.getPosition().getY());
+        tank2Transform.rotate(p2.getAngleRotationRadian());
+        tank2Transform.translate(-p2.getWidth() / 2, -p2.getHeight() / 2);
+        g2d.setTransform(tank2Transform);
+        g2d.fillRect(0, 0, p2.getWidth(), p2.getHeight());
+
+        g2d.setTransform(tx);
     }
 
     public KeyEvent getLastEvent() {
