@@ -1,11 +1,10 @@
 package client;
 
 import java.net.Socket;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import tank_lib.network.BattlePacket;
-import tank_lib.network.PacketTypes;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -70,5 +69,13 @@ public class ThreadNetwork extends Thread {
 
     public BattlePacket getPacketReceived() {
         return packetsReceived.poll();
+    }
+
+    public ArrayList<BattlePacket> getPacketsReceived() {
+        ArrayList<BattlePacket> packets = new ArrayList<>();
+        while (packetsReceived.peek() != null) {
+            packets.add(packetsReceived.poll());
+        }
+        return packets;
     }
 }

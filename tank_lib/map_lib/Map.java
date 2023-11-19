@@ -2,6 +2,7 @@ package tank_lib.map_lib;
 
 import java.util.ArrayList;
 import tank_lib.Point;
+import tank_lib.settings;
 
 public class Map {
 	// ! Matrice che contiene le celle che compongono la mappa

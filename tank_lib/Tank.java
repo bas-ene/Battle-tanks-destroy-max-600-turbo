@@ -37,6 +37,10 @@ public class Tank {
 		return height;
 	}
 
+	public void setRotation(double angleRadian) {
+		angleRotationRadian = angleRadian;
+	}
+
 	public void rotateBy(double angleRadian) {
 		angleRotationRadian += angleRadian;
 	}
@@ -47,7 +51,7 @@ public class Tank {
 
 	public void moveBy(double pixels) {
 		this.position.moveX(Math.cos(angleRotationRadian) * pixels);
-		this.position.moveY(Math.sin(angleRotationRadian) * pixels);
+		this.position.moveY(-Math.sin(angleRotationRadian) * pixels);
 
 	}
 }

@@ -41,7 +41,8 @@ public class BattleFrame extends JFrame {
      * Funzione helper che setta vari paramentri del Frame
      */
     private void initFrame() {
-        this.setPreferredSize(new Dimension(map.getWidth() * settings.TILE_SIZE, map.getHeight() * settings.TILE_SIZE));
+        this.setPreferredSize(
+                new Dimension(map.getWidth() * settings.TILE_SIZE_PX, map.getHeight() * settings.TILE_SIZE_PX));
         pack();
         setVisible(true);
         setResizable(true);
@@ -82,56 +83,26 @@ public class BattleFrame extends JFrame {
             for (int j = 0; j < map.getWidth(); j++) {
                 // draw map
                 g.setColor(map.getTile(i, j).getColor());
-                g.fillRect(j * settings.TILE_SIZE, i * settings.TILE_SIZE + settings.TITLE_BAR_HEIGHT,
-                        settings.TILE_SIZE, settings.TILE_SIZE);
+                g.fillRect(j * settings.TILE_SIZE_PX, i * settings.TILE_SIZE_PX + settings.TITLE_BAR_HEIGHT,
+                        settings.TILE_SIZE_PX, settings.TILE_SIZE_PX);
             }
         }
+
         // draw tanks
         Graphics2D g2d = (Graphics2D) g;
         AffineTransform tx = new AffineTransform();
         Rectangle tank = new Rectangle((int) (p1.getPosition().getX() - p1.getWidth() / 2),
                 (int) (p1.getPosition().getY() - p1.getHeight() / 2), p1.getWidth(), p1.getHeight());
-        tx.rotate(p1.getAngleRotationRadian());
-        tx.translate(-p1.getPosition().getX(), -p1.getPosition().getY());
-        Shape transTank = tx.createTransformedShape(tank);
-        g2d.setColor(Color.MAGENTA);
-        g2d.fill(transTank);
-        // moveTank(p1);
+
+        g2d.setColor(Color.RED);
+        g2d.fill(tank);
 
         tank = new Rectangle((int) (p2.getPosition().getX() - p2.getWidth() / 2),
                 (int) (p2.getPosition().getY() - p2.getHeight() / 2), p2.getWidth(),
                 p2.getHeight());
-        tx = new AffineTransform();
-        // translate to origin, rotate, then translate back
-        tx.translate(p2.getPosition().getX(), p2.getPosition().getY());
-        tx.rotate(p2.getAngleRotationRadian());
-        tx.translate(-p2.getPosition().getX(), -p2.getPosition().getY());
 
-        transTank = tx.createTransformedShape(tank);
-        g2d.setColor(Color.WHITE);
-        g2d.fill(transTank);
-        // moveTank(p2);
-    }
-
-    private void moveTank(Tank pX) {
-        // System.out.println(pX.getAngleRotationRadian());
-        // System.out.println(pX.getPosition().getX());
-        // System.out.println(pX.getPosition().getY());
-        // pX.rotateBy(Math.PI/2);
-        System.out.println(pX.getUsername());
-        System.out.println(map.getTile(pX.getPosition()).getTileType());
-        pX.moveBy(map.getTile(pX.getPosition()).getSpeedMultiplier() * 10);
-    }
-
-    public void rotateTankRight(Tank pX) {
-
-        pX.rotateBy(-0.1);
-
-    }
-
-    public void rotateTankLeft(Tank pX) {
-
-        pX.rotateBy(0.1);
+        g2d.setColor(Color.BLACK);
+        g2d.fill(tank);
     }
 
     public KeyEvent getLastEvent() {
