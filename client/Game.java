@@ -85,7 +85,6 @@ public class Game extends Thread {
                     p1.moveBy(mov);
                     break;
                 case 'a':
-                    rotation *= -1;
                     p1.rotateBy(rotation);
                     break;
                 case 's':
@@ -93,6 +92,7 @@ public class Game extends Thread {
                     p1.moveBy(mov);
                     break;
                 case 'd':
+                    rotation *= -1;
                     p1.rotateBy(rotation);
                     break;
                 default:

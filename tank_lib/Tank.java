@@ -8,8 +8,8 @@ public class Tank {
 	private float health = 100.0f;
 	private boolean canShoot = true;
 	private String username;
-	private int width = 20;
-	private int height = 25;
+	private int width = 25;
+	private int height = 20;
 	private double angleRotationRadian = 0;
 
 	public Tank(Point spawnPoint, String username) {
