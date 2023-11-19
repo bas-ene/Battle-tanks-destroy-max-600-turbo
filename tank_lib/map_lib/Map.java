@@ -231,6 +231,13 @@ public class Map {
 		return map[(int) ((int) p.getY() / settings.TILE_SIZE)][(int) ((int) p.getX() / settings.TILE_SIZE)];
 	}
 
+	public Tile getTile(double x, double y) {
+		if (x < 0 || y < 0 || x > map[0].length * settings.TILE_SIZE
+				|| y > map.length * settings.TILE_SIZE)
+			return null;
+		return map[(int) ((int) y / settings.TILE_SIZE)][(int) ((int) x / settings.TILE_SIZE)];
+	}
+
 	@Override
 	public String toString() {
 		String s = "";

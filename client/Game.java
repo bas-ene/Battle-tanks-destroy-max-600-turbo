@@ -4,6 +4,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 import tank_lib.Bullet;
+import tank_lib.Point;
 import tank_lib.Tank;
 import tank_lib.settings;
 import tank_lib.map_lib.Map;
@@ -54,8 +55,6 @@ public class Game extends Thread {
                 continue;
             }
             // System.out.println(k.getKeyChar());
-            handleClipping();
-
             handleMovement(k);
             sendMovement(k);
             handleClipping();
@@ -72,27 +71,40 @@ public class Game extends Thread {
 
     private void handleClipping() {
         // check if the tank is outside the map
-        if (p1.getPosition().getX() < p1.getHeight() / 2) {
-            p1.getPosition().setX(p1.getHeight());
+        // sinistra
+        if (p1.getPosition().getX() - p1.getWidth() / 2 < 0) {
+            p1.getPosition().setX(p1.getPosition().getX() + 1);
         }
-        if (p1.getPosition().getX() > battleFrame.getWidth() - p1.getHeight() / 2) {
-            p1.getPosition().setX(battleFrame.getWidth() - p1.getWidth());
+        // destra
+        if (p1.getPosition().getX() + p1.getWidth() / 2 > battleFrame.getWidth()) {
+            p1.getPosition().setX(p1.getPosition().getX() - 1);
         }
-        if (p1.getPosition().getY() < settings.TITLE_BAR_HEIGHT + p1.getHeight() / 2) {
-            p1.getPosition().setY(p1.getHeight());
+        // sopra
+        if (p1.getPosition().getY() - p1.getWidth() / 2 < settings.TITLE_BAR_HEIGHT) {
+            p1.getPosition().setY(p1.getPosition().getY() + 1);
         }
-        if (p1.getPosition().getY() > battleFrame.getHeight() - p1.getHeight() / 2) {
-            p1.getPosition().setY(battleFrame.getHeight() - p1.getHeight());
+        // sotto
+        if (p1.getPosition().getY() + p1.getWidth() / 2 > battleFrame.getHeight()) {
+            p1.getPosition().setY(p1.getPosition().getY() - 1);
         }
         // check if the tank is inside a building
         // if it is, move it outside
         // if it is not, do nothing
+        Point p = p1.getPositionInMap();
+        // a destra c'è un edificio
+        if (map.getTile(p.getX() + p1.getWidth() / 2, p.getY()).getTileType() == TileTypes.BUILDING)
+            p1.getPosition().setX(p1.getPosition().getX() - 1);
+        // a sinistra c'è un edificio
+        if (map.getTile(p.getX() - p1.getWidth() / 2, p.getY()).getTileType() == TileTypes.BUILDING)
+            p1.getPosition().setX(p1.getPosition().getX() + 1);
+        // sopra c'è un edificio
+        if (map.getTile(p.getX(), p.getY() - p1.getHeight() / 2).getTileType() == TileTypes.BUILDING)
+            p1.getPosition().setY(p1.getPosition().getY() + 1);
+        // sotto c'è un edificio
+        if (map.getTile(p.getX(), p.getY() + p1.getHeight() / 2).getTileType() == TileTypes.BUILDING)
+            p1.getPosition().setY(p1.getPosition().getY() - 1);
         System.out.println(p1.getPosition().getX() + " " + p1.getPosition().getY());
         System.out.println(map.getTile(p1.getPositionInMap()));
-        if (map.getTile(p1.getPositionInMap()).getTileType() == TileTypes.BUILDING) {
-            // move the tank outside the building
-            System.out.println("CLIIPPATO");
-        }
 
     }
 

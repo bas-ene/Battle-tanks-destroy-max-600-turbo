@@ -64,7 +64,7 @@ public class BattleFrame extends JFrame {
             // Double-buffer: clear the offscreen image.
             offScreenImageDrawed = createImage(d.width, d.height);
         }
-        // g.clearRect(0, 0, this.getWidth(), this.getHeight()); 
+        // g.clearRect(0, 0, this.getWidth(), this.getHeight());
         super.paint(g);
         offScreenGraphicsDrawed = offScreenImageDrawed.getGraphics();
         offScreenGraphicsDrawed.setColor(Color.white);
