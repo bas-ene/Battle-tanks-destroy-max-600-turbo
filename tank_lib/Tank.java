@@ -11,7 +11,11 @@ public class Tank {
 	private int width = 25;
 	private int height = 20;
 	private double angleRotationRadian = 0;
+	private Bullet bullet;
 
+	public Bullet getBullet() {
+		return bullet;
+	}
 	/**
 	 * Costruttore parametrico.
 	 * 
@@ -23,10 +27,10 @@ public class Tank {
 		this.position = spawnPoint;
 	}
 
-	public void shoot() {
-		;
-		return;
+	public void setBullet(Bullet bullet) {
+		this.bullet = bullet;
 	}
+	
 
 	/**
 	 * Ritorna la posizione corrente del tank.

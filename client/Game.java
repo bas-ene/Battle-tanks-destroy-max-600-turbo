@@ -76,9 +76,16 @@ public class Game extends Thread {
                 continue;
             }
             // System.out.println(k.getKeyChar());
-            handleMovement(k);
-            sendMovement(k);
-            handleClipping();
+            if (k.getKeyChar() == 'w' || k.getKeyChar() == 'a' || k.getKeyChar() == 's' || k.getKeyChar() == 'd') {
+                handleMovement(k);
+                sendMovement(k);
+                handleClipping();
+            }
+            
+            if(k.getKeyChar() == 'z'){
+                sendBullet();
+            }
+           
 
             // handle shooting
 
@@ -153,6 +160,20 @@ public class Game extends Thread {
         this.threadNetwork.addPacketToSend(battlePacket);
     }
 
+    private void sendBullet() {
+        // send the bullet to the server
+        // tipo SHOT
+        // 1 int per id, 2 double per posizione, 1 per angolo
+        byte[] bytes = new byte[Integer.BYTES + Double.BYTES * 3];
+        ByteBuffer byteBuf = ByteBuffer.wrap(bytes);
+        byteBuf.putInt(p1.getBullet().getId());
+        byteBuf.putDouble(p1.getPosition().getX());
+        byteBuf.putDouble(p1.getPosition().getY());
+        byteBuf.putDouble(p1.getAngleRotationRadian());
+        BattlePacket battlePacket = new BattlePacket(PacketTypes.SHOT, bytes);
+        this.threadNetwork.addPacketToSend(battlePacket);
+    }
+
     /**
      * Gestisce il movimento del tank in base all'input.
      * 
@@ -181,9 +202,6 @@ public class Game extends Thread {
                 case 'd':
                     rotation *= -1;
                     p1.rotateBy(rotation);
-                    break;
-                case 'z':
-                    p1.shoot();
                     break;
                 default:
                     break;
@@ -219,7 +237,7 @@ public class Game extends Thread {
                 // add a bullet to the list of bullets
                 ByteBuffer byteBufSHOT = ByteBuffer.wrap(battlePacket.getPacketBytes());
                 Bullet bullet = new Bullet(byteBufSHOT.getInt(), byteBufSHOT.getDouble(), byteBufSHOT.getDouble(),byteBufSHOT.getDouble());
-                bullets2.add(bullet);
+                bullets1.add(bullet);
                 break;
             case BDST:
                 // remove the bullet from the list of bullets and destroy the building

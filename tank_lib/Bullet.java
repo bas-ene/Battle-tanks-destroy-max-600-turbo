@@ -10,6 +10,9 @@ public class Bullet {
 	private int ID;
 	private int speed;
 
+	public int getId() {
+		return ID;
+	}
 	public Bullet(int ID, Point position, double direction) {
 		this.position = position;
 		this.directionRadian = direction;
