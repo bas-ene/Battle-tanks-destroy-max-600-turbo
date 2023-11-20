@@ -1,6 +1,7 @@
 package client;
 
 import java.awt.event.KeyEvent;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 import tank_lib.Bullet;
@@ -10,6 +11,7 @@ import tank_lib.settings;
 import tank_lib.map_lib.Map;
 import tank_lib.map_lib.TileTypes;
 import tank_lib.network.BattlePacket;
+import tank_lib.network.PacketTypes;
 
 /**
  * Rappresenta e gestisce la logica del gioco e il game loop.
@@ -135,8 +137,17 @@ public class Game extends Thread {
      */
     private void sendMovement(KeyEvent k) {
         // send the movement to the server
-        if (k != null)
-            this.threadNetwork.addPacketToSend(new BattlePacket(new byte[] { (byte) k.getKeyChar(), (byte) '\n' }));
+        if (k == null)
+            return;
+        // tipo MOVM
+        // 2 double per posizione, 1 per angolo
+        byte[] bytes = new byte[Double.BYTES * 3];
+        ByteBuffer byteBuf = ByteBuffer.wrap(bytes);
+        byteBuf.putDouble(p1.getPosition().getX());
+        byteBuf.putDouble(p1.getPosition().getY());
+        byteBuf.putDouble(p1.getAngleRotationRadian());
+        BattlePacket battlePacket = new BattlePacket(PacketTypes.MOVM, bytes);
+        this.threadNetwork.addPacketToSend(battlePacket);
     }
 
     /**
