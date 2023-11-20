@@ -21,7 +21,9 @@ public class Game extends Thread {
     Map map;
     Tank p1;
     Tank p2;
-    ArrayList<Bullet> bullets;
+    ArrayList<Bullet> bullets1;
+    ArrayList<Bullet> bullets2;
+
     ThreadNetwork threadNetwork;
 
     /**
@@ -39,7 +41,8 @@ public class Game extends Thread {
         this.map = map;
         this.p1 = p1;
         this.p2 = p2;
-        this.bullets = new ArrayList<>();
+        this.bullets1 = new ArrayList<>(); 
+        this.bullets2 = new ArrayList<>(); 
 
         this.threadNetwork = threadNetwork;
     }
@@ -214,6 +217,9 @@ public class Game extends Thread {
                 break;
             case SHOT:
                 // add a bullet to the list of bullets
+                ByteBuffer byteBufSHOT = ByteBuffer.wrap(battlePacket.getPacketBytes());
+                Bullet bullet = new Bullet(byteBufSHOT.getInt(), byteBufSHOT.getDouble(), byteBufSHOT.getDouble(),byteBufSHOT.getDouble());
+                bullets2.add(bullet);
                 break;
             case BDST:
                 // remove the bullet from the list of bullets and destroy the building
@@ -227,7 +233,6 @@ public class Game extends Thread {
             default:
                 System.out.println("Packet type not recognized");
                 break;
-
         }
     }
 
