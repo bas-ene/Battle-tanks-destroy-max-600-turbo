@@ -27,7 +27,7 @@ public class Server {
 			System.out.println("Server started and listening on port 23456");
 			Socket clientSocket = serverSocket.accept();
 			InputStream in = clientSocket.getInputStream();
-			PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+			OutputStream out = clientSocket.getOutputStream();
 			while (true) {
 				while (true) {
 
@@ -56,6 +56,22 @@ public class Server {
 						default:
 							break;
 					}
+
+					//DEMO
+					// send the same position, but with a different angle,
+					// to test if the client is receiving the packet correctly
+					byte bytes[] = new byte[4 + 4 + 8 * 3];
+					// lunghezza del messaggio - questa lunghezza
+					ByteBuffer bb = ByteBuffer.wrap(bytes);
+					bb.putInt(8 * 3);
+					// inserisco il tipo di pacchetto
+					bb.put(PacketTypes.MOVM.toString().getBytes());
+					// dati
+					bb.putDouble(150);
+					bb.putDouble(100);
+					bb.putDouble(Math.random() * 2 * Math.PI);
+					out.write(bytes);
+					out.flush();
 					// System.out.println();
 					// if (requestLength == null) {
 					// continue;

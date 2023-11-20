@@ -203,6 +203,11 @@ public class Game extends Thread {
                 break;
             case MOVM:
                 // set the location of the tank to the one received
+                System.out.println("MOVIMENTO NEMICO");
+                ByteBuffer byteBuf = ByteBuffer.wrap(battlePacket.getPacketBytes());
+                p2.setX(byteBuf.getDouble());
+                p2.setY(byteBuf.getDouble());
+                p2.setRotation(byteBuf.getDouble());
                 break;
             case SHOT:
                 // add a bullet to the list of bullets

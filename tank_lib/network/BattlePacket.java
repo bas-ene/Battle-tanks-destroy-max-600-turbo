@@ -39,4 +39,8 @@ public class BattlePacket {
         return bytes;
     }
 
+    public byte[] getPacketBytes() {
+        return packetBytes;
+    }
+
 }

@@ -1,10 +1,13 @@
 package client;
 
 import java.net.Socket;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import tank_lib.network.BattlePacket;
+import tank_lib.network.PacketTypes;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -43,33 +46,60 @@ public class ThreadNetwork extends Thread {
     @Override
     public void run() {
         byte[] buffer = new byte[2048];
-        while (true) {
-            // Send packets
-            BattlePacket battlePacket = packetsToSend.poll();
-            if (battlePacket != null) {
-                // Get the byte array from the BattlePacket
-                byte[] packetBytes = battlePacket.bitify();
 
+        // Create a thread for sending packets
+        Thread sendThread = new Thread(() -> {
+            while (true) {
+                BattlePacket battlePacket = packetsToSend.poll();
+                if (battlePacket != null) {
+                    byte[] packetBytes = battlePacket.bitify();
+
+                    try {
+                        outputStream.write(packetBytes);
+                        outputStream.flush();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        // Create a thread for receiving packets
+        Thread receiveThread = new Thread(() -> {
+            while (true) {
                 try {
-                    // Send the byte array through the socket's output stream
-                    outputStream.write(packetBytes);
-                    outputStream.flush();
+                    byte[] pLengthBytes = new byte[4];
+                    inputStream.read(pLengthBytes);
+                    int packetLength = ByteBuffer.wrap(pLengthBytes).getInt();
+                    System.out.println("Received packet length: " + packetLength);
+
+                    byte[] strBytes = new byte[4];
+                    inputStream.read(strBytes);
+                    String typeBytes = new String(strBytes);
+                    System.out.println("Received packet type: " + typeBytes);
+                    PacketTypes type = PacketTypes.valueOf(typeBytes);
+
+                    byte[] dataBytes = new byte[packetLength];
+                    ByteBuffer byteBuf = ByteBuffer.wrap(dataBytes);
+                    inputStream.read(dataBytes);
+                    BattlePacket p = new BattlePacket(type, dataBytes);
+                    addPacketReceived(p);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-            // Receive packets
-            // try {
-            // int bytesRead = inputStream.read(buffer);
-            // if (bytesRead != -1) {
-            // byte[] packetBytes = Arrays.copyOf(buffer, bytesRead);
-            // BattlePacket receivedPacket = new BattlePacket(packetBytes); // replace with
-            // actual constructor
-            // addPacketReceived(receivedPacket);
-            // }
-            // } catch (IOException e) {
-            // e.printStackTrace();
-            // }
+        });
+
+        // Start both threads
+        sendThread.start();
+        receiveThread.start();
+
+        // Wait for both threads to finish
+        try {
+            sendThread.join();
+            receiveThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
