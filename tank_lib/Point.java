@@ -53,10 +53,20 @@ public class Point {
 		return y;
 	}
 
+	/**
+	 * Sposta x di delta.
+	 * 
+	 * @param delta
+	 */
 	public void moveX(double delta) {
 		x += delta;
 	}
 
+	/**
+	 * Sposta y di delta.
+	 * 
+	 * @param delta
+	 */
 	public void moveY(double delta) {
 		y += delta;
 	}
@@ -75,10 +85,20 @@ public class Point {
 		return Math.sqrt(a + b);
 	}
 
+	/**
+	 * Imposta x
+	 * 
+	 * @param x
+	 */
 	public void setX(double x) {
 		this.x = x;
 	}
 
+	/**
+	 * Imposta y
+	 * 
+	 * @param y
+	 */
 	public void setY(double y) {
 		this.y = y;
 	}

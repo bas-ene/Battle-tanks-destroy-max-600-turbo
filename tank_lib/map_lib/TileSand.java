@@ -3,12 +3,15 @@ package tank_lib.map_lib;
 import java.awt.Color;
 
 /**
- * TileSand
+ * Rappresenta una tile di sabbia nella mappa.
  */
 public class TileSand implements Tile {
 	private TileTypes type = TileTypes.SAND;
 	private float speedMultiplier = 0.5f;
 
+	/**
+	 * Costruttore di default.
+	 */
 	public TileSand() {
 
 	}

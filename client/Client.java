@@ -23,9 +23,12 @@ public class Client {
 			Socket socket = new Socket();
 			socket.bind(new InetSocketAddress("localhost", 12345));
 			socket.connect(new InetSocketAddress("localhost", 23456), 0);
+			
 			game = new Game(f, m, p1, p2, new ThreadNetwork(socket));
+			
 			ThreadPaint threadPaint = new ThreadPaint(f);
 			threadPaint.start();
+			
 			game.start();
 			game.join();
 

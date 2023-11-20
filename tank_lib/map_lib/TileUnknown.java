@@ -4,24 +4,32 @@ import java.awt.Color;
 import java.util.ArrayList;
 
 /**
- * TileUnknown
+ * Rappresenta una tile sconosciuta, o meglio il cui tipo non e` ancora stato
+ * determinato.
  */
 public class TileUnknown implements Tile {
 	private TileTypes type = TileTypes.UNKNOWN;
 	private float speedMultiplier = 0.0f;
-	private ArrayList<TileTypes> possibleTileType;
 	private Map map;
 
+	/**
+	 * Constructor for TileUnknown.
+	 *
+	 * @param map the map object associated with the tile
+	 */
 	public TileUnknown(Map map) {
 		this.map = map;
-
-		possibleTileType = new ArrayList<>();
-
-		possibleTileType.add(TileTypes.GRASS);
-		possibleTileType.add(TileTypes.BUILDING);
-		possibleTileType.add(TileTypes.SAND);
 	}
 
+	/**
+	 * Determina i tipi di tile che possono essere piazzati nella posizione
+	 * specificata.
+	 * 
+	 * @param xPos
+	 * @param yPos
+	 * @return la lista dei tipi di tile che possono essere piazzati
+	 * @throws Exception
+	 */
 	public ArrayList<TileTypes> canBePlaced(int xPos, int yPos) throws Exception {
 		var tps = map.getSquare(xPos, yPos);
 		var possibleTypes = new ArrayList<TileTypes>();
@@ -47,7 +55,6 @@ public class TileUnknown implements Tile {
 		if (couldBeWater)
 			possibleTypes.add(TileTypes.WATER);
 		return possibleTypes;
-
 	}
 
 	@Override

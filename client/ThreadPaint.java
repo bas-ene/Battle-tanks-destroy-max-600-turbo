@@ -1,21 +1,34 @@
 package client;
 
-public class ThreadPaint extends Thread{
+import tank_lib.settings;
+
+/**
+ * ThreadPaint
+ */
+public class ThreadPaint extends Thread {
     BattleFrame battleFrame;
 
+    /**
+     * Costruttore parametrico
+     * 
+     * @param battleFrame Finestra di gioco.
+     */
     public ThreadPaint(BattleFrame battleFrame) {
         this.battleFrame = battleFrame;
     }
 
+    /**
+     * Ogni {@link settings.REFRESH_RATE} millisecondi ridipingi il frame.
+     */
     @Override
     public void run() {
         while (true) {
-            // refresha il frame
+            // refresh the frame
             battleFrame.paint(battleFrame.getGraphics());
 
             // 30 FPS
             try {
-                Thread.sleep(33);
+                Thread.sleep(settings.REFRESH_RATE);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

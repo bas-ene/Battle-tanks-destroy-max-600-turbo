@@ -3,12 +3,15 @@ package tank_lib.map_lib;
 import java.awt.Color;
 
 /**
- * TileWater
+ * Rappresenta dell'acqua nella mappa.
  */
 public class TileWater implements Tile {
 	private TileTypes type = TileTypes.WATER;
 	private float speedMultiplier = 0.3f;
 
+	/**
+	 * Costruttore di defualt.
+	 */
 	public TileWater() {
 
 	}

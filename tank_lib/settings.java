@@ -7,4 +7,5 @@ public class settings {
     public static int DEFAULT_MAP_SIZE = 10;
     public static int TILE_SIZE = 30;
     public static float TANK_ROTATION_SPEED_RPM = 0.5f;
+    public static int REFRESH_RATE = 33;
 }

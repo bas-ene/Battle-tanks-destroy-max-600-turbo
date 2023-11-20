@@ -3,12 +3,15 @@ package tank_lib.map_lib;
 import java.awt.Color;
 
 /**
- * TileGrass
+ * Rappresenta una tile di erba nella mappa.
  */
 public class TileGrass implements Tile {
 	private TileTypes type = TileTypes.GRASS;
 	private float speedMultiplier = 1.0f;
 
+	/**
+	 * Costruttore di default.
+	 */
 	public TileGrass() {
 
 	}

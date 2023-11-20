@@ -9,13 +9,22 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+/**
+ * La classe rappresenta un thread di rete che gestisce l'invio e la ricezione
+ * di {@link BattlePacket} su una socket.
+ */
 public class ThreadNetwork extends Thread {
-    ConcurrentLinkedQueue<BattlePacket> packetsToSend = new ConcurrentLinkedQueue<>();
-    ConcurrentLinkedQueue<BattlePacket> packetsReceived = new ConcurrentLinkedQueue<>();
-    Socket socket;
-    OutputStream outputStream;
-    InputStream inputStream;
+    private ConcurrentLinkedQueue<BattlePacket> packetsToSend = new ConcurrentLinkedQueue<>();
+    private ConcurrentLinkedQueue<BattlePacket> packetsReceived = new ConcurrentLinkedQueue<>();
+    private Socket socket;
+    private OutputStream outputStream;
+    private InputStream inputStream;
 
+    /**
+     * Costruttore parametrico
+     * 
+     * @param socket The socket to communicate over.
+     */
     public ThreadNetwork(Socket socket) {
         this.socket = socket;
         try {
@@ -26,11 +35,16 @@ public class ThreadNetwork extends Thread {
         }
     }
 
+    /**
+     * La logica del thread.
+     * Invia continuamente pacchetti dalla coda packetsToSend e riceve pacchetti
+     * nella coda packetsReceived.
+     */
     @Override
     public void run() {
         byte[] buffer = new byte[2048];
         while (true) {
-            // manda pacchetti
+            // Send packets
             BattlePacket battlePacket = packetsToSend.poll();
             if (battlePacket != null) {
                 // Get the byte array from the BattlePacket
@@ -44,7 +58,7 @@ public class ThreadNetwork extends Thread {
                     e.printStackTrace();
                 }
             }
-            // riccevi pacchetti
+            // Receive packets
             // try {
             // int bytesRead = inputStream.read(buffer);
             // if (bytesRead != -1) {
@@ -59,18 +73,40 @@ public class ThreadNetwork extends Thread {
         }
     }
 
+    /**
+     * Adds a BattlePacket to the packetsToSend queue.
+     * Aggiungi un BattlePacket alla coda dei pacchetti da inviare.
+     * 
+     * @param packet Il BattlePacket da inviare.
+     */
     public void addPacketToSend(BattlePacket packet) {
         packetsToSend.add(packet);
     }
 
+    /**
+     * Aggiunge un BattlePacket alla coda dei pacchetti ricevuti.
+     * 
+     * @param packet Il BattlePacket ricevuto.
+     */
     public void addPacketReceived(BattlePacket packet) {
         packetsReceived.add(packet);
     }
+
+    /**
+     * Restituisce e rimuove il prossimo BattlePacket dalla coda packetsReceived.
+     * 
+     * @retun Il prossimo BattlePacket ricevuto, o null se la coda è vuota.
+     */
 
     public BattlePacket getPacketReceived() {
         return packetsReceived.poll();
     }
 
+    /**
+     * Restituisce una lista dei pacchetti ricevuti.
+     * 
+     * @return Lista di BattlePacket ricevuti
+     */
     public ArrayList<BattlePacket> getPacketsReceived() {
         ArrayList<BattlePacket> packets = new ArrayList<>();
         while (packetsReceived.peek() != null) {

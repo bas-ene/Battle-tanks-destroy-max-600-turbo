@@ -11,6 +11,9 @@ import tank_lib.map_lib.Map;
 import tank_lib.map_lib.TileTypes;
 import tank_lib.network.BattlePacket;
 
+/**
+ * Rappresenta e gestisce la logica del gioco e il game loop.
+ */
 public class Game extends Thread {
     BattleFrame battleFrame;
     Map map;
@@ -19,6 +22,16 @@ public class Game extends Thread {
     ArrayList<Bullet> bullets;
     ThreadNetwork threadNetwork;
 
+    /**
+     * Costruttore paramentrico
+     * 
+     * @param battleFrame   Finestra di gioco.
+     * @param map           Oggetto Map che rappresenta la mappa.
+     * @param p1            Tank che rappresenta il p1 (sempre questo client).
+     * @param p2            Tank che rappresenta il p2 (sempre l'avversario).
+     * @param threadNetwork ThreadNetwork che gestisce la comunicazione con il
+     *                      server.
+     */
     public Game(BattleFrame battleFrame, Map map, Tank p1, Tank p2, ThreadNetwork threadNetwork) {
         this.battleFrame = battleFrame;
         this.map = map;
@@ -29,6 +42,9 @@ public class Game extends Thread {
         this.threadNetwork = threadNetwork;
     }
 
+    /**
+     * Fa partitre il game loop e gestisce la logica del gioco.
+     */
     public void run() {
         // Initialize game variables and objects
 
@@ -69,6 +85,10 @@ public class Game extends Thread {
         // cleanup();
     }
 
+    /**
+     * Gestisce la collisone/clipping del tank per evitare che esca dalla mappa o
+     * collida con gli edifici.
+     */
     private void handleClipping() {
         // check if the tank is outside the map
         // sinistra
@@ -108,12 +128,22 @@ public class Game extends Thread {
 
     }
 
+    /**
+     * Manda il movimento al server.
+     * 
+     * @param k Il KeyEvent che identifica il movimento.
+     */
     private void sendMovement(KeyEvent k) {
         // send the movement to the server
         if (k != null)
             this.threadNetwork.addPacketToSend(new BattlePacket(new byte[] { (byte) k.getKeyChar(), (byte) '\n' }));
     }
 
+    /**
+     * Gestisce il movimento del tank in base all'input.
+     * 
+     * @param k Il KeyEvent che identifica il movimento.
+     */
     private void handleMovement(KeyEvent k) {
         // wasd movement
         float speedMultiplier = map.getTile(p1.getPositionInMap()).getSpeedMultiplier();
@@ -144,6 +174,11 @@ public class Game extends Thread {
         }
     }
 
+    /**
+     * Gestisce il pacchetto ricevuto e aggiorna di conseguenza lo stato del gioco.
+     * 
+     * @param battlePacket Il BattlePacket ricevuto dal server.
+     */
     private void handlePacket(BattlePacket battlePacket) {
         switch (battlePacket.getPacketType()) {
             case CONN:

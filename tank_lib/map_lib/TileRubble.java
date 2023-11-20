@@ -3,12 +3,15 @@ package tank_lib.map_lib;
 import java.awt.Color;
 
 /**
- * TileRubble
+ * Rappresenta una tile di macerie nella mappa.
  */
 public class TileRubble implements Tile {
 	private TileTypes type = TileTypes.RUBBLE;
 	private float speedMultiplier = 0.75f;
 
+	/**
+	 * Costruttore di default.
+	 */
 	public TileRubble() {
 
 	}
