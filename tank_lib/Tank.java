@@ -23,6 +23,11 @@ public class Tank {
 		this.position = spawnPoint;
 	}
 
+	public Bullet shoot() {
+		Bullet bullet = new Bullet("01",position,angleRotationRadian);
+		return bullet;
+	}
+
 	/**
 	 * Ritorna la posizione corrente del tank.
 	 * 

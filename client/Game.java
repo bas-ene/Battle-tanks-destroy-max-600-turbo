@@ -179,6 +179,9 @@ public class Game extends Thread {
                     rotation *= -1;
                     p1.rotateBy(rotation);
                     break;
+                case 'z':
+                    p1.shoot();
+                    break;
                 default:
                     break;
             }
