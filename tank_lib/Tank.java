@@ -25,6 +25,7 @@ public class Tank {
 	public Tank(Point spawnPoint, String username) {
 		this.username = username;
 		this.position = spawnPoint;
+		bullet= new Bullet(01, position, angleRotationRadian);
 	}
 
 	public void setBullet(Bullet bullet) {

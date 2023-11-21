@@ -18,6 +18,7 @@ import javax.swing.JFrame;
 public class BattleFrame extends JFrame {
     Map map;
     Tank p1, p2;
+
     BattleKey keyHandler = new BattleKey();
 
     /**
@@ -111,6 +112,19 @@ public class BattleFrame extends JFrame {
         g2d.setTransform(tank2Transform);
         g2d.fillRect(0, 0, p2.getWidth(), p2.getHeight());
 
+        //draw bullets
+        /* 
+        g2d.setColor(Color.BLUE);
+        for (Bullet b : p1.getBullets()) {
+            AffineTransform bulletTransform = new AffineTransform();
+            bulletTransform.translate(b.getPosition().getX(), b.getPosition().getY());
+            bulletTransform.rotate(b.getAngleRotationRadian());
+            bulletTransform.translate(-b.getWidth() / 2, -b.getHeight() / 2);
+            g2d.setTransform(bulletTransform);
+            g2d.fillRect(0, 0, b.getWidth(), b.getHeight());
+            
+        }
+*/
         g2d.setTransform(tx);
     }
 
