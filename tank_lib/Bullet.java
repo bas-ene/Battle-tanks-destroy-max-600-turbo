@@ -13,6 +13,7 @@ public class Bullet {
 	public int getId() {
 		return ID;
 	}
+
 	public Bullet(int ID, Point position, double direction) {
 		this.position = position;
 		this.directionRadian = direction;
@@ -20,11 +21,12 @@ public class Bullet {
 	}
 
 	public Bullet(int ID, double x, double y, double direction) {
-		Point p=new Point(x,y);
+		Point p = new Point(x, y);
 		this.position = p;
 		this.directionRadian = direction;
 		this.ID = ID;
 	}
+
 	public void setBulletType() {
 		switch (ID) {
 			case 01:

@@ -3,12 +3,8 @@ package server;
 import java.io.*;
 import java.net.*;
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 
-import client.BattleFrame;
-import client.ThreadPaint;
-import tank_lib.Point;
-import tank_lib.Tank;
+import tank_lib.settings;
 import tank_lib.map_lib.Map;
 import tank_lib.network.PacketTypes;
 
@@ -29,6 +25,18 @@ public class Server {
 			InputStream in = clientSocket.getInputStream();
 			OutputStream out = clientSocket.getOutputStream();
 			while (true) {
+				// manda la mappa ai client che si connettono DEMO
+				Map m = new Map(settings.DEFAULT_MAP_SIZE, settings.DEFAULT_MAP_SIZE);
+				ByteBuffer mp = ByteBuffer
+						.allocate(4 + 4 + 4 * 2 + 1 * settings.DEFAULT_MAP_SIZE * settings.DEFAULT_MAP_SIZE);
+				mp.putInt(4 * 2 + 1 * settings.DEFAULT_MAP_SIZE * settings.DEFAULT_MAP_SIZE);
+				mp.put(PacketTypes.SMAP.toString().getBytes());
+				mp.putInt(settings.DEFAULT_MAP_SIZE);
+				mp.putInt(settings.DEFAULT_MAP_SIZE);
+				mp.put(m.bitify());
+				System.out.println(m.toString());
+				out.write(mp.array());
+				out.flush();
 				while (true) {
 
 					byte[] pLengthBytes = new byte[4];
@@ -57,7 +65,7 @@ public class Server {
 							break;
 					}
 
-					//DEMO
+					// DEMO
 					// send the same position, but with a different angle,
 					// to test if the client is receiving the packet correctly
 					byte bytes[] = new byte[4 + 4 + 8 * 3];

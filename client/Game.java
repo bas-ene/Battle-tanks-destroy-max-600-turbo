@@ -25,6 +25,7 @@ public class Game extends Thread {
     ArrayList<Bullet> bullets2;
 
     ThreadNetwork threadNetwork;
+    ThreadPaint threadPaint;
 
     /**
      * Costruttore paramentrico
@@ -41,8 +42,17 @@ public class Game extends Thread {
         this.map = map;
         this.p1 = p1;
         this.p2 = p2;
-        this.bullets1 = new ArrayList<>(); 
-        this.bullets2 = new ArrayList<>(); 
+        this.bullets1 = new ArrayList<>();
+        this.bullets2 = new ArrayList<>();
+
+        this.threadNetwork = threadNetwork;
+    }
+
+    public Game(Tank p1, Tank p2, ThreadNetwork threadNetwork) {
+        this.p1 = p1;
+        this.p2 = p2;
+        this.bullets1 = new ArrayList<>();
+        this.bullets2 = new ArrayList<>();
 
         this.threadNetwork = threadNetwork;
     }
@@ -52,15 +62,33 @@ public class Game extends Thread {
      */
     public void run() {
         // Initialize game variables and objects
-
-        long lastTime = System.nanoTime();
-        double amountOfTicks = 60.0;
-        double ns = 1000000000 / amountOfTicks;
-        double delta = 0;
-        long timer = System.currentTimeMillis();
-        int updates = 0;
-        int frames = 0;
         this.threadNetwork.start();
+        boolean receivedMap = false;
+        while (!receivedMap) {
+            // wait to receive a SMAP packet to build the map and start the game and the
+            // thread paint
+            ArrayList<BattlePacket> packet = this.threadNetwork.getPacketsReceived();
+            // foreach packet, process it and check if it is a SMAP packet
+            for (BattlePacket battlePacket : packet) {
+                if (battlePacket.getPacketType() == PacketTypes.SMAP) {
+                    handlePacket(battlePacket);
+                    receivedMap = true;
+                    break;
+                }
+            }
+
+        }
+        this.battleFrame = new BattleFrame(map, p1, p2);
+        this.threadPaint = new ThreadPaint(battleFrame);
+        threadPaint.start();
+        // long lastTime = System.nanoTime();
+        // double amountOfTicks = 60.0;
+        // double ns = 1000000000 / amountOfTicks;
+        // double delta = 0;
+        // long timer = System.currentTimeMillis();
+        // int updates = 0;
+        // int frames = 0;
+
         // Start the game loop
         while (true) {
             // based on packets received, update the game
@@ -81,11 +109,10 @@ public class Game extends Thread {
                 sendMovement(k);
                 handleClipping();
             }
-            
-            if(k.getKeyChar() == 'z'){
+
+            if (k.getKeyChar() == 'z') {
                 sendBullet();
             }
-           
 
             // handle shooting
 
@@ -221,6 +248,12 @@ public class Game extends Thread {
                 break;
             case SMAP:
                 // set the map to the one received
+                ByteBuffer byteBufSMAP = ByteBuffer.wrap(battlePacket.getPacketBytes());
+                int mapWidth = byteBufSMAP.getInt();
+                int mapHeight = byteBufSMAP.getInt();
+                byte[] mBytes = new byte[mapWidth * mapHeight];
+                byteBufSMAP.get(mBytes);
+                this.map = new Map(mBytes, mapHeight, mapWidth);
                 break;
             case STRT:
                 // startGame();
@@ -236,7 +269,8 @@ public class Game extends Thread {
             case SHOT:
                 // add a bullet to the list of bullets
                 ByteBuffer byteBufSHOT = ByteBuffer.wrap(battlePacket.getPacketBytes());
-                Bullet bullet = new Bullet(byteBufSHOT.getInt(), byteBufSHOT.getDouble(), byteBufSHOT.getDouble(),byteBufSHOT.getDouble());
+                Bullet bullet = new Bullet(byteBufSHOT.getInt(), byteBufSHOT.getDouble(), byteBufSHOT.getDouble(),
+                        byteBufSHOT.getDouble());
                 bullets1.add(bullet);
                 break;
             case BDST:
