@@ -200,6 +200,7 @@ public class Game extends Thread {
     }
 
     private void sendBullet() {
+        System.out.println("SPARO");
         // send the bullet to the server
         // tipo SHOT
         // 1 int per id, 2 double per posizione, 1 per angolo
@@ -272,13 +273,14 @@ public class Game extends Thread {
                 break;
             case MOVM:
                 // set the location of the tank to the one received
-                System.out.println("MOVIMENTO NEMICO");
+                System.out.println("MOVIMENTO NEMICO RICEVUTO");
                 ByteBuffer byteBuf = ByteBuffer.wrap(battlePacket.getPacketBytes());
                 p2.setX(byteBuf.getDouble());
                 p2.setY(byteBuf.getDouble());
                 p2.setRotation(byteBuf.getDouble());
                 break;
             case SHOT:
+                System.out.println("SPARO RICEVUTO");
                 // add a bullet to the list of bullets
                 ByteBuffer byteBufSHOT = ByteBuffer.wrap(battlePacket.getPacketBytes());
                 Bullet bullet = new Bullet(byteBufSHOT.getInt(), byteBufSHOT.getDouble(), byteBufSHOT.getDouble(),

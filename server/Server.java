@@ -51,35 +51,54 @@ public class Server {
 					PacketTypes type = PacketTypes.valueOf(typeBytes);
 					byte[] dataBytes = new byte[packetLength];
 					ByteBuffer byteBuf = ByteBuffer.wrap(dataBytes);
+					// DEMO
+					// send the same position, but with a different angle,
+					// to test if the client is receiving the packet correctly
+					// lunghezza del messaggio - questa lunghezza
+					byte bytes[];
+					ByteBuffer bb;
 					in.read(dataBytes);
 					switch (type) {
 						case MOVM:
+							bytes = new byte[4 + 4 + 8 * 3];
+							bb = ByteBuffer.wrap(bytes);
+							bb.putInt(8 * 3);
 							System.out.println("Received MOVM packet");
 							double x = byteBuf.getDouble();
 							double y = byteBuf.getDouble();
 							double angle = byteBuf.getDouble();
 							System.out.println("x: " + x + " y: " + y + " angle: " + angle);
-							break;
+							bb.put(PacketTypes.MOVM.toString().getBytes());
+							out.write(bytes);
+							out.flush();
 
+							break;
+						case SHOT:
+							bytes = new byte[4 + 8 * 3];
+							bb = ByteBuffer.wrap(bytes);
+							//bb.putInt(8 * 3);
+							System.out.println("Received SHOT packet");
+							double x1 = byteBuf.getDouble();
+							double y1 = byteBuf.getDouble();
+							double angle1 = byteBuf.getDouble();
+							System.out.println("x: " + x1 + " y: " + y1 + " angle: " + angle1);
+							bb.put(PacketTypes.SHOT.toString().getBytes());
+							out.write(bytes);
+							out.flush();
+							break;
 						default:
 							break;
 					}
 
-					// DEMO
-					// send the same position, but with a different angle,
-					// to test if the client is receiving the packet correctly
-					byte bytes[] = new byte[4 + 4 + 8 * 3];
-					// lunghezza del messaggio - questa lunghezza
-					ByteBuffer bb = ByteBuffer.wrap(bytes);
-					bb.putInt(8 * 3);
-					// inserisco il tipo di pacchetto
-					bb.put(PacketTypes.MOVM.toString().getBytes());
+					
+					
+
 					// dati
-					bb.putDouble(150);
-					bb.putDouble(100);
-					bb.putDouble(Math.random() * 2 * Math.PI);
-					out.write(bytes);
-					out.flush();
+					//bb.putDouble(150);
+					//bb.putDouble(100);
+					//bb.putDouble(Math.random() * 2 * Math.PI);
+					//out.write(bytes);
+					//out.flush();
 					// System.out.println();
 					// if (requestLength == null) {
 					// continue;

@@ -125,6 +125,7 @@ public class BattleFrame extends JFrame {
         
         g2d.setColor(Color.BLUE);
         for (Bullet b : bullets) {
+            System.out.println("rendering bullet");
             AffineTransform bulletTransform = new AffineTransform();
             bulletTransform.translate(b.getPosition().getX(), b.getPosition().getY());
             bulletTransform.rotate(b.getDirectionRadian());
