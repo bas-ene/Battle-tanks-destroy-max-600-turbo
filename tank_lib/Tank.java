@@ -12,10 +12,12 @@ public class Tank {
 	private int height = 20;
 	private double angleRotationRadian = 0;
 	private Bullet bullet;
+	private int id;
 
 	public Bullet getBullet() {
 		return bullet;
 	}
+
 	/**
 	 * Costruttore parametrico.
 	 * 
@@ -30,7 +32,6 @@ public class Tank {
 	public void setBullet(Bullet bullet) {
 		this.bullet = bullet;
 	}
-	
 
 	/**
 	 * Ritorna la posizione corrente del tank.
@@ -140,5 +141,17 @@ public class Tank {
 	 */
 	public Point getPositionInMap() {
 		return new Point(this.position.getX(), this.position.getY() - settings.TITLE_BAR_HEIGHT);
+	}
+
+	public int getID() {
+		return id;
+	}
+
+	public void setID(int id) {
+		this.id = id;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
 	}
 }

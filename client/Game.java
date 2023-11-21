@@ -72,8 +72,13 @@ public class Game extends Thread {
      */
     public void run() {
         // Initialize game variables and objects
+        // showLobby();
         this.threadNetwork.start();
-        getReceivedMap();
+        String username = "p1";
+        p1.setUsername(username);
+        sendConnectionPacket(username);
+        getIdFromServer();
+        getMapFromServer();
         this.battleFrame = new BattleFrame(map, p1, p2);
         this.threadPaint = new ThreadPaint(battleFrame);
         threadPaint.start();
@@ -120,22 +125,46 @@ public class Game extends Thread {
         // cleanup();
     }
 
-    private void getReceivedMap() {
+    private void getMapFromServer() {
         boolean receivedMap = false;
         while (!receivedMap) {
             // wait to receive a SMAP packet to build the map and start the game and the
             // thread paint
-            ArrayList<BattlePacket> packet = this.threadNetwork.getPacketsReceived();
+            BattlePacket packet = this.threadNetwork.getPacketReceived();
             // foreach packet, process it and check if it is a SMAP packet
-            for (BattlePacket battlePacket : packet) {
-                if (battlePacket.getPacketType() == PacketTypes.SMAP) {
-                    handlePacket(battlePacket);
-                    receivedMap = true;
-                    break;
-                }
+            if (packet.getPacketType() == PacketTypes.SMAP) {
+                handlePacket(packet);
+                receivedMap = true;
+                break;
             }
-
         }
+    }
+
+    private void sendConnectionPacket(String username) {
+        // send a connection packet to the server
+        // tipo CONN
+        byte[] bytes = username.getBytes();
+        BattlePacket battlePacket = new BattlePacket(PacketTypes.CONN, bytes);
+        this.threadNetwork.addPacketToSend(battlePacket);
+    }
+
+    private void getIdFromServer() {
+        // ricevi pacchetto di tipo CONN dal serve che avra come payload n byte (nel
+        // nostro caso 2, uno per player) che
+        // rappresentano gli id dei player
+        byte[] bytes = new byte[settings.NUMBER_OF_CLIENTS];
+        boolean receivedIDs = false;
+        while (!receivedIDs) {
+
+            BattlePacket packet = this.threadNetwork.getPacketReceived();
+            // foreach packet, process it and check if it is a SMAP packet
+            if (packet.getPacketType() == PacketTypes.CONN) {
+                handlePacket(packet);
+                receivedIDs = true;
+                break;
+            }
+        }
+
     }
 
     /**
@@ -226,8 +255,6 @@ public class Game extends Thread {
         float mov = (settings.TANK_SPEED_TILES_S * settings.TILE_SIZE_PX * speedMultiplier) * 1 / 30;
         // rotation per tick
         double rotation = 2 * Math.PI * settings.TANK_ROTATION_SPEED_RPM * 1 / 30;
-        // System.out.println(mov);
-        // System.out.println(rotation);
         if (k != null) {
             switch (k.getKeyChar()) {
                 case 'w':
@@ -259,9 +286,16 @@ public class Game extends Thread {
         switch (battlePacket.getPacketType()) {
             case CONN:
                 // set the player id to the one received
+                System.out.println("RICEVUTI ID");
+
+                ByteBuffer byteBufCONN = ByteBuffer.wrap(battlePacket.getPacketBytes());
+                p1.setID(byteBufCONN.getInt());
+                p2.setID(byteBufCONN.getInt());
                 break;
             case SMAP:
                 // set the map to the one received
+                System.out.println("RICEVUTA MAPPA");
+
                 ByteBuffer byteBufSMAP = ByteBuffer.wrap(battlePacket.getPacketBytes());
                 int mapWidth = byteBufSMAP.getInt();
                 int mapHeight = byteBufSMAP.getInt();
@@ -275,13 +309,16 @@ public class Game extends Thread {
             case MOVM:
                 // set the location of the tank to the one received
                 System.out.println("MOVIMENTO NEMICO");
-                ByteBuffer byteBuf = ByteBuffer.wrap(battlePacket.getPacketBytes());
-                p2.setX(byteBuf.getDouble());
-                p2.setY(byteBuf.getDouble());
-                p2.setRotation(byteBuf.getDouble());
+
+                ByteBuffer byteBufMOVM = ByteBuffer.wrap(battlePacket.getPacketBytes());
+                p2.setX(byteBufMOVM.getDouble());
+                p2.setY(byteBufMOVM.getDouble());
+                p2.setRotation(byteBufMOVM.getDouble());
                 break;
             case SHOT:
                 // add a bullet to the list of bullets
+                System.out.println("SPARO");
+
                 ByteBuffer byteBufSHOT = ByteBuffer.wrap(battlePacket.getPacketBytes());
                 Bullet bullet = new Bullet(byteBufSHOT.getInt(), byteBufSHOT.getDouble(), byteBufSHOT.getDouble(),
                         byteBufSHOT.getDouble());
@@ -301,16 +338,4 @@ public class Game extends Thread {
                 break;
         }
     }
-
-    private void update() {
-        // Update game logic
-    }
-
-    // private void render() {
-    // // Render game graphics
-    // }
-
-    // private void cleanup() {
-    // // Clean up and exit the game
-    // }
 }

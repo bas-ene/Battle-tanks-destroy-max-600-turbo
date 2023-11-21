@@ -3,9 +3,12 @@ package server;
 import java.io.*;
 import java.net.*;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 
+import tank_lib.Tank;
 import tank_lib.settings;
 import tank_lib.map_lib.Map;
+import tank_lib.network.BattlePacket;
 import tank_lib.network.PacketTypes;
 
 /**
@@ -21,22 +24,23 @@ public class Server {
 			// BattleFrame f = new BattleFrame(m, p1, p2);
 			ServerSocket serverSocket = new ServerSocket(23456);
 			System.out.println("Server started and listening on port 23456");
-			Socket clientSocket = serverSocket.accept();
-			InputStream in = clientSocket.getInputStream();
-			OutputStream out = clientSocket.getOutputStream();
+			ArrayList<TcpClientThread> clients = new ArrayList<>();
+			ArrayList<Tank> tanks = new ArrayList<>();
+
 			while (true) {
-				// manda la mappa ai client che si connettono DEMO
 				Map m = new Map(settings.DEFAULT_MAP_SIZE, settings.DEFAULT_MAP_SIZE);
-				ByteBuffer mp = ByteBuffer
-						.allocate(4 + 4 + 4 * 2 + 1 * settings.DEFAULT_MAP_SIZE * settings.DEFAULT_MAP_SIZE);
-				mp.putInt(4 * 2 + 1 * settings.DEFAULT_MAP_SIZE * settings.DEFAULT_MAP_SIZE);
-				mp.put(PacketTypes.SMAP.toString().getBytes());
-				mp.putInt(settings.DEFAULT_MAP_SIZE);
-				mp.putInt(settings.DEFAULT_MAP_SIZE);
-				mp.put(m.bitify());
-				System.out.println(m.toString());
-				out.write(mp.array());
-				out.flush();
+
+				for (int i = 0; i < settings.NUMBER_OF_CLIENTS; i++) {
+					clients.add(new TcpClientThread(serverSocket.accept()));
+					clients.get(i).start();
+					tanks.add(clients.get(i).getTank());
+					clients.get(i).sendIDs(new int[] { 1, 2 });
+				}
+				// dopo che si sono connessi tutti, invio il pacchetto che identifica l'inizio
+				// della partita
+				for (int i = 0; i < settings.NUMBER_OF_CLIENTS; i++) {
+					clients.get(i).sendStartPacket();
+				}
 				while (true) {
 
 					byte[] pLengthBytes = new byte[4];
@@ -80,42 +84,7 @@ public class Server {
 					bb.putDouble(Math.random() * 2 * Math.PI);
 					out.write(bytes);
 					out.flush();
-					// System.out.println();
-					// if (requestLength == null) {
-					// continue;
-					// }
-					// System.out.println("Client says: " + requestLength);
 
-					// switch (requestLength) {
-					// case "w":
-					// out.println("You pressed w");
-					// // f.moveTankForward(p1);
-
-					// break;
-					// case "a":
-					// out.println("You pressed a");
-					// // f.rotateTankLeft(p1);
-					// break;
-					// case "s":
-					// out.println("You pressed s");
-					// // f.moveTankBack(p1);
-					// break;
-					// case "d":
-					// out.println("You pressed d");
-					// // f.rotateTankRight(p1);
-					// break;
-					// case "z":
-					// // shoot
-					// break;
-					// case "esc":
-					// out.println("You pressed esc");
-					// break;
-					// default:
-
-					// break;
-					// }
-					// To send a message
-					// out.println("Hello, client!");
 				}
 			}
 			// serverSocket.close();
