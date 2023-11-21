@@ -28,7 +28,7 @@ public class Game extends Thread {
     ThreadPaint threadPaint;
 
     /**
-     * Costruttore paramentrico
+     * Costruttore paramentrico, usato principalmente per test.
      * 
      * @param battleFrame   Finestra di gioco.
      * @param map           Oggetto Map che rappresenta la mappa.
@@ -48,6 +48,16 @@ public class Game extends Thread {
         this.threadNetwork = threadNetwork;
     }
 
+    /**
+     * Costruttore parametrico, che riceve la mappa dal server e si crea da solo il
+     * BattleFrame e il ThreadPaint associato.
+     * 
+     * @param p1            L'oggetto Tank che rappresenta il player 1 (questo
+     *                      client).
+     * @param p2            L'oggetto Tank che rappresenta il player 2
+     *                      (l'avversario).
+     * @param threadNetwork Thread per la comunicazione con il server.
+     */
     public Game(Tank p1, Tank p2, ThreadNetwork threadNetwork) {
         this.p1 = p1;
         this.p2 = p2;
@@ -63,21 +73,7 @@ public class Game extends Thread {
     public void run() {
         // Initialize game variables and objects
         this.threadNetwork.start();
-        boolean receivedMap = false;
-        while (!receivedMap) {
-            // wait to receive a SMAP packet to build the map and start the game and the
-            // thread paint
-            ArrayList<BattlePacket> packet = this.threadNetwork.getPacketsReceived();
-            // foreach packet, process it and check if it is a SMAP packet
-            for (BattlePacket battlePacket : packet) {
-                if (battlePacket.getPacketType() == PacketTypes.SMAP) {
-                    handlePacket(battlePacket);
-                    receivedMap = true;
-                    break;
-                }
-            }
-
-        }
+        getReceivedMap();
         this.battleFrame = new BattleFrame(map, p1, p2);
         this.threadPaint = new ThreadPaint(battleFrame);
         threadPaint.start();
@@ -122,6 +118,24 @@ public class Game extends Thread {
 
         // Clean up and exit the game
         // cleanup();
+    }
+
+    private void getReceivedMap() {
+        boolean receivedMap = false;
+        while (!receivedMap) {
+            // wait to receive a SMAP packet to build the map and start the game and the
+            // thread paint
+            ArrayList<BattlePacket> packet = this.threadNetwork.getPacketsReceived();
+            // foreach packet, process it and check if it is a SMAP packet
+            for (BattlePacket battlePacket : packet) {
+                if (battlePacket.getPacketType() == PacketTypes.SMAP) {
+                    handlePacket(battlePacket);
+                    receivedMap = true;
+                    break;
+                }
+            }
+
+        }
     }
 
     /**
