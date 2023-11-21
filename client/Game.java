@@ -21,8 +21,7 @@ public class Game extends Thread {
     Map map;
     Tank p1;
     Tank p2;
-    ArrayList<Bullet> bullets1;
-    ArrayList<Bullet> bullets2;
+    ArrayList<Bullet> bullets;
 
     ThreadNetwork threadNetwork;
     ThreadPaint threadPaint;
@@ -42,8 +41,8 @@ public class Game extends Thread {
         this.map = map;
         this.p1 = p1;
         this.p2 = p2;
-        this.bullets1 = new ArrayList<>();
-        this.bullets2 = new ArrayList<>();
+        this.bullets = new ArrayList<>();
+
 
         this.threadNetwork = threadNetwork;
     }
@@ -61,8 +60,7 @@ public class Game extends Thread {
     public Game(Tank p1, Tank p2, ThreadNetwork threadNetwork) {
         this.p1 = p1;
         this.p2 = p2;
-        this.bullets1 = new ArrayList<>();
-        this.bullets2 = new ArrayList<>();
+        this.bullets = new ArrayList<>();
 
         this.threadNetwork = threadNetwork;
     }
@@ -74,7 +72,7 @@ public class Game extends Thread {
         // Initialize game variables and objects
         this.threadNetwork.start();
         getReceivedMap();
-        this.battleFrame = new BattleFrame(map, p1, p2);
+        this.battleFrame = new BattleFrame(map, p1, p2,bullets);
         this.threadPaint = new ThreadPaint(battleFrame);
         threadPaint.start();
         // long lastTime = System.nanoTime();
@@ -284,8 +282,8 @@ public class Game extends Thread {
                 // add a bullet to the list of bullets
                 ByteBuffer byteBufSHOT = ByteBuffer.wrap(battlePacket.getPacketBytes());
                 Bullet bullet = new Bullet(byteBufSHOT.getInt(), byteBufSHOT.getDouble(), byteBufSHOT.getDouble(),
-                        byteBufSHOT.getDouble());
-                bullets1.add(bullet);
+                byteBufSHOT.getDouble());
+                bullets.add(bullet);
                 break;
             case BDST:
                 // remove the bullet from the list of bullets and destroy the building

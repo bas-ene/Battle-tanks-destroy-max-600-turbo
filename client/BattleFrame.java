@@ -9,6 +9,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
 import java.awt.Image;
 import javax.swing.JFrame;
 
@@ -18,6 +19,7 @@ import javax.swing.JFrame;
 public class BattleFrame extends JFrame {
     Map map;
     Tank p1, p2;
+    ArrayList<Bullet> bullets;
 
     BattleKey keyHandler = new BattleKey();
 
@@ -35,7 +37,14 @@ public class BattleFrame extends JFrame {
         this.initFrame();
         this.addKeyListener(keyHandler);
     }
-
+    public BattleFrame(Map m, Tank p1, Tank p2, ArrayList<Bullet> bullets) {
+        this.map = m;
+        this.p1 = p1;
+        this.p2 = p2;
+        this.initFrame();
+        this.addKeyListener(keyHandler);
+        this.bullets = bullets;
+    }
     /**
      * Funzione helper che setta vari paramentri del Frame
      */
@@ -113,18 +122,18 @@ public class BattleFrame extends JFrame {
         g2d.fillRect(0, 0, p2.getWidth(), p2.getHeight());
 
         //draw bullets
-        /* 
+        
         g2d.setColor(Color.BLUE);
-        for (Bullet b : p1.getBullets()) {
+        for (Bullet b : bullets) {
             AffineTransform bulletTransform = new AffineTransform();
             bulletTransform.translate(b.getPosition().getX(), b.getPosition().getY());
-            bulletTransform.rotate(b.getAngleRotationRadian());
+            bulletTransform.rotate(b.getDirectionRadian());
             bulletTransform.translate(-b.getWidth() / 2, -b.getHeight() / 2);
             g2d.setTransform(bulletTransform);
             g2d.fillRect(0, 0, b.getWidth(), b.getHeight());
             
         }
-*/
+
         g2d.setTransform(tx);
     }
 
