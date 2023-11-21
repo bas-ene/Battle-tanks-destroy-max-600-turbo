@@ -31,8 +31,8 @@ public class ThreadNetwork extends Thread {
     public ThreadNetwork(Socket socket) {
         this.socket = socket;
         try {
-            outputStream = socket.getOutputStream();
-            inputStream = socket.getInputStream();
+            outputStream = this.socket.getOutputStream();
+            inputStream = this.socket.getInputStream();
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -4,7 +4,6 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import tank_lib.Point;
 import tank_lib.Tank;
-import tank_lib.map_lib.Map;
 
 /**
  * Client
