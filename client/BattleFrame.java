@@ -11,6 +11,8 @@ import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.awt.Image;
 import javax.swing.JFrame;
 
@@ -20,8 +22,8 @@ import javax.swing.JFrame;
 public class BattleFrame extends JFrame {
     Map map;
     Tank p1, p2;
-    ArrayList<Bullet> bullets;
 
+private CopyOnWriteArrayList<Bullet> bullets = new CopyOnWriteArrayList<>();
     BattleKey keyHandler = new BattleKey();
 
     /**
@@ -37,9 +39,10 @@ public class BattleFrame extends JFrame {
         this.p2 = p2;
         this.initFrame();
         this.addKeyListener(keyHandler);
+        bullets = new CopyOnWriteArrayList<>();
     }
 
-    public BattleFrame(Map m, Tank p1, Tank p2, ArrayList<Bullet> bullets) {
+    public BattleFrame(Map m, Tank p1, Tank p2, CopyOnWriteArrayList<Bullet> bullets) {
         this.map = m;
         this.p1 = p1;
         this.p2 = p2;
@@ -70,7 +73,8 @@ public class BattleFrame extends JFrame {
      */
     @Override
     public void paint(Graphics g) {
-        ArrayList<Bullet> bullets_= moveBullets();
+        System.out.println("paint");
+        CopyOnWriteArrayList<Bullet> bullets_= moveBullets();
         //ArrayList<Bullet> bullets_=new ArrayList<>();
         // super.paint(g);
         final Dimension d = getSize();
@@ -92,7 +96,7 @@ public class BattleFrame extends JFrame {
      * @brief Metodo per double buffer
      * 
      */
-    public void renderOffScreen(final Graphics g, ArrayList<Bullet> bullets_) {
+    public void renderOffScreen(final Graphics g, CopyOnWriteArrayList<Bullet> bullets_) {
         Graphics2D g2d = (Graphics2D) g;
 
         // renderizza la mappa
@@ -159,17 +163,25 @@ public class BattleFrame extends JFrame {
     public KeyEvent getLastEvent() {
         return this.keyHandler.getLastEvent();
     }
-
+/* 
     public void setBullets(ArrayList<Bullet> bullets) {
         this.bullets = bullets;
     }
-
-    public ArrayList<Bullet> moveBullets() {
-        ArrayList<Bullet> copiedBullets = new ArrayList<>(bullets);
-        for (Bullet bullet : copiedBullets) {
+*/
+    public CopyOnWriteArrayList<Bullet> moveBullets() {
+        CopyOnWriteArrayList<Bullet> remainingBullets = new CopyOnWriteArrayList<>();
+        for (Bullet bullet : bullets) {
             bullet.move();
+            if (bullet.getPosition().getX() > 0 || bullet.getPosition().getY() > 0 ||
+                bullet.getPosition().getX() < map.getWidth() || bullet.getPosition().getY() < map.getHeight()) {
+                remainingBullets.add(bullet);
+            }
         }
-        return copiedBullets;
+        bullets = remainingBullets;
+        return remainingBullets;
     }
 
+    public void addBullet(Bullet bullet) {
+        this.bullets.add(bullet);
+    }
 }

@@ -21,7 +21,7 @@ public class Game extends Thread {
     Map map;
     Tank p1;
     Tank p2;
-    ArrayList<Bullet> bullets;
+    //ArrayList<Bullet> bullets;
 
     ThreadNetwork threadNetwork;
     ThreadPaint threadPaint;
@@ -41,7 +41,6 @@ public class Game extends Thread {
         this.map = map;
         this.p1 = p1;
         this.p2 = p2;
-        this.bullets = new ArrayList<>();
 
 
         this.threadNetwork = threadNetwork;
@@ -60,7 +59,6 @@ public class Game extends Thread {
     public Game(Tank p1, Tank p2, ThreadNetwork threadNetwork) {
         this.p1 = p1;
         this.p2 = p2;
-        this.bullets = new ArrayList<>();
 
         this.threadNetwork = threadNetwork;
     }
@@ -72,7 +70,7 @@ public class Game extends Thread {
         // Initialize game variables and objects
         this.threadNetwork.start();
         getReceivedMap();
-        this.battleFrame = new BattleFrame(map, p1, p2,bullets);
+        this.battleFrame = new BattleFrame(map, p1, p2);
         this.threadPaint = new ThreadPaint(battleFrame);
         threadPaint.start();
         // long lastTime = System.nanoTime();
@@ -182,8 +180,7 @@ public class Game extends Thread {
 
     private void handleShooting(){
         Bullet b=p1.shoot();
-        bullets.add(b);
-        battleFrame.setBullets(bullets);
+        battleFrame.addBullet(b);
     }
 
     /**
