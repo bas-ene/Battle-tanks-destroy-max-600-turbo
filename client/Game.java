@@ -19,11 +19,11 @@ import tank_lib.network.PacketTypes;
 public class Game extends Thread {
     BattleFrame battleFrame;
     Map map;
-    Tank p1;
-    Tank p2;
+    int playerID;
+    String username;
+    Tank[] players;
     ArrayList<Bullet> bullets1;
     ArrayList<Bullet> bullets2;
-
     ThreadNetwork threadNetwork;
     ThreadPaint threadPaint;
 
@@ -32,16 +32,19 @@ public class Game extends Thread {
      * 
      * @param battleFrame   Finestra di gioco.
      * @param map           Oggetto Map che rappresenta la mappa.
-     * @param p1            Tank che rappresenta il p1 (sempre questo client).
+     * @param player        Tank che rappresenta il player (sempre questo
+     *                      client).
      * @param p2            Tank che rappresenta il p2 (sempre l'avversario).
      * @param threadNetwork ThreadNetwork che gestisce la comunicazione con il
      *                      server.
      */
-    public Game(BattleFrame battleFrame, Map map, Tank p1, Tank p2, ThreadNetwork threadNetwork) {
+    public Game(BattleFrame battleFrame, Map map, Tank player, Tank p2, ThreadNetwork threadNetwork) {
         this.battleFrame = battleFrame;
         this.map = map;
-        this.p1 = p1;
-        this.p2 = p2;
+        this.playerID = 0;
+        this.players = new Tank[2];
+        players[0] = player;
+        players[1] = player;
         this.bullets1 = new ArrayList<>();
         this.bullets2 = new ArrayList<>();
 
@@ -50,20 +53,15 @@ public class Game extends Thread {
 
     /**
      * Costruttore parametrico, che riceve la mappa dal server e si crea da solo il
-     * BattleFrame e il ThreadPaint associato.
+     * BattleFrame, il ThreadPaint associato e i Tank.
      * 
-     * @param p1            L'oggetto Tank che rappresenta il player 1 (questo
-     *                      client).
-     * @param p2            L'oggetto Tank che rappresenta il player 2
-     *                      (l'avversario).
      * @param threadNetwork Thread per la comunicazione con il server.
      */
-    public Game(Tank p1, Tank p2, ThreadNetwork threadNetwork) {
-        this.p1 = p1;
-        this.p2 = p2;
+    public Game(ThreadNetwork threadNetwork, String username) {
         this.bullets1 = new ArrayList<>();
         this.bullets2 = new ArrayList<>();
-
+        this.players = new Tank[settings.NUMBER_OF_CLIENTS];
+        this.username = username;
         this.threadNetwork = threadNetwork;
     }
 
@@ -74,38 +72,45 @@ public class Game extends Thread {
         // Initialize game variables and objects
         // showLobby();
         this.threadNetwork.start();
-        String username = "p1";
-        p1.setUsername(username);
-        System.out.println("username: " + username);
-        sendConnectionPacket(username);
+        sendConnectionPacket(this.username);
         System.out.println("CONNESSIONE INVIATA");
         getIdFromServer();
         System.out.println("ID RICEVUTI");
         getMapFromServer();
         System.out.println("MAPPA RICEVUTA");
-        this.battleFrame = new BattleFrame(map, p1, p2);
+        this.battleFrame = new BattleFrame(map, players, playerID);
         this.threadPaint = new ThreadPaint(battleFrame);
         // wait for STRT packet
         System.out.println("IN ATTESA DI START");
         waitForStart();
         System.out.println("START RICEVUTO");
         threadPaint.start();
-        // long lastTime = System.nanoTime();
-        // double amountOfTicks = 60.0;
-        // double ns = 1000000000 / amountOfTicks;
-        // double delta = 0;
-        // long timer = System.currentTimeMillis();
-        // int updates = 0;
-        // int frames = 0;
-
         // Start the game loop
-        while (true) {
-            // based on packets received, update the game
-            ArrayList<BattlePacket> packet = this.threadNetwork.getPacketsReceived();
-            // foreach packet, process it
-            for (BattlePacket battlePacket : packet) {
-                handlePacket(battlePacket);
+        long timeLastPacketSent = System.currentTimeMillis();
+        final int delay = 1000 / 200;
+
+        // based on packets received, update the game
+        // process packets in parallel with the game loop
+        new Thread(() -> {
+            BattlePacket[] packets = this.threadNetwork.getPacketsReceived();
+            while (true) {
+                packets = this.threadNetwork.getPacketsReceived();
+
+                for (BattlePacket battlePacket : packets) {
+                    if (battlePacket == null)
+                        continue;
+                    handlePacket(battlePacket);
+                    System.out
+                            .println("Finito di processare pacchetto al secondo: " + System.currentTimeMillis() / 1000);
+                }
+                try {
+                    sleep(10);
+                } catch (InterruptedException e) {
+                }
             }
+        }).start();
+
+        while (true) {
 
             // move the tank if necessary
             KeyEvent k = this.battleFrame.getLastEvent();
@@ -115,7 +120,16 @@ public class Game extends Thread {
             System.out.println(k.getKeyChar());
             if (k.getKeyChar() == 'w' || k.getKeyChar() == 'a' || k.getKeyChar() == 's' || k.getKeyChar() == 'd') {
                 handleMovement(k);
-                sendMovement(k);
+                if (System.currentTimeMillis() - timeLastPacketSent < delay)
+                    continue;
+                else {
+                    System.out.println("INVIO MOVIMENTO al secondo: " + System.currentTimeMillis() / 1000);
+                    System.out.println(
+                            "Tempo passato da ultimo invio: "
+                                    + ((System.currentTimeMillis() - timeLastPacketSent) / 1000));
+                    timeLastPacketSent = System.currentTimeMillis();
+                    sendMovement(k);
+                }
                 handleClipping();
             }
 
@@ -195,39 +209,47 @@ public class Game extends Thread {
     private void handleClipping() {
         // check if the tank is outside the map
         // sinistra
-        if (p1.getPosition().getX() - p1.getWidth() / 2 < 0) {
-            p1.getPosition().setX(p1.getPosition().getX() + 1);
+        if (this.players[playerID].getPosition().getX() - this.players[playerID].getWidth() / 2 < 0) {
+            this.players[playerID].getPosition().setX(this.players[playerID].getPosition().getX() + 1);
         }
         // destra
-        if (p1.getPosition().getX() + p1.getWidth() / 2 > battleFrame.getWidth()) {
-            p1.getPosition().setX(p1.getPosition().getX() - 1);
+        if (this.players[playerID].getPosition().getX() + this.players[playerID].getWidth() / 2 > battleFrame
+                .getWidth()) {
+            this.players[playerID].getPosition().setX(this.players[playerID].getPosition().getX() - 1);
         }
         // sopra
-        if (p1.getPosition().getY() - p1.getWidth() / 2 < settings.TITLE_BAR_HEIGHT) {
-            p1.getPosition().setY(p1.getPosition().getY() + 1);
+        if (this.players[playerID].getPosition().getY()
+                - this.players[playerID].getWidth() / 2 < settings.TITLE_BAR_HEIGHT) {
+            this.players[playerID].getPosition().setY(this.players[playerID].getPosition().getY() + 1);
         }
         // sotto
-        if (p1.getPosition().getY() + p1.getWidth() / 2 > battleFrame.getHeight()) {
-            p1.getPosition().setY(p1.getPosition().getY() - 1);
+        if (this.players[playerID].getPosition().getY() + this.players[playerID].getWidth() / 2 > battleFrame
+                .getHeight()) {
+            this.players[playerID].getPosition().setY(this.players[playerID].getPosition().getY() - 1);
         }
         // check if the tank is inside a building
         // if it is, move it outside
         // if it is not, do nothing
-        Point p = p1.getPositionInMap();
+        Point p = this.players[playerID].getPositionInMap();
         // a destra c'è un edificio
-        if (map.getTile(p.getX() + p1.getWidth() / 2, p.getY()).getTileType() == TileTypes.BUILDING)
-            p1.getPosition().setX(p1.getPosition().getX() - 1);
+        if (map.getTile(p.getX() + this.players[playerID].getWidth() / 2, p.getY())
+                .getTileType() == TileTypes.BUILDING)
+            this.players[playerID].getPosition().setX(this.players[playerID].getPosition().getX() - 1);
         // a sinistra c'è un edificio
-        if (map.getTile(p.getX() - p1.getWidth() / 2, p.getY()).getTileType() == TileTypes.BUILDING)
-            p1.getPosition().setX(p1.getPosition().getX() + 1);
+        if (map.getTile(p.getX() - this.players[playerID].getWidth() / 2, p.getY())
+                .getTileType() == TileTypes.BUILDING)
+            this.players[playerID].getPosition().setX(this.players[playerID].getPosition().getX() + 1);
         // sopra c'è un edificio
-        if (map.getTile(p.getX(), p.getY() - p1.getHeight() / 2).getTileType() == TileTypes.BUILDING)
-            p1.getPosition().setY(p1.getPosition().getY() + 1);
+        if (map.getTile(p.getX(), p.getY() - this.players[playerID].getHeight() / 2)
+                .getTileType() == TileTypes.BUILDING)
+            this.players[playerID].getPosition().setY(this.players[playerID].getPosition().getY() + 1);
         // sotto c'è un edificio
-        if (map.getTile(p.getX(), p.getY() + p1.getHeight() / 2).getTileType() == TileTypes.BUILDING)
-            p1.getPosition().setY(p1.getPosition().getY() - 1);
-        System.out.println(p1.getPosition().getX() + " " + p1.getPosition().getY());
-        System.out.println(map.getTile(p1.getPositionInMap()));
+        if (map.getTile(p.getX(), p.getY() + this.players[playerID].getHeight() / 2)
+                .getTileType() == TileTypes.BUILDING)
+            this.players[playerID].getPosition().setY(this.players[playerID].getPosition().getY() - 1);
+        System.out.println(this.players[playerID].getPosition().getX() + " "
+                + this.players[playerID].getPosition().getY());
+        System.out.println(map.getTile(this.players[playerID].getPositionInMap()));
 
     }
 
@@ -242,11 +264,12 @@ public class Game extends Thread {
             return;
         // tipo MOVM
         // 2 double per posizione, 1 per angolo
-        byte[] bytes = new byte[Double.BYTES * 3];
+        byte[] bytes = new byte[Integer.BYTES + Double.BYTES * 3];
         ByteBuffer byteBuf = ByteBuffer.wrap(bytes);
-        byteBuf.putDouble(p1.getPosition().getX());
-        byteBuf.putDouble(p1.getPosition().getY());
-        byteBuf.putDouble(p1.getAngleRotationRadian());
+        byteBuf.putInt(this.playerID);
+        byteBuf.putDouble(this.players[playerID].getPosition().getX());
+        byteBuf.putDouble(this.players[playerID].getPosition().getY());
+        byteBuf.putDouble(this.players[playerID].getAngleRotationRadian());
         BattlePacket battlePacket = new BattlePacket(PacketTypes.MOVM, bytes);
         this.threadNetwork.addPacketToSend(battlePacket);
     }
@@ -257,10 +280,10 @@ public class Game extends Thread {
         // 1 int per id, 2 double per posizione, 1 per angolo
         byte[] bytes = new byte[Integer.BYTES + Double.BYTES * 3];
         ByteBuffer byteBuf = ByteBuffer.wrap(bytes);
-        byteBuf.putInt(p1.getBullet().getId());
-        byteBuf.putDouble(p1.getPosition().getX());
-        byteBuf.putDouble(p1.getPosition().getY());
-        byteBuf.putDouble(p1.getAngleRotationRadian());
+        byteBuf.putInt(this.players[playerID].getBullet().getId());
+        byteBuf.putDouble(this.players[playerID].getPosition().getX());
+        byteBuf.putDouble(this.players[playerID].getPosition().getY());
+        byteBuf.putDouble(this.players[playerID].getAngleRotationRadian());
         BattlePacket battlePacket = new BattlePacket(PacketTypes.SHOT, bytes);
         this.threadNetwork.addPacketToSend(battlePacket);
     }
@@ -272,25 +295,25 @@ public class Game extends Thread {
      */
     private void handleMovement(KeyEvent k) {
         // wasd movement
-        float speedMultiplier = map.getTile(p1.getPositionInMap()).getSpeedMultiplier();
+        float speedMultiplier = map.getTile(this.players[playerID].getPositionInMap()).getSpeedMultiplier();
         float mov = (settings.TANK_SPEED_TILES_S * settings.TILE_SIZE_PX * speedMultiplier) * 1 / 30;
         // rotation per tick
         double rotation = 2 * Math.PI * settings.TANK_ROTATION_SPEED_RPM * 1 / 30;
         if (k != null) {
             switch (k.getKeyChar()) {
                 case 'w':
-                    p1.moveBy(mov);
+                    this.players[playerID].moveBy(mov);
                     break;
                 case 'a':
-                    p1.rotateBy(rotation);
+                    this.players[playerID].rotateBy(rotation);
                     break;
                 case 's':
                     mov *= -1;
-                    p1.moveBy(mov);
+                    this.players[playerID].moveBy(mov);
                     break;
                 case 'd':
                     rotation *= -1;
-                    p1.rotateBy(rotation);
+                    this.players[playerID].rotateBy(rotation);
                     break;
                 default:
                     break;
@@ -310,8 +333,14 @@ public class Game extends Thread {
                 System.out.println("RICEVUTI ID");
 
                 ByteBuffer byteBufCONN = ByteBuffer.wrap(battlePacket.getPacketBytes());
-                p1.setID(byteBufCONN.getInt());
-                p2.setID(byteBufCONN.getInt());
+                // set the id of the player
+                this.playerID = byteBufCONN.getInt();
+                for (int i = 0; i < settings.NUMBER_OF_CLIENTS; i++) {
+                    if (i == this.playerID)
+                        players[i] = new Tank(username, playerID);
+                    else
+                        players[i] = new Tank("Nemico " + i, byteBufCONN.getInt());
+                }
                 break;
             case SMAP:
                 // set the map to the one received
@@ -324,13 +353,13 @@ public class Game extends Thread {
                 byte[] mBytes = new byte[mapWidth * mapHeight];
                 byteBufSMAP.get(mBytes);
                 this.map = new Map(mBytes, mapHeight, mapWidth);
+                // set spawn position based on id
+                for (int i = 0; i < players.length; i++) {
+                    byte[] spawnPointBytes = new byte[Double.BYTES * 2];
+                    byteBufSMAP.get(spawnPointBytes);
+                    this.players[i].setPositionInWindow(new Point(spawnPointBytes));
+                }
 
-                byte[] spawnP1 = new byte[Double.BYTES * 2];
-                byteBufSMAP.get(spawnP1);
-                this.p1.setPositionInWindow(new Point(spawnP1));
-                byte[] spawnP2 = new byte[Double.BYTES * 2];
-                byteBufSMAP.get(spawnP2);
-                this.p2.setPositionInWindow(new Point(spawnP2));
                 break;
             case STRT:
                 // startGame();
@@ -340,9 +369,12 @@ public class Game extends Thread {
                 System.out.println("MOVIMENTO NEMICO");
 
                 ByteBuffer byteBufMOVM = ByteBuffer.wrap(battlePacket.getPacketBytes());
-                p2.setX(byteBufMOVM.getDouble());
-                p2.setY(byteBufMOVM.getDouble());
-                p2.setRotation(byteBufMOVM.getDouble());
+                int id = byteBufMOVM.getInt();
+                double x = byteBufMOVM.getDouble();
+                double y = byteBufMOVM.getDouble();
+                double angle = byteBufMOVM.getDouble();
+                this.players[id].setPosition(new Point(x, y));
+                this.players[id].setRotation(angle);
                 break;
             case SHOT:
                 // add a bullet to the list of bullets

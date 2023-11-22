@@ -2,7 +2,6 @@ package client;
 
 import java.net.Socket;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import tank_lib.network.BattlePacket;
@@ -45,8 +44,6 @@ public class ThreadNetwork extends Thread {
      */
     @Override
     public void run() {
-        byte[] buffer = new byte[2048];
-
         // Create a thread for sending packets
         Thread sendThread = new Thread(() -> {
             while (true) {
@@ -80,9 +77,10 @@ public class ThreadNetwork extends Thread {
                     PacketTypes type = PacketTypes.valueOf(typeBytes);
 
                     byte[] dataBytes = new byte[packetLength];
-                    ByteBuffer byteBuf = ByteBuffer.wrap(dataBytes);
                     inputStream.read(dataBytes);
                     BattlePacket p = new BattlePacket(type, dataBytes);
+                    if (p.getPacketType() == PacketTypes.MOVM)
+                        System.out.println("Received packet at second: " + System.currentTimeMillis() / 1000);
                     addPacketReceived(p);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -137,10 +135,12 @@ public class ThreadNetwork extends Thread {
      * 
      * @return Lista di BattlePacket ricevuti
      */
-    public ArrayList<BattlePacket> getPacketsReceived() {
-        ArrayList<BattlePacket> packets = new ArrayList<>();
-        while (packetsReceived.peek() != null) {
-            packets.add(packetsReceived.poll());
+    public BattlePacket[] getPacketsReceived() {
+        BattlePacket[] packets = new BattlePacket[packetsReceived.size()];
+        for (int i = 0; i < packets.length; i++) {
+            while (packetsReceived.peek() != null) {
+                packets[i] = packetsReceived.poll();
+            }
         }
         return packets;
     }

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import tank_lib.Tank;
 import tank_lib.settings;
 import tank_lib.map_lib.Map;
+import tank_lib.network.BattlePacket;
 
 /**
  * Server
@@ -14,15 +15,20 @@ import tank_lib.map_lib.Map;
 public class Server {
 	public static void main(String[] args) {
 		try {
+			// inizializzazione serversocket
 			ServerSocket serverSocket = new ServerSocket(23456);
 			System.out.println("Server started and listening on port 23456");
+			// lista dei client
 			ArrayList<TcpClientThread> clients = new ArrayList<>();
+			// lista dei tank
 			ArrayList<Tank> tanks = new ArrayList<>();
 			// init clients and map
 			Map map = new Map(settings.DEFAULT_MAP_SIZE, settings.DEFAULT_MAP_SIZE);
 			// inizializza i client
 			System.out.println("In attesa che: " + settings.NUMBER_OF_CLIENTS + " clients si connettano...");
 			for (int i = 0; i < settings.NUMBER_OF_CLIENTS; i++) {
+				// aspetta che un client si connetta e poi mandagli/ricevi le informazioni
+				// necessarie
 				clients.add(new TcpClientThread(serverSocket.accept()));
 				System.out.println("Client " + i + " connesso");
 				clients.get(i).start();
@@ -39,54 +45,17 @@ public class Server {
 				clients.get(i).sendStartPacket();
 			}
 			System.out.println("Inviato pacchetto di inizio partita");
+			// scambio di messaggi per il gioco
+			// DEMO => il primo clietn mandato si muove al secondo
+			while (true) {
+				BattlePacket p = clients.get(0).getPacketReceived();
+				if (p == null)
+					continue;
+				System.out.println("Ricevuto pacchetto al secondo: " + System.currentTimeMillis() / 1000);
+				clients.get(1).addPacketToSend(p);
 
-			// while (true) {
+			}
 
-			// byte[] pLengthBytes = new byte[4];
-			// in.read(pLengthBytes);
-			// int packetLength = ByteBuffer.wrap(pLengthBytes).getInt();
-			// System.out.println("Received packet length: " + packetLength);
-			// // Read 4 bytes and convert to a string
-			// byte[] strBytes = new byte[4];
-			// in.read(strBytes);
-			// String typeBytes = new String(strBytes);
-			// System.out.println("Received packet type: " + typeBytes);
-			// PacketTypes type = PacketTypes.valueOf(typeBytes);
-			// byte[] dataBytes = new byte[packetLength];
-			// ByteBuffer byteBuf = ByteBuffer.wrap(dataBytes);
-			// in.read(dataBytes);
-			// switch (type) {
-			// case MOVM:
-			// System.out.println("Received MOVM packet");
-			// double x = byteBuf.getDouble();
-			// double y = byteBuf.getDouble();
-			// double angle = byteBuf.getDouble();
-			// System.out.println("x: " + x + " y: " + y + " angle: " + angle);
-			// break;
-
-			// default:
-			// break;
-			// }
-
-			// // DEMO
-			// // send the same position, but with a different angle,
-			// // to test if the client is receiving the packet correctly
-			// byte bytes[] = new byte[4 + 4 + 8 * 3];
-			// // lunghezza del messaggio - questa lunghezza
-			// ByteBuffer bb = ByteBuffer.wrap(bytes);
-			// bb.putInt(8 * 3);
-			// // inserisco il tipo di pacchetto
-			// bb.put(PacketTypes.MOVM.toString().getBytes());
-			// // dati
-			// bb.putDouble(150);
-			// bb.putDouble(100);
-			// bb.putDouble(Math.random() * 2 * Math.PI);
-			// out.write(bytes);
-			// out.flush();
-
-			// }
-			// }
-			// serverSocket.close();
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
 			e.printStackTrace();

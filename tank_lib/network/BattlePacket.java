@@ -1,7 +1,6 @@
 package tank_lib.network;
 
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 
 public class BattlePacket {
     PacketTypes packetType;

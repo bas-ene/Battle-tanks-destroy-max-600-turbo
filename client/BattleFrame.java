@@ -17,20 +17,21 @@ import javax.swing.JFrame;
  */
 public class BattleFrame extends JFrame {
     Map map;
-    Tank p1, p2;
+    int playerID;
+    Tank[] players;
     BattleKey keyHandler = new BattleKey();
 
     /**
      * Costrutture parametrico
      * 
-     * @param m  mappa da renderizzare
-     * @param p1 giocatore 1, (client che crea questa classe)
-     * @param p2 giocatore 2, (altro client)
+     * @param m        mappa da renderizzare
+     * @param players  gli altri giocatori
+     * @param playerID id del giocatore
      */
-    public BattleFrame(Map m, Tank p1, Tank p2) {
+    public BattleFrame(Map m, Tank[] players, int playerID) {
         this.map = m;
-        this.p1 = p1;
-        this.p2 = p2;
+        this.players = players;
+        this.playerID = playerID;
         this.initFrame();
         this.addKeyListener(keyHandler);
     }
@@ -96,22 +97,28 @@ public class BattleFrame extends JFrame {
         // Draw tank 1
         g2d.setColor(Color.RED);
         AffineTransform tank1Transform = new AffineTransform();
-        tank1Transform.translate(p1.getPosition().getX(), p1.getPosition().getY());
-        tank1Transform.rotate(-p1.getAngleRotationRadian());
-        tank1Transform.translate(-p1.getWidth() / 2, -p1.getHeight() / 2);
+        tank1Transform.translate(players[playerID].getPosition().getX(),
+                players[playerID].getPosition().getY());
+        tank1Transform.rotate(-players[playerID].getAngleRotationRadian());
+        tank1Transform.translate(-players[playerID].getWidth() / 2, -players[playerID].getHeight() / 2);
         g2d.setTransform(tank1Transform);
-        g2d.fillRect(0, 0, p1.getWidth(), p1.getHeight());
+        g2d.fillRect(0, 0, players[playerID].getWidth(), players[playerID].getHeight());
+        g2d.drawRect(0, 0, players[playerID].getWidth(), players[playerID].getHeight());
+        // Draw enemies
+        for (int i = 0; i < players.length; i++) {
+            if (i == playerID)
+                continue;
+            g2d.setColor(Color.BLACK);
+            AffineTransform tank2Transform = new AffineTransform();
+            tank2Transform.translate(players[i].getPosition().getX(), players[i].getPosition().getY());
+            tank2Transform.rotate(players[i].getAngleRotationRadian());
+            tank2Transform.translate(-players[i].getWidth() / 2, -players[i].getHeight() / 2);
+            g2d.setTransform(tank2Transform);
+            g2d.fillRect(0, 0, players[i].getWidth(), players[i].getHeight());
 
-        // Draw tank 2
-        g2d.setColor(Color.BLACK);
-        AffineTransform tank2Transform = new AffineTransform();
-        tank2Transform.translate(p2.getPosition().getX(), p2.getPosition().getY());
-        tank2Transform.rotate(p2.getAngleRotationRadian());
-        tank2Transform.translate(-p2.getWidth() / 2, -p2.getHeight() / 2);
-        g2d.setTransform(tank2Transform);
-        g2d.fillRect(0, 0, p2.getWidth(), p2.getHeight());
+            g2d.setTransform(tx);
+        }
 
-        g2d.setTransform(tx);
     }
 
     public KeyEvent getLastEvent() {

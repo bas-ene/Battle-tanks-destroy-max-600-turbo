@@ -14,10 +14,6 @@ public class Tank {
 	private Bullet bullet;
 	private int id;
 
-	public Bullet getBullet() {
-		return bullet;
-	}
-
 	/**
 	 * Costruttore parametrico.
 	 * 
@@ -29,8 +25,15 @@ public class Tank {
 		this.position = spawnPoint;
 	}
 
-	public void setBullet(Bullet bullet) {
-		this.bullet = bullet;
+	public Tank(String username) {
+		this.username = username;
+		this.position = new Point(0, 0);
+	}
+
+	public Tank(String username, int id) {
+		this.username = username;
+		this.position = new Point(0, 0);
+		this.id = id;
 	}
 
 	/**
@@ -164,8 +167,16 @@ public class Tank {
 	}
 
 	public void setPositionInWindow(Point point) {
-		this.position = new Point(point.getX() * settings.TILE_SIZE,
+		this.position = new Point(point.getX() * settings.TILE_SIZE + settings.TILE_SIZE / 2,
 				point.getY() * settings.TILE_SIZE + settings.TITLE_BAR_HEIGHT);
 
+	}
+
+	public Bullet getBullet() {
+		return bullet;
+	}
+
+	public void setBullet(Bullet bullet) {
+		this.bullet = bullet;
 	}
 }

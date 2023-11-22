@@ -3,8 +3,6 @@ package client;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import tank_lib.Point;
-import tank_lib.Tank;
 
 /**
  * Client
@@ -12,11 +10,6 @@ import tank_lib.Tank;
 public class Client {
 
 	public static void main(String[] args) {
-
-		// Map m = new Map(20, 20);
-		Tank p1 = new Tank(new Point(250, 250), "you");
-		Tank p2 = new Tank(new Point(100, 100), "enemy");
-		// BattleFrame f = new BattleFrame(m, p1, p2);
 
 		Game game;
 		String ipString = "localhost";
@@ -38,7 +31,7 @@ public class Client {
 			Socket socket = new Socket();
 			socket.connect(new InetSocketAddress(InetAddress.getByName(ipString), Integer.parseInt(portString)), 0);
 
-			game = new Game(p1, p2, new ThreadNetwork(socket));
+			game = new Game(new ThreadNetwork(socket), username);
 
 			game.start();
 			game.join();

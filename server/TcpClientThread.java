@@ -2,7 +2,6 @@ package server;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import tank_lib.Tank;
 import tank_lib.map_lib.Map;
 import tank_lib.network.BattlePacket;
 import tank_lib.network.PacketTypes;
@@ -90,7 +89,6 @@ public class TcpClientThread extends Thread {
                     PacketTypes type = PacketTypes.valueOf(typeBytes);
 
                     byte[] dataBytes = new byte[packetLength];
-                    ByteBuffer byteBuf = ByteBuffer.wrap(dataBytes);
                     inputStream.read(dataBytes);
                     BattlePacket p = new BattlePacket(type, dataBytes);
                     addPacketReceived(p);
