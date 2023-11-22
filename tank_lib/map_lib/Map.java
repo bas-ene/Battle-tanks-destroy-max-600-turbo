@@ -109,7 +109,7 @@ public class Map {
 
 		for (int i = 0; i < spawnPoints.length; i++) {
 			Point ithSpawnPoint = new Point((int) (Math.random() * this.getHeight()) % this.getHeight(),
-					(int) (this.getWidth()) % this.getWidth());
+					(int) (Math.random() * this.getWidth()) % this.getWidth());
 			spawnPoints[i] = ithSpawnPoint;
 			map[(int) ithSpawnPoint.getY()][(int) ithSpawnPoint.getX()] = new TileGrass();
 		}

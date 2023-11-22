@@ -112,7 +112,7 @@ public class Point {
 	}
 
 	public byte[] bitify() {
-		ByteBuffer b = ByteBuffer.allocate(16);
+		ByteBuffer b = ByteBuffer.allocate(Double.BYTES * 2);
 		b.putDouble(x);
 		b.putDouble(y);
 		return b.array();

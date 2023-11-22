@@ -24,7 +24,7 @@ public class ThreadPaint extends Thread {
     public void run() {
         while (true) {
             // refresh the frame
-            battleFrame.paint(battleFrame.getGraphics());
+            battleFrame.repaint();
 
             // 30 FPS
             try {

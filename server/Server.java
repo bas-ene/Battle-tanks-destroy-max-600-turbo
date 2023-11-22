@@ -21,19 +21,25 @@ public class Server {
 			// init clients and map
 			Map map = new Map(settings.DEFAULT_MAP_SIZE, settings.DEFAULT_MAP_SIZE);
 			// inizializza i client
+			System.out.println("In attesa che: " + settings.NUMBER_OF_CLIENTS + " clients si connettano...");
 			for (int i = 0; i < settings.NUMBER_OF_CLIENTS; i++) {
 				clients.add(new TcpClientThread(serverSocket.accept()));
+				System.out.println("Client " + i + " connesso");
 				clients.get(i).start();
 				tanks.add(new Tank(map.getSpawnPoint(i), clients.get(i).getTankUsername()));
+				System.out.println("Client " + i + " ha username: " + tanks.get(i).getUsername());
 				tanks.get(i).setID(i);
 				clients.get(i).sendIDs(i, settings.NUMBER_OF_CLIENTS);
 				clients.get(i).sendMap(map);
+				System.out.println("Mandato la mappa al client  " + i);
 			}
 			// dopo che si sono connessi tutti, invio il pacchetto che identifica l'inizio
 			// della partita
 			for (int i = 0; i < settings.NUMBER_OF_CLIENTS; i++) {
 				clients.get(i).sendStartPacket();
 			}
+			System.out.println("Inviato pacchetto di inizio partita");
+
 			// while (true) {
 
 			// byte[] pLengthBytes = new byte[4];
