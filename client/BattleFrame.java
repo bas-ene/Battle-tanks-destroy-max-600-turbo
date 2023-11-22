@@ -126,20 +126,26 @@ public class BattleFrame extends JFrame {
         g2d.fillRect(0, 0, p2.getWidth(), p2.getHeight());
 
         // draw bullets
-
+        //print all array bullets
+        for(Bullet b : bullets){
+            System.out.println(123);
+            System.out.println(b.toString());
+        }
         g2d.setColor(Color.BLUE);
         for (Bullet b : bullets) {
-            System.out.println("rendering bullet");
+            System.out.println("Bullet");
+            System.out.println(p1.getPosition().getX()+ p1.getPosition().getY());
+            System.out.println(b.getPosition().getX()+ b.getPosition().getY());
             AffineTransform bulletTransform = new AffineTransform();
             bulletTransform.translate(b.getPosition().getX(), b.getPosition().getY());
             bulletTransform.rotate(b.getDirectionRadian());
             bulletTransform.translate(-b.getWidth() / 2, -b.getHeight() / 2);
             g2d.setTransform(bulletTransform);
             g2d.fillRect(0, 0, b.getWidth(), b.getHeight());
+        g2d.setTransform(tx);
 
         }
 
-        g2d.setTransform(tx);
     }
 
     public KeyEvent getLastEvent() {

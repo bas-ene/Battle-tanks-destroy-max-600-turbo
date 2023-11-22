@@ -9,7 +9,7 @@ public class Bullet {
 	private double directionRadian;
 	private int ID;
 	private int speed;
-	private int width = 30;
+	private int width = 10;
 	private int height=10;
 
 	public int getWidth() {
@@ -32,6 +32,10 @@ public class Bullet {
 		return ID;
 	}
 
+	public void setId(int ID) {
+		this.ID = ID;
+	}
+
 	public Bullet(int ID, Point position, double direction) {
 		this.position = position;
 		this.directionRadian = direction;
@@ -49,8 +53,17 @@ public class Bullet {
 		return position;
 	}
 
+	public void setPosition(double x, double y) {
+		Point p = new Point(x, y);
+		this.position = p;
+	}
+
 	public double getDirectionRadian() {
 		return directionRadian;
+	}
+
+	public void setDirectionRadian(double directionRadian) {
+		this.directionRadian = directionRadian;
 	}
 
 	public void setBulletType() {

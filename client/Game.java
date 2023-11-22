@@ -105,6 +105,7 @@ public class Game extends Thread {
             }
 
             if (k.getKeyChar() == 'z') {
+                handleShooting();
                 sendBullet();
             }
 
@@ -177,6 +178,11 @@ public class Game extends Thread {
         System.out.println(p1.getPosition().getX() + " " + p1.getPosition().getY());
         System.out.println(map.getTile(p1.getPositionInMap()));
 
+    }
+
+    private void handleShooting(){
+        p1.shoot();
+        bullets.add(p1.getBullet());
     }
 
     /**

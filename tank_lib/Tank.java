@@ -42,6 +42,12 @@ public class Tank {
 		return position;
 	}
 
+	public void shoot(){
+		bullet.setPosition(position.getX(), position.getY());
+		bullet.setDirectionRadian(angleRotationRadian);
+		bullet.setBulletType();
+	}
+
 	/**
 	 * Ritorna la vita corrente del tank.
 	 * 
