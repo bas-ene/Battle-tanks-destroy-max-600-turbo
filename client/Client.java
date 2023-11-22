@@ -20,13 +20,6 @@ public class Client {
 		Game game;
 		try {
 			Socket socket = new Socket();
-			try {
-				System.out.println("indirizzo 1");
-				socket.bind(new InetSocketAddress("localhost", 12345));
-			} catch (Exception e) {
-				System.out.println("indirizzo 2");
-				socket.bind(new InetSocketAddress("localhost", 55555));
-			}
 			socket.connect(new InetSocketAddress("localhost", 23456), 0);
 
 			game = new Game(p1, p2, new ThreadNetwork(socket));
