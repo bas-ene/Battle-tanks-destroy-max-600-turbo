@@ -3,6 +3,7 @@ package server;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import tank_lib.Tank;
+import tank_lib.map_lib.Map;
 import tank_lib.network.BattlePacket;
 import tank_lib.network.PacketTypes;
 
@@ -18,6 +19,12 @@ import java.io.OutputStream;
  * La classe rappresenta un thread di rete che gestisce l'invio e la ricezione
  * di {@link BattlePacket} su una socket.
  */
+/**
+ * This class represents a thread that handles TCP client communication in a
+ * Battle Tanks game server.
+ * It is responsible for sending and receiving Battle Packets over a socket
+ * connection.
+ */
 public class TcpClientThread extends Thread {
     private ConcurrentLinkedQueue<BattlePacket> packetsToSend = new ConcurrentLinkedQueue<>();
     private ConcurrentLinkedQueue<BattlePacket> packetsReceived = new ConcurrentLinkedQueue<>();
@@ -26,8 +33,8 @@ public class TcpClientThread extends Thread {
     private InputStream inputStream;
 
     /**
-     * Costruttore parametrico
-     * 
+     * Constructs a TcpClientThread object with the specified socket.
+     *
      * @param socket The socket to communicate over.
      */
     public TcpClientThread(Socket socket) {
@@ -41,9 +48,9 @@ public class TcpClientThread extends Thread {
     }
 
     /**
-     * La logica del thread.
-     * Invia continuamente pacchetti dalla coda packetsToSend e riceve pacchetti
-     * nella coda packetsReceived.
+     * The logic of the thread.
+     * Continuously sends packets from the packetsToSend queue and receives packets
+     * into the packetsReceived queue.
      */
     @Override
     public void run() {
@@ -70,6 +77,7 @@ public class TcpClientThread extends Thread {
         Thread receiveThread = new Thread(() -> {
             while (true) {
                 try {
+                    // parsing
                     byte[] pLengthBytes = new byte[4];
                     inputStream.read(pLengthBytes);
                     int packetLength = ByteBuffer.wrap(pLengthBytes).getInt();
@@ -107,37 +115,35 @@ public class TcpClientThread extends Thread {
 
     /**
      * Adds a BattlePacket to the packetsToSend queue.
-     * Aggiungi un BattlePacket alla coda dei pacchetti da inviare.
-     * 
-     * @param packet Il BattlePacket da inviare.
+     *
+     * @param packet The BattlePacket to send.
      */
     public void addPacketToSend(BattlePacket packet) {
         packetsToSend.add(packet);
     }
 
     /**
-     * Aggiunge un BattlePacket alla coda dei pacchetti ricevuti.
-     * 
-     * @param packet Il BattlePacket ricevuto.
+     * Adds a BattlePacket to the packetsReceived queue.
+     *
+     * @param packet The received BattlePacket.
      */
     public void addPacketReceived(BattlePacket packet) {
         packetsReceived.add(packet);
     }
 
     /**
-     * Restituisce e rimuove il prossimo BattlePacket dalla coda packetsReceived.
-     * 
-     * @retun Il prossimo BattlePacket ricevuto, o null se la coda è vuota.
+     * Retrieves and removes the next BattlePacket from the packetsReceived queue.
+     *
+     * @return The next received BattlePacket, or null if the queue is empty.
      */
-
     public BattlePacket getPacketReceived() {
         return packetsReceived.poll();
     }
 
     /**
-     * Restituisce una lista dei pacchetti ricevuti.
-     * 
-     * @return Lista di BattlePacket ricevuti
+     * Returns a list of received BattlePackets.
+     *
+     * @return List of received BattlePackets.
      */
     public ArrayList<BattlePacket> getPacketsReceived() {
         ArrayList<BattlePacket> packets = new ArrayList<>();
@@ -147,13 +153,57 @@ public class TcpClientThread extends Thread {
         return packets;
     }
 
-    public Tank getTank() {
-        return null;
+    /**
+     * Gets the username of the tank.
+     *
+     * @return The username of the tank.
+     */
+    public String getTankUsername() {
+
+        while (true) {
+            BattlePacket packet = getPacketReceived();
+            if (packet != null && packet.getPacketType() == PacketTypes.CONN) {
+                return new String(packet.getPacketBytes());
+            }
+
+        }
     }
 
-    public void sendIDs(int[] is) {
-    }
-
+    /**
+     * Sends a start packet.
+     */
     public void sendStartPacket() {
+        BattlePacket packet = new BattlePacket(PacketTypes.STRT, null);
+        addPacketToSend(packet);
+    }
+
+    /**
+     * Sends IDs to the clients.
+     *
+     * @param i                 The ID of the tank.
+     * @param NUMBER_OF_CLIENTS The total number of clients.
+     */
+    public void sendIDs(int i, int NUMBER_OF_CLIENTS) {
+        // packet of type CONN, first puts the ID of the tank of interest, and then the
+        // others in ascending order
+        ByteBuffer byteBuf = ByteBuffer.allocate(NUMBER_OF_CLIENTS * Integer.BYTES);
+        byteBuf.putInt(i);
+        for (int j = 0; j < NUMBER_OF_CLIENTS; j++) {
+            if (j != i) {
+                byteBuf.putInt(j);
+            }
+        }
+        BattlePacket packet = new BattlePacket(PacketTypes.CONN, byteBuf.array());
+        addPacketToSend(packet);
+    }
+
+    /**
+     * Sends the map to the clients.
+     *
+     * @param map The map to send.
+     */
+    public void sendMap(Map map) {
+        BattlePacket packet = new BattlePacket(PacketTypes.SMAP, map.bitify());
+        addPacketToSend(packet);
     }
 }

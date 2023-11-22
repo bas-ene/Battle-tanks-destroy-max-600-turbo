@@ -1,5 +1,6 @@
 package tank_lib.map_lib;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import tank_lib.Point;
 import tank_lib.settings;
@@ -15,6 +16,8 @@ public class Map {
 	 */
 	private Tile[][] map;
 
+	private Point[] spawnPoints;
+
 	// ! Costruttore di default
 	/**
 	 * Costruttore di default, la dimensione della mappa verra` quindi determinata
@@ -23,6 +26,7 @@ public class Map {
 	public Map() {
 		try {
 			map = new Tile[settings.DEFAULT_MAP_SIZE][settings.DEFAULT_MAP_SIZE];
+			spawnPoints = new Point[settings.NUMBER_OF_CLIENTS];
 			generateMap(10, 10);
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
@@ -40,6 +44,7 @@ public class Map {
 	public Map(int nRows, int nCols) {
 		try {
 			map = new Tile[nRows][nCols];
+			spawnPoints = new Point[settings.NUMBER_OF_CLIENTS];
 			generateMap(nRows, nCols);
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
@@ -101,10 +106,13 @@ public class Map {
 				map[i][j] = new TileUnknown(this);
 			}
 		}
-		Point spawnPointP1 = new Point((int) (Math.random() * 10), (int) (Math.random() * 10));
-		Point spawnPointP2 = new Point((int) (Math.random() * 10), (int) (Math.random() * 10));
-		map[(int) spawnPointP1.getX()][(int) spawnPointP1.getY()] = new TileGrass();
-		map[(int) spawnPointP2.getX()][(int) spawnPointP2.getY()] = new TileGrass();
+
+		for (int i = 0; i < spawnPoints.length; i++) {
+			Point ithSpawnPoint = new Point((int) (Math.random() * this.getHeight()) % this.getHeight(),
+					(int) (this.getWidth()) % this.getWidth());
+			spawnPoints[i] = ithSpawnPoint;
+			map[(int) ithSpawnPoint.getY()][(int) ithSpawnPoint.getX()] = new TileGrass();
+		}
 
 		for (int i = 0; i < nRows; i++) {
 			for (int j = 0; j < nCols; j++) {
@@ -255,9 +263,13 @@ public class Map {
 	 * @return byte[]
 	 */
 	public byte[] bitify() {
+		ByteBuffer bb = ByteBuffer.allocate(2 * Integer.BYTES + 2 * Double.BYTES * spawnPoints.length +
+				this.getHeight() * this.getWidth());
+		bb.putInt(this.getHeight());
+		bb.putInt(this.getWidth());
 		byte[] bytes = new byte[map.length * map[0].length];
-		for (int i = 0; i < map.length; i++) {
-			for (int j = 0; j < map[0].length; j++) {
+		for (int i = 0; i < this.getHeight(); i++) {
+			for (int j = 0; j < this.getWidth(); j++) {
 				byte type;
 				switch (map[i][j].getTileType()) {
 					case GRASS:
@@ -279,6 +291,16 @@ public class Map {
 				bytes[i * map.length + j] = type;
 			}
 		}
-		return bytes;
+		bb.put(bytes);
+		for (Point p : spawnPoints) {
+			bb.put(p.bitify());
+		}
+		return bb.array();
+	}
+
+	public Point getSpawnPoint(int i) {
+		if (i < 0 || i > spawnPoints.length)
+			return null;
+		return spawnPoints[i];
 	}
 }

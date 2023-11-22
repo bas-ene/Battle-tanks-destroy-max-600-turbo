@@ -42,6 +42,10 @@ public class Tank {
 		return position;
 	}
 
+	public void setPosition(Point p) {
+		this.position = p;
+	}
+
 	/**
 	 * Ritorna la vita corrente del tank.
 	 * 

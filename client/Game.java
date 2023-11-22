@@ -81,6 +81,9 @@ public class Game extends Thread {
         getMapFromServer();
         this.battleFrame = new BattleFrame(map, p1, p2);
         this.threadPaint = new ThreadPaint(battleFrame);
+        // wait for STRT packet
+        waitForStart();
+
         threadPaint.start();
         // long lastTime = System.nanoTime();
         // double amountOfTicks = 60.0;
@@ -125,6 +128,20 @@ public class Game extends Thread {
         // cleanup();
     }
 
+    private void waitForStart() {
+        boolean receivedStart = false;
+        while (!receivedStart) {
+            // wait to receive a STRT packet to start the game and the thread paint
+            BattlePacket packet = this.threadNetwork.getPacketReceived();
+            // foreach packet, process it and check if it is a STRT packet
+            if (packet != null && packet.getPacketType() == PacketTypes.STRT) {
+                handlePacket(packet);
+                receivedStart = true;
+                break;
+            }
+        }
+    }
+
     private void getMapFromServer() {
         boolean receivedMap = false;
         while (!receivedMap) {
@@ -132,7 +149,7 @@ public class Game extends Thread {
             // thread paint
             BattlePacket packet = this.threadNetwork.getPacketReceived();
             // foreach packet, process it and check if it is a SMAP packet
-            if (packet.getPacketType() == PacketTypes.SMAP) {
+            if (packet != null && packet.getPacketType() == PacketTypes.SMAP) {
                 handlePacket(packet);
                 receivedMap = true;
                 break;
@@ -152,13 +169,12 @@ public class Game extends Thread {
         // ricevi pacchetto di tipo CONN dal serve che avra come payload n byte (nel
         // nostro caso 2, uno per player) che
         // rappresentano gli id dei player
-        byte[] bytes = new byte[settings.NUMBER_OF_CLIENTS];
         boolean receivedIDs = false;
         while (!receivedIDs) {
 
             BattlePacket packet = this.threadNetwork.getPacketReceived();
             // foreach packet, process it and check if it is a SMAP packet
-            if (packet.getPacketType() == PacketTypes.CONN) {
+            if (packet != null && packet.getPacketType() == PacketTypes.CONN) {
                 handlePacket(packet);
                 receivedIDs = true;
                 break;
@@ -299,9 +315,17 @@ public class Game extends Thread {
                 ByteBuffer byteBufSMAP = ByteBuffer.wrap(battlePacket.getPacketBytes());
                 int mapWidth = byteBufSMAP.getInt();
                 int mapHeight = byteBufSMAP.getInt();
+
                 byte[] mBytes = new byte[mapWidth * mapHeight];
                 byteBufSMAP.get(mBytes);
                 this.map = new Map(mBytes, mapHeight, mapWidth);
+
+                byte[] spawnP1 = new byte[Double.BYTES * 2];
+                byteBufSMAP.get(spawnP1);
+                this.p1.setPosition(new Point(spawnP1));
+                byte[] spawnP2 = new byte[Double.BYTES * 2];
+                byteBufSMAP.get(spawnP2);
+                this.p2.setPosition(new Point(spawnP2));
                 break;
             case STRT:
                 // startGame();

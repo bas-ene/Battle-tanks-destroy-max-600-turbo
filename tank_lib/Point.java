@@ -1,5 +1,7 @@
 package tank_lib;
 
+import java.nio.ByteBuffer;
+
 /**
  * Point
  */
@@ -37,6 +39,12 @@ public class Point {
 	public Point(int x, int y) {
 		this.x = x;
 		this.y = y;
+	}
+
+	public Point(byte[] byteArray) {
+		ByteBuffer bb = ByteBuffer.wrap(byteArray);
+		x = bb.getDouble();
+		y = bb.getDouble();
 	}
 
 	/**
@@ -103,4 +111,10 @@ public class Point {
 		this.y = y;
 	}
 
+	public byte[] bitify() {
+		ByteBuffer b = ByteBuffer.allocate(16);
+		b.putDouble(x);
+		b.putDouble(y);
+		return b.array();
+	}
 }
