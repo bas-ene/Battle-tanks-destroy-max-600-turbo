@@ -183,6 +183,7 @@ public class Game extends Thread {
     private void handleShooting(){
         p1.shoot();
         bullets.add(p1.getBullet());
+        //battleFrame.setBullets(bullets);
     }
 
     /**
@@ -292,7 +293,7 @@ public class Game extends Thread {
                 ByteBuffer byteBufSHOT = ByteBuffer.wrap(battlePacket.getPacketBytes());
                 Bullet bullet = new Bullet(byteBufSHOT.getInt(), byteBufSHOT.getDouble(), byteBufSHOT.getDouble(),
                 byteBufSHOT.getDouble());
-                bullets.add(bullet);
+                //bullets.add(bullet);
                 break;
             case BDST:
                 // remove the bullet from the list of bullets and destroy the building

@@ -130,26 +130,33 @@ public class BattleFrame extends JFrame {
         for(Bullet b : bullets){
             System.out.println(123);
             System.out.println(b.toString());
+            System.out.println("x: " + b.getPosition().getX());
+            System.out.println("y: " + b.getPosition().getY());
         }
         g2d.setColor(Color.BLUE);
         for (Bullet b : bullets) {
             System.out.println("Bullet");
-            System.out.println(p1.getPosition().getX()+ p1.getPosition().getY());
-            System.out.println(b.getPosition().getX()+ b.getPosition().getY());
+            System.out.println(p1.getPosition().getX() + p1.getPosition().getY());
+            System.out.println(b.getPosition().getX() + b.getPosition().getY());
+            AffineTransform originalTransform = g2d.getTransform(); // save the original transform
             AffineTransform bulletTransform = new AffineTransform();
             bulletTransform.translate(b.getPosition().getX(), b.getPosition().getY());
             bulletTransform.rotate(b.getDirectionRadian());
             bulletTransform.translate(-b.getWidth() / 2, -b.getHeight() / 2);
             g2d.setTransform(bulletTransform);
             g2d.fillRect(0, 0, b.getWidth(), b.getHeight());
-        g2d.setTransform(tx);
-
+            g2d.setTransform(originalTransform); // restore the original transform
         }
+        g2d.setTransform(tx);
 
     }
 
     public KeyEvent getLastEvent() {
         return this.keyHandler.getLastEvent();
+    }
+
+    public void setBullets(ArrayList<Bullet> bullets) {
+        this.bullets = bullets;
     }
 
 }

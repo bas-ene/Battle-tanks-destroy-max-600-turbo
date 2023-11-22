@@ -42,7 +42,9 @@ public class Tank {
 		return position;
 	}
 
-	public void shoot(){
+	public void shoot() {
+		System.out.println("printo la posizione del tank");
+		System.out.println(position.getX() + " " + position.getY());
 		bullet.setPosition(position.getX(), position.getY());
 		bullet.setDirectionRadian(angleRotationRadian);
 		bullet.setBulletType();
