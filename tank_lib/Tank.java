@@ -147,6 +147,10 @@ public class Tank {
 		return new Point(this.position.getX(), this.position.getY() - settings.TITLE_BAR_HEIGHT);
 	}
 
+	public void translatePositionInWindow() {
+		this.position.setY(this.position.getY() + settings.TITLE_BAR_HEIGHT);
+	}
+
 	public int getID() {
 		return id;
 	}
@@ -157,5 +161,11 @@ public class Tank {
 
 	public void setUsername(String username) {
 		this.username = username;
+	}
+
+	public void setPositionInWindow(Point point) {
+		this.position = new Point(point.getX() * settings.TILE_SIZE,
+				point.getY() * settings.TILE_SIZE + settings.TITLE_BAR_HEIGHT);
+
 	}
 }

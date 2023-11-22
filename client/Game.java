@@ -76,14 +76,19 @@ public class Game extends Thread {
         this.threadNetwork.start();
         String username = "p1";
         p1.setUsername(username);
+        System.out.println("username: " + username);
         sendConnectionPacket(username);
+        System.out.println("CONNESSIONE INVIATA");
         getIdFromServer();
+        System.out.println("ID RICEVUTI");
         getMapFromServer();
+        System.out.println("MAPPA RICEVUTA");
         this.battleFrame = new BattleFrame(map, p1, p2);
         this.threadPaint = new ThreadPaint(battleFrame);
         // wait for STRT packet
+        System.out.println("IN ATTESA DI START");
         waitForStart();
-
+        System.out.println("START RICEVUTO");
         threadPaint.start();
         // long lastTime = System.nanoTime();
         // double amountOfTicks = 60.0;
@@ -107,7 +112,7 @@ public class Game extends Thread {
             if (k == null) {
                 continue;
             }
-            // System.out.println(k.getKeyChar());
+            System.out.println(k.getKeyChar());
             if (k.getKeyChar() == 'w' || k.getKeyChar() == 'a' || k.getKeyChar() == 's' || k.getKeyChar() == 'd') {
                 handleMovement(k);
                 sendMovement(k);
@@ -322,10 +327,10 @@ public class Game extends Thread {
 
                 byte[] spawnP1 = new byte[Double.BYTES * 2];
                 byteBufSMAP.get(spawnP1);
-                this.p1.setPosition(new Point(spawnP1));
+                this.p1.setPositionInWindow(new Point(spawnP1));
                 byte[] spawnP2 = new byte[Double.BYTES * 2];
                 byteBufSMAP.get(spawnP2);
-                this.p2.setPosition(new Point(spawnP2));
+                this.p2.setPositionInWindow(new Point(spawnP2));
                 break;
             case STRT:
                 // startGame();

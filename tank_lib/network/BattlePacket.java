@@ -27,15 +27,16 @@ public class BattlePacket {
     public byte[] bitify() {
         // 4 per la lunghezza del messaggio, 4 byte per il tipo di pacchetto, il
         // restante per i dati
-        byte bytes[] = new byte[4 + 4 + packetBytes.length];
+        int packetBytesLength = packetBytes == null ? 0 : packetBytes.length;
+        byte bytes[] = new byte[4 + 4 + packetBytesLength];
         // lunghezza del messaggio - questa lunghezza
         ByteBuffer b = ByteBuffer.wrap(bytes);
-        b.putInt(packetBytes.length);
+        b.putInt(packetBytesLength);
         // inserisco il tipo di pacchetto
         b.put(packetType.toString().getBytes());
         // dati
-        b.put(packetBytes);
-
+        if (packetBytes != null)
+            b.put(packetBytes);
         return bytes;
     }
 
