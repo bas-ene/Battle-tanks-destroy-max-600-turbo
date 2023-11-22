@@ -10,6 +10,7 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.awt.Image;
 import javax.swing.JFrame;
 
@@ -69,7 +70,8 @@ public class BattleFrame extends JFrame {
      */
     @Override
     public void paint(Graphics g) {
-        moveBullets();
+        ArrayList<Bullet> bullets_= moveBullets();
+        //ArrayList<Bullet> bullets_=new ArrayList<>();
         // super.paint(g);
         final Dimension d = getSize();
         if (offScreenImageDrawed == null) {
@@ -81,7 +83,7 @@ public class BattleFrame extends JFrame {
         offScreenGraphicsDrawed = offScreenImageDrawed.getGraphics();
         offScreenGraphicsDrawed.setColor(Color.white);
         offScreenGraphicsDrawed.fillRect(0, 0, d.width, d.height);
-        renderOffScreen(offScreenImageDrawed.getGraphics());
+        renderOffScreen(offScreenImageDrawed.getGraphics(),bullets_);
         g.drawImage(offScreenImageDrawed, 0, 0, null);
 
     }
@@ -90,7 +92,7 @@ public class BattleFrame extends JFrame {
      * @brief Metodo per double buffer
      * 
      */
-    public void renderOffScreen(final Graphics g) {
+    public void renderOffScreen(final Graphics g, ArrayList<Bullet> bullets_) {
         Graphics2D g2d = (Graphics2D) g;
 
         // renderizza la mappa
@@ -128,14 +130,15 @@ public class BattleFrame extends JFrame {
 
         // draw bullets
         //print all array bullets
-        for(Bullet b : bullets){
+         
+        for(Bullet b : bullets_){
             System.out.println(123);
             System.out.println(b.toString());
             System.out.println("x: " + b.getPosition().getX());
             System.out.println("y: " + b.getPosition().getY());
         }
         g2d.setColor(Color.BLUE);
-        for (Bullet b : bullets) {
+        for (Bullet b : bullets_) {
             System.out.println("Bullet");
             System.out.println(p1.getPosition().getX() + p1.getPosition().getY());
             System.out.println(b.getPosition().getX() + b.getPosition().getY());
@@ -148,6 +151,7 @@ public class BattleFrame extends JFrame {
             g2d.fillRect(0, 0, b.getWidth(), b.getHeight());
             g2d.setTransform(originalTransform); // restore the original transform
         }
+        
         g2d.setTransform(tx);
 
     }
@@ -160,12 +164,12 @@ public class BattleFrame extends JFrame {
         this.bullets = bullets;
     }
 
-    public void moveBullets() {
-        for (Bullet b : bullets) {
-            System.out.println("before: "+b.getPosition().getX() + " " + b.getPosition().getY());
-            b.move();
-            System.out.println("after: "+b.getPosition().getX() + " " + b.getPosition().getY());
+    public ArrayList<Bullet> moveBullets() {
+        ArrayList<Bullet> copiedBullets = new ArrayList<>(bullets);
+        for (Bullet bullet : copiedBullets) {
+            bullet.move();
         }
-        
+        return copiedBullets;
     }
+
 }
