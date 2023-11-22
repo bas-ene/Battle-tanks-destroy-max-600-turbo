@@ -211,6 +211,7 @@ public class Game extends Thread {
         byteBuf.putDouble(p1.getPosition().getY());
         byteBuf.putDouble(p1.getAngleRotationRadian());
         BattlePacket battlePacket = new BattlePacket(PacketTypes.SHOT, bytes);
+        System.out.println(battlePacket.getPacketType());
         this.threadNetwork.addPacketToSend(battlePacket);
     }
 

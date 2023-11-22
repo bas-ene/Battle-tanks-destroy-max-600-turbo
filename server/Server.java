@@ -6,6 +6,7 @@ import java.nio.ByteBuffer;
 
 import tank_lib.settings;
 import tank_lib.map_lib.Map;
+import tank_lib.network.BattlePacket;
 import tank_lib.network.PacketTypes;
 
 /**
@@ -78,12 +79,13 @@ public class Server {
 							bb = ByteBuffer.wrap(bytes);
 							//bb.putInt(8 * 3);
 							System.out.println("Received SHOT packet");
+							int id = byteBuf.getInt();
 							double x1 = byteBuf.getDouble();
 							double y1 = byteBuf.getDouble();
 							double angle1 = byteBuf.getDouble();
 							System.out.println("x: " + x1 + " y: " + y1 + " angle: " + angle1);
-							bb.put(PacketTypes.SHOT.toString().getBytes());
-							out.write(bytes);
+							BattlePacket p = new BattlePacket(PacketTypes.SHOT, bytes);
+							out.write(p.bitify());
 							out.flush();
 							break;
 						default:

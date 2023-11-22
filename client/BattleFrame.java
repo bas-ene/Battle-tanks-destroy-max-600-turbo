@@ -37,6 +37,7 @@ public class BattleFrame extends JFrame {
         this.initFrame();
         this.addKeyListener(keyHandler);
     }
+
     public BattleFrame(Map m, Tank p1, Tank p2, ArrayList<Bullet> bullets) {
         this.map = m;
         this.p1 = p1;
@@ -45,6 +46,7 @@ public class BattleFrame extends JFrame {
         this.addKeyListener(keyHandler);
         this.bullets = bullets;
     }
+
     /**
      * Funzione helper che setta vari paramentri del Frame
      */
@@ -111,6 +113,8 @@ public class BattleFrame extends JFrame {
         tank1Transform.translate(-p1.getWidth() / 2, -p1.getHeight() / 2);
         g2d.setTransform(tank1Transform);
         g2d.fillRect(0, 0, p1.getWidth(), p1.getHeight());
+        g2d.setColor(Color.BLACK);
+        g2d.drawLine(0, 0, 10, 0);
 
         // Draw tank 2
         g2d.setColor(Color.BLACK);
@@ -121,8 +125,8 @@ public class BattleFrame extends JFrame {
         g2d.setTransform(tank2Transform);
         g2d.fillRect(0, 0, p2.getWidth(), p2.getHeight());
 
-        //draw bullets
-        
+        // draw bullets
+
         g2d.setColor(Color.BLUE);
         for (Bullet b : bullets) {
             System.out.println("rendering bullet");
@@ -132,7 +136,7 @@ public class BattleFrame extends JFrame {
             bulletTransform.translate(-b.getWidth() / 2, -b.getHeight() / 2);
             g2d.setTransform(bulletTransform);
             g2d.fillRect(0, 0, b.getWidth(), b.getHeight());
-            
+
         }
 
         g2d.setTransform(tx);
