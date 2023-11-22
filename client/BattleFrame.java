@@ -69,6 +69,7 @@ public class BattleFrame extends JFrame {
      */
     @Override
     public void paint(Graphics g) {
+        moveBullets();
         // super.paint(g);
         final Dimension d = getSize();
         if (offScreenImageDrawed == null) {
@@ -159,4 +160,12 @@ public class BattleFrame extends JFrame {
         this.bullets = bullets;
     }
 
+    public void moveBullets() {
+        for (Bullet b : bullets) {
+            System.out.println("before: "+b.getPosition().getX() + " " + b.getPosition().getY());
+            b.move();
+            System.out.println("after: "+b.getPosition().getX() + " " + b.getPosition().getY());
+        }
+        
+    }
 }

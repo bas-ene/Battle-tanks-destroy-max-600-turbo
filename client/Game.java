@@ -314,6 +314,8 @@ public class Game extends Thread {
         // Update game logic
     }
 
+    
+
     // private void render() {
     // // Render game graphics
     // }

@@ -40,6 +40,7 @@ public class Bullet {
 		this.position = position;
 		this.directionRadian = direction;
 		this.ID = ID;
+		setBulletType();
 	}
 
 	public Bullet(int ID, double x, double y, double direction) {
@@ -47,6 +48,7 @@ public class Bullet {
 		this.position = p;
 		this.directionRadian = direction;
 		this.ID = ID;
+		setBulletType();
 	}
 
 	public Point getPosition() {
@@ -86,6 +88,14 @@ public class Bullet {
 				damage = 200;
 				break;
 		}
+	}
+
+	public void move() {
+		double x = position.getX() + speed * Math.cos(directionRadian);
+		double y = position.getY() + speed * Math.sin(directionRadian);
+		position.setX(x);
+		position.setY(y);
+		System.out.println("speed: " + speed);
 	}
 
 }
