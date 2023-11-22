@@ -39,15 +39,19 @@ public class Tank {
 	 * @return La posizione corrente del tank.
 	 */
 	public Point getPosition() {
-		return position;
+		Point p= new Point(position.getX(), position.getY());
+		return p;
 	}
 
-	public void shoot() {
+	public Bullet shoot() {
+		Point position = new Point(this.position.getX(), this.position.getY());
+		Bullet bullet_ = new Bullet(01, position, angleRotationRadian);
 		System.out.println("printo la posizione del tank");
 		System.out.println(position.getX() + " " + position.getY());
-		bullet.setPosition(position.getX(), position.getY());
-		bullet.setDirectionRadian(angleRotationRadian);
-		bullet.setBulletType();
+		//bullet.setPosition(position.getX(), position.getY());
+		//bullet.setDirectionRadian(angleRotationRadian);
+		//bullet.setBulletType();
+		return bullet_;
 	}
 
 	/**

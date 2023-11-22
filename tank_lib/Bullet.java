@@ -50,7 +50,8 @@ public class Bullet {
 	}
 
 	public Point getPosition() {
-		return position;
+		Point p = new Point(position.getX(), position.getY());
+		return p;
 	}
 
 	public void setPosition(double x, double y) {

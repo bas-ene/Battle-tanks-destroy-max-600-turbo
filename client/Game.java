@@ -181,9 +181,9 @@ public class Game extends Thread {
     }
 
     private void handleShooting(){
-        p1.shoot();
-        bullets.add(p1.getBullet());
-        //battleFrame.setBullets(bullets);
+        Bullet b=p1.shoot();
+        bullets.add(b);
+        battleFrame.setBullets(bullets);
     }
 
     /**
