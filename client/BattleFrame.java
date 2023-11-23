@@ -9,6 +9,10 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.awt.Image;
 import javax.swing.JFrame;
 
@@ -19,6 +23,8 @@ public class BattleFrame extends JFrame {
     Map map;
     int playerID;
     Tank[] players;
+
+private CopyOnWriteArrayList<Bullet> bullets = new CopyOnWriteArrayList<>();
     BattleKey keyHandler;
 
     /**
@@ -35,6 +41,7 @@ public class BattleFrame extends JFrame {
         this.initFrame();
         this.keyHandler = new BattleKey();
         this.addKeyListener(keyHandler);
+        this.bullets = new CopyOnWriteArrayList<>();
     }
 
     /**
@@ -60,6 +67,9 @@ public class BattleFrame extends JFrame {
      */
     @Override
     public void paint(Graphics g) {
+        System.out.println("paint");
+        CopyOnWriteArrayList<Bullet> bullets_= moveBullets();
+        //ArrayList<Bullet> bullets_=new ArrayList<>();
         // super.paint(g);
         final Dimension d = getSize();
         if (offScreenImageDrawed == null) {
@@ -121,10 +131,63 @@ public class BattleFrame extends JFrame {
             g2d.setTransform(tx);
         }
 
+
+
+        // draw bullets
+        //print all array bullets
+         
+        for(Bullet b : bullets){
+            System.out.println(123);
+            System.out.println(b.toString());
+            System.out.println("x: " + b.getPosition().getX());
+            System.out.println("y: " + b.getPosition().getY());
+        }
+        g2d.setColor(Color.BLUE);
+        for (Bullet b : bullets) {
+            System.out.println("Bullet");
+            System.out.println(p1.getPosition().getX() + p1.getPosition().getY());
+            System.out.println(b.getPosition().getX() + b.getPosition().getY());
+            AffineTransform originalTransform = g2d.getTransform(); // save the original transform
+            AffineTransform bulletTransform = new AffineTransform();
+            bulletTransform.translate(b.getPosition().getX(), b.getPosition().getY());
+            bulletTransform.rotate(b.getDirectionRadian());
+            bulletTransform.translate(-b.getWidth() / 2, -b.getHeight() / 2);
+            g2d.setTransform(bulletTransform);
+            g2d.fillRect(0, 0, b.getWidth(), b.getHeight());
+            g2d.setTransform(originalTransform); // restore the original transform
+        }
+        
+        g2d.setTransform(tx);
+
     }
 
     public KeyEvent getLastEvent() {
         return this.keyHandler.getLastEvent();
     }
+/* 
+    public void setBullets(ArrayList<Bullet> bullets) {
+        this.bullets = bullets;
+    }
+*/
+    public CopyOnWriteArrayList<Bullet> moveBullets() {
+        CopyOnWriteArrayList<Bullet> remainingBullets = new CopyOnWriteArrayList<>();
+        for (Bullet bullet : bullets) {
+            bullet.move();
+            if (bullet.getPosition().getX() > 0 && bullet.getPosition().getY() > 0 &&
+    bullet.getPosition().getX() < map.getWidth()* settings.TILE_SIZE_PX && bullet.getPosition().getY() < map.getHeight()* settings.TILE_SIZE_PX) {
+    remainingBullets.add(bullet);
+    System.out.println("bullet added"+map.getWidth()* settings.TILE_SIZE_PX+map.getHeight()* settings.TILE_SIZE_PX);
+}
+else{
+    remainingBullets.remove(bullet);
+    System.out.println("Bullet removed");
+}
+        }
+        bullets = remainingBullets;
+        return remainingBullets;
+    }
 
+    public void addBullet(Bullet bullet) {
+        this.bullets.add(bullet);
+    }
 }

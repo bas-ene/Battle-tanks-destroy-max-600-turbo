@@ -24,8 +24,6 @@ public class Game extends Thread {
     int winnerID;
     String username;
     Tank[] players;
-    ArrayList<Bullet> bullets1;
-    ArrayList<Bullet> bullets2;
     ThreadNetwork threadNetwork;
     ThreadPaint threadPaint;
     boolean isGameRunning = false;
@@ -48,9 +46,6 @@ public class Game extends Thread {
         this.players = new Tank[2];
         players[0] = player;
         players[1] = player;
-        this.bullets1 = new ArrayList<>();
-        this.bullets2 = new ArrayList<>();
-
         this.threadNetwork = threadNetwork;
     }
 
@@ -61,8 +56,6 @@ public class Game extends Thread {
      * @param threadNetwork Thread per la comunicazione con il server.
      */
     public Game(Socket sockets, String username) {
-        this.bullets1 = new ArrayList<>();
-        this.bullets2 = new ArrayList<>();
         this.players = new Tank[settings.NUMBER_OF_CLIENTS];
         this.username = username;
         this.threadNetwork = new ThreadNetwork(sockets, this);
@@ -123,6 +116,7 @@ public class Game extends Thread {
             }
 
             if (k.getKeyChar() == 'z') {
+                handleShooting();
                 sendBullet();
             }
 
@@ -196,6 +190,11 @@ public class Game extends Thread {
 
     }
 
+    private void handleShooting(){
+        Bullet b=players[playerID].shoot();
+        battleFrame.addBullet(b);
+    }
+
     /**
      * Manda il movimento al server.
      * 
@@ -218,6 +217,7 @@ public class Game extends Thread {
     }
 
     private void sendBullet() {
+        System.out.println("SPARO");
         // send the bullet to the server
         // tipo SHOT
         // 1 int per id, 2 double per posizione, 1 per angolo
@@ -228,6 +228,7 @@ public class Game extends Thread {
         byteBuf.putDouble(this.players[playerID].getPosition().getY());
         byteBuf.putDouble(this.players[playerID].getAngleRotationRadian());
         BattlePacket battlePacket = new BattlePacket(PacketTypes.SHOT, bytes);
+        System.out.println(battlePacket.getPacketType());
         this.threadNetwork.addPacketToSend(battlePacket);
     }
 
@@ -311,24 +312,21 @@ public class Game extends Thread {
                 break;
             case MOVM:
                 // set the location of the tank to the one received
-                System.out.println("MOVIMENTO NEMICO");
-
-                ByteBuffer byteBufMOVM = ByteBuffer.wrap(battlePacket.getPacketBytes());
-                int id = byteBufMOVM.getInt();
-                double x = byteBufMOVM.getDouble();
-                double y = byteBufMOVM.getDouble();
-                double angle = byteBufMOVM.getDouble();
-                this.players[id].setPosition(new Point(x, y));
-                this.players[id].setRotation(angle);
+                System.out.println("MOVIMENTO NEMICO RICEVUTO");
+                ByteBuffer byteBuf = ByteBuffer.wrap(battlePacket.getPacketBytes());
+                p2.setX(byteBuf.getDouble());
+                p2.setY(byteBuf.getDouble());
+                p2.setRotation(byteBuf.getDouble());
                 break;
             case SHOT:
+                System.out.println("SPARO RICEVUTO");
                 // add a bullet to the list of bullets
                 System.out.println("SPARO");
 
                 ByteBuffer byteBufSHOT = ByteBuffer.wrap(battlePacket.getPacketBytes());
                 Bullet bullet = new Bullet(byteBufSHOT.getInt(), byteBufSHOT.getDouble(), byteBufSHOT.getDouble(),
-                        byteBufSHOT.getDouble());
-                bullets1.add(bullet);
+                byteBufSHOT.getDouble());
+                //bullets.add(bullet);
                 break;
             case BDST:
                 // remove the bullet from the list of bullets and destroy the building

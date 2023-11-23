@@ -69,8 +69,9 @@ public class ThreadNetwork extends Thread {
                 try {
                     byte[] pLengthBytes = new byte[4];
                     inputStream.read(pLengthBytes);
+                    System.out.println(pLengthBytes);
                     int packetLength = ByteBuffer.wrap(pLengthBytes).getInt();
-                    System.out.println("Received packet length: " + packetLength);
+                    System.out.println("Received Spacket length: " + packetLength);
 
                     byte[] strBytes = new byte[4];
                     inputStream.read(strBytes);

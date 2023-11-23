@@ -10,6 +10,7 @@ import tank_lib.Tank;
 import tank_lib.settings;
 import tank_lib.map_lib.Map;
 import tank_lib.network.BattlePacket;
+import tank_lib.network.BattlePacket;
 import tank_lib.network.PacketTypes;
 
 /**

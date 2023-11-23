@@ -23,6 +23,7 @@ public class Tank {
 	public Tank(Point spawnPoint, String username) {
 		this.username = username;
 		this.position = spawnPoint;
+		bullet= new Bullet(01, position, angleRotationRadian);
 	}
 
 	public Tank(String username) {
@@ -42,7 +43,20 @@ public class Tank {
 	 * @return La posizione corrente del tank.
 	 */
 	public Point getPosition() {
-		return position;
+		Point p= new Point(position.getX(), position.getY());
+		return p;
+	}
+
+	public Bullet shoot() {
+		Point position = new Point(this.position.getX(), this.position.getY());
+		double mirroredAngle = (2*Math.PI) - angleRotationRadian;
+		Bullet bullet_ = new Bullet(01, position, mirroredAngle);
+		System.out.println("printo la posizione del tank");
+		System.out.println(position.getX() + " " + position.getY());
+		//bullet.setPosition(position.getX(), position.getY());
+		//bullet.setDirectionRadian(mirroredAngle);
+		//bullet.setBulletType();
+		return bullet_;
 	}
 
 	public void setPosition(Point p) {
