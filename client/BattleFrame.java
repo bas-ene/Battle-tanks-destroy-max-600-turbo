@@ -168,6 +168,7 @@ public class BattleFrame extends JFrame {
         CopyOnWriteArrayList<Bullet> remainingBullets = new CopyOnWriteArrayList<>();
         for (Bullet bullet : bullets) {
             bullet.move();
+            checkHit();
             if (bullet.getPosition().getX() > 0 && bullet.getPosition().getY() > 0 &&
                     bullet.getPosition().getX() < map.getWidth() * settings.TILE_SIZE_PX
                     && bullet.getPosition().getY() < map.getHeight() * settings.TILE_SIZE_PX) {
@@ -185,5 +186,27 @@ public class BattleFrame extends JFrame {
 
     public void addBullet(Bullet bullet) {
         this.bullets.add(bullet);
+    }
+
+    //check if tank is hit by a bullet
+    public void checkHit() {
+        for (Bullet bullet : bullets) {
+            for (int i = 0; i < players.length; i++) {
+                if (i == playerID)
+                    continue;
+                if (bullet.getPosition().getX() > players[i].getPosition().getX()
+                        && bullet.getPosition().getX() < players[i].getPosition().getX() + players[i].getWidth()
+                        && bullet.getPosition().getY() > players[i].getPosition().getY()
+                        && bullet.getPosition().getY() < players[i].getPosition().getY() + players[i].getHeight()) {
+                    System.out.println("hit");
+                    //remove 1/10 of health from tank
+                    
+                }
+            }
+        }
+    }
+
+    public void removePlayer(int id) {
+        players[id] = null;
     }
 }
