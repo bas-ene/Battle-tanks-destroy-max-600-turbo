@@ -92,17 +92,12 @@ public class Game extends Thread {
         // based on packets received, update the game
         // process packets in parallel with the game loop
         new Thread(() -> {
-            BattlePacket[] packets = this.threadNetwork.getPacketsReceived();
             while (true) {
-                packets = this.threadNetwork.getPacketsReceived();
-
-                for (BattlePacket battlePacket : packets) {
-                    if (battlePacket == null)
-                        continue;
-                    handlePacket(battlePacket);
-                    System.out
-                            .println("Finito di processare pacchetto al secondo: " + System.currentTimeMillis() / 1000);
-                }
+                BattlePacket p = this.threadNetwork.getPacketReceived();
+                if (p == null)
+                    continue;
+                handlePacket(p);
+                System.out.println("Finito di processare pacchetto al secondo: " + System.currentTimeMillis() / 1000);
                 try {
                     sleep(10);
                 } catch (InterruptedException e) {
@@ -389,7 +384,11 @@ public class Game extends Thread {
                 // remove the bullet from the list of bullets and destroy the building
                 break;
             case HLTH:
+                ByteBuffer byteBufHTLH = ByteBuffer.wrap(battlePacket.getPacketBytes());
                 // update the tank health
+                int idTankHit = byteBufHTLH.getInt();
+                float newHealth = byteBufHTLH.getFloat();
+                players[idTankHit].setHealth(newHealth);
                 break;
             case GEND:
                 // showEndGame();
