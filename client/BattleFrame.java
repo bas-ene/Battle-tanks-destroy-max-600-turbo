@@ -147,13 +147,13 @@ public class BattleFrame extends JFrame {
             g2d.setTransform(originalTransform); // restore the original transform
         }
         // draw healthbar
-         for (int i = 0; i < players.length; i++) {
-
+        for (int i = 0; i < players.length; i++) {
+              if (i == playerID)
+                    continue;
             g2d.setColor(Color.RED);
             g2d.fillRect((int) players[i].getPosition().getX(), (int) players[i].getPosition().getY() - 10,
-                    (int) players[i].getHealth() / 10, 5);
+                    (int) players[i].getHealth() / 5, 5); // Double the width by dividing by 5 instead of 10
         }
-    
 
         g2d.setTransform(tx);
 
@@ -219,14 +219,5 @@ public class BattleFrame extends JFrame {
         players[id] = null;
     }
 
-    //draws healthbar for each player
-    public void drawHealthBar(Graphics2D g2d) {
-        for (int i = 0; i < players.length; i++) {
-            if (i == playerID)
-                continue;
-            g2d.setColor(Color.RED);
-            g2d.fillRect((int) players[i].getPosition().getX(), (int) players[i].getPosition().getY() - 10,
-                    (int) players[i].getHealth() / 10, 5);
-        }
-    }
+    
 }
