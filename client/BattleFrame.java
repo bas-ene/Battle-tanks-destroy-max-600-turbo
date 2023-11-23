@@ -77,7 +77,6 @@ public class BattleFrame extends JFrame {
         offScreenGraphicsDrawed.fillRect(0, 0, d.width, d.height);
         renderOffScreen(offScreenImageDrawed.getGraphics());
         g.drawImage(offScreenImageDrawed, 0, 0, null);
-
     }
 
     /**
@@ -87,6 +86,8 @@ public class BattleFrame extends JFrame {
     public void renderOffScreen(final Graphics g) {
         super.paint(g);
         Graphics2D g2d = (Graphics2D) g;
+       // drawHealthBar(g2d);
+
         CopyOnWriteArrayList<Bullet> bullets_ = moveBullets();
 
         // renderizza la mappa
@@ -133,9 +134,9 @@ public class BattleFrame extends JFrame {
        
         g2d.setColor(Color.BLUE);
         for (Bullet b : bullets_) {
-           // System.out.println("Bullet");
-         //   System.out.println(players[playerID].getPosition().getX() + players[playerID].getPosition().getY());
-        //    System.out.println(b.getPosition().getX() + b.getPosition().getY());
+            // System.out.println("Bullet");
+            //   System.out.println(players[playerID].getPosition().getX() + players[playerID].getPosition().getY());
+            //    System.out.println(b.getPosition().getX() + b.getPosition().getY());
             AffineTransform originalTransform = g2d.getTransform(); // save the original transform
             AffineTransform bulletTransform = new AffineTransform();
             bulletTransform.translate(b.getPosition().getX(), b.getPosition().getY());
@@ -145,6 +146,14 @@ public class BattleFrame extends JFrame {
             g2d.fillRect(0, 0, b.getWidth(), b.getHeight());
             g2d.setTransform(originalTransform); // restore the original transform
         }
+        // draw healthbar
+         for (int i = 0; i < players.length; i++) {
+
+            g2d.setColor(Color.RED);
+            g2d.fillRect((int) players[i].getPosition().getX(), (int) players[i].getPosition().getY() - 10,
+                    (int) players[i].getHealth() / 10, 5);
+        }
+    
 
         g2d.setTransform(tx);
 
@@ -208,5 +217,16 @@ public class BattleFrame extends JFrame {
 
     public void removePlayer(int id) {
         players[id] = null;
+    }
+
+    //draws healthbar for each player
+    public void drawHealthBar(Graphics2D g2d) {
+        for (int i = 0; i < players.length; i++) {
+            if (i == playerID)
+                continue;
+            g2d.setColor(Color.RED);
+            g2d.fillRect((int) players[i].getPosition().getX(), (int) players[i].getPosition().getY() - 10,
+                    (int) players[i].getHealth() / 10, 5);
+        }
     }
 }
