@@ -84,12 +84,18 @@ public class Game extends Thread {
         // wait for STRT packet
         System.out.println("IN ATTESA DI START");
         while (!isGameRunning) {
+            try {
+                this.sleep(100);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
 
         System.out.println("START RICEVUTO");
         // Start the game loop
         long timeLastPacketSent = System.currentTimeMillis();
-        final int delay = 1000 / 200;
+        final int delay = 1000 / 25;
 
         // // based on packets received, update the game
         // // process packets in parallel with the game loop
