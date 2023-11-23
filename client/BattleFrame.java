@@ -111,7 +111,7 @@ public class BattleFrame extends JFrame {
             g2d.setColor(Color.BLACK);
             AffineTransform tank2Transform = new AffineTransform();
             tank2Transform.translate(players[i].getPosition().getX(), players[i].getPosition().getY());
-            tank2Transform.rotate(players[i].getAngleRotationRadian());
+            tank2Transform.rotate(-players[i].getAngleRotationRadian());
             tank2Transform.translate(-players[i].getWidth() / 2, -players[i].getHeight() / 2);
             g2d.setTransform(tank2Transform);
             g2d.fillRect(0, 0, players[i].getWidth(), players[i].getHeight());
