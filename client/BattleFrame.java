@@ -67,7 +67,6 @@ public class BattleFrame extends JFrame {
             offScreenImageDrawed = createImage(d.width, d.height);
         }
         // g.clearRect(0, 0, this.getWidth(), this.getHeight());
-        super.paint(g);
         offScreenGraphicsDrawed = offScreenImageDrawed.getGraphics();
         offScreenGraphicsDrawed.setColor(Color.white);
         offScreenGraphicsDrawed.fillRect(0, 0, d.width, d.height);
@@ -81,6 +80,7 @@ public class BattleFrame extends JFrame {
      * 
      */
     public void renderOffScreen(final Graphics g) {
+        super.paint(g);
         Graphics2D g2d = (Graphics2D) g;
 
         // renderizza la mappa
