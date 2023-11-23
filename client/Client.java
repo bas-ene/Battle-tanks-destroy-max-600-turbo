@@ -16,7 +16,7 @@ public class Client {
 		String portString = "23456";
 		String username = "you";
 		try {
-			Lobby lobby = new Lobby(ipString, portString, username);
+			LobbyFrame lobby = new LobbyFrame(ipString, portString, username);
 			// aspetta che la lobby si chiuda
 			while (lobby.isVisible()) {
 				Thread.sleep(100);
@@ -30,13 +30,14 @@ public class Client {
 
 			Socket socket = new Socket();
 			socket.connect(new InetSocketAddress(InetAddress.getByName(ipString), Integer.parseInt(portString)), 0);
+			lobby.dispose();
 
 			game = new Game(socket, username);
-
 			game.start();
-			
 			game.join();
-
+			int winnerID = game.getWinnerID();
+			int playerID = game.getPlayerID();
+			EndGameFrame endGameFrame = new EndGameFrame(winnerID, playerID);
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}

@@ -3,7 +3,7 @@ package client;
 import javax.swing.*;
 import java.awt.*;
 
-public class Lobby extends JFrame {
+public class LobbyFrame extends JFrame {
     private JTextField serverIpTextField;
     private JTextField serverPortTextField;
     private JTextField usernameTextField;
@@ -12,7 +12,7 @@ public class Lobby extends JFrame {
     private String portString;
     private String username;
 
-    public Lobby(String ipString, String portString, String username) {
+    public LobbyFrame(String ipString, String portString, String username) {
         setTitle("Lobby");
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         setPreferredSize(new Dimension(300, 200));

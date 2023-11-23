@@ -21,6 +21,7 @@ public class Game extends Thread {
     BattleFrame battleFrame;
     Map map;
     int playerID;
+    int winnerID;
     String username;
     Tank[] players;
     ArrayList<Bullet> bullets1;
@@ -85,9 +86,8 @@ public class Game extends Thread {
         System.out.println("IN ATTESA DI START");
         while (!isGameRunning) {
             try {
-                this.sleep(100);
+                sleep(100);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -96,24 +96,6 @@ public class Game extends Thread {
         // Start the game loop
         long timeLastPacketSent = System.currentTimeMillis();
         final int delay = 1000 / 25;
-
-        // // based on packets received, update the game
-        // // process packets in parallel with the game loop
-        // new Thread(() -> {
-        // while (true) {
-        // BattlePacket p = this.threadNetwork.getPacketReceived();
-        // if (p == null)
-        // continue;
-        // handlePacket(p);
-        // System.out.println("Finito di processare pacchetto al secondo: " +
-        // System.currentTimeMillis() / 1000);
-        // try {
-        // sleep(10);
-        // } catch (InterruptedException e) {
-        // }
-        // }
-        // }).start();
-
         while (isGameRunning) {
 
             // move the tank if necessary
@@ -149,38 +131,10 @@ public class Game extends Thread {
             // sends the packet to the server
 
         }
-
-        // Clean up and exit the game
+        System.out.println("FINE PARTITA");
+        this.battleFrame.setVisible(false);
+        this.battleFrame.dispose();
         // cleanup();
-    }
-
-    private void waitForStart() {
-        boolean receivedStart = false;
-        while (!receivedStart) {
-            // wait to receive a STRT packet to start the game and the thread paint
-            BattlePacket packet = this.threadNetwork.getPacketReceived();
-            // foreach packet, process it and check if it is a STRT packet
-            if (packet != null && packet.getPacketType() == PacketTypes.STRT) {
-                handlePacket(packet);
-                receivedStart = true;
-                break;
-            }
-        }
-    }
-
-    private void getMapFromServer() {
-        boolean receivedMap = false;
-        while (!receivedMap) {
-            // wait to receive a SMAP packet to build the map and start the game and the
-            // thread paint
-            BattlePacket packet = this.threadNetwork.getPacketReceived();
-            // foreach packet, process it and check if it is a SMAP packet
-            if (packet != null && packet.getPacketType() == PacketTypes.SMAP) {
-                handlePacket(packet);
-                receivedMap = true;
-                break;
-            }
-        }
     }
 
     private void sendConnectionPacket(String username) {
@@ -189,24 +143,6 @@ public class Game extends Thread {
         byte[] bytes = username.getBytes();
         BattlePacket battlePacket = new BattlePacket(PacketTypes.CONN, bytes);
         this.threadNetwork.addPacketToSend(battlePacket);
-    }
-
-    private void getIdFromServer() {
-        // ricevi pacchetto di tipo CONN dal serve che avra come payload n byte (nel
-        // nostro caso 2, uno per player) che
-        // rappresentano gli id dei player
-        boolean receivedIDs = false;
-        while (!receivedIDs) {
-
-            BattlePacket packet = this.threadNetwork.getPacketReceived();
-            // foreach packet, process it and check if it is a SMAP packet
-            if (packet != null && packet.getPacketType() == PacketTypes.CONN) {
-                handlePacket(packet);
-                receivedIDs = true;
-                break;
-            }
-        }
-
     }
 
     /**
@@ -406,6 +342,8 @@ public class Game extends Thread {
                 break;
             case GEND:
                 // showEndGame();
+                ByteBuffer byteBufGEND = ByteBuffer.wrap(battlePacket.getPacketBytes());
+                winnerID = byteBufGEND.getInt();
                 isGameRunning = false;
                 break;
             default:
@@ -416,7 +354,19 @@ public class Game extends Thread {
 
     private void startGame() {
         this.battleFrame = new BattleFrame(map, players, playerID);
-        this.threadPaint = new ThreadPaint(battleFrame);
+        this.threadPaint = new ThreadPaint(battleFrame, this);
         threadPaint.start();
+    }
+
+    public boolean isGameRunning() {
+        return isGameRunning;
+    }
+
+    public int getWinnerID() {
+        return this.winnerID;
+    }
+
+    public int getPlayerID() {
+        return this.playerID;
     }
 }
