@@ -2,12 +2,15 @@ package server;
 
 import java.io.*;
 import java.net.*;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
+import tank_lib.Point;
 import tank_lib.Tank;
 import tank_lib.settings;
 import tank_lib.map_lib.Map;
 import tank_lib.network.BattlePacket;
+import tank_lib.network.PacketTypes;
 
 /**
  * Server
@@ -48,11 +51,19 @@ public class Server {
 			// scambio di messaggi per il gioco
 			// DEMO => il primo clietn mandato si muove al secondo
 			while (true) {
+				// per ogni client ricevo il pacchetto e lo mando a tutti gli altri
+				// aggiornando la posizione del tank e la loro vita
 				for (int i = 0; i < clients.size(); i++) {
 					BattlePacket p = clients.get(i).getPacketReceived();
+					System.out.println("Ricevuto pacchetto al secondo: " + System.currentTimeMillis() / 1000);
+
 					if (p == null)
 						continue;
-					System.out.println("Ricevuto pacchetto al secondo: " + System.currentTimeMillis() / 1000);
+					// aggiorno la posizione del tank
+					if (p.getPacketType() == PacketTypes.MOVM) {
+						setTankPosition(tanks.get(i), p);
+						System.out.println("Tank " + i + " si è mosso in posizione: " + tanks.get(i).getPosition());
+					}
 					for (int j = 0; j < clients.size(); j++) {
 						if (i == j)
 							continue;
@@ -66,5 +77,16 @@ public class Server {
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
+	}
+
+	public static void setTankPosition(Tank tank, BattlePacket movmPacket) {
+		ByteBuffer byteBufMOVM = ByteBuffer.wrap(movmPacket.getPacketBytes());
+		// id, inutilizzato in questo caso
+		byteBufMOVM.getInt();
+		double x = byteBufMOVM.getDouble();
+		double y = byteBufMOVM.getDouble();
+		double angle = byteBufMOVM.getDouble();
+		tank.setPosition(new Point(x, y));
+		tank.setRotation(angle);
 	}
 }
