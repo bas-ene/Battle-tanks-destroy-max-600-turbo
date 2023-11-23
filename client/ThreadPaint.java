@@ -7,14 +7,16 @@ import tank_lib.settings;
  */
 public class ThreadPaint extends Thread {
     BattleFrame battleFrame;
+    Game game;
 
     /**
      * Costruttore parametrico
      * 
      * @param battleFrame Finestra di gioco.
      */
-    public ThreadPaint(BattleFrame battleFrame) {
+    public ThreadPaint(BattleFrame battleFrame, Game game) {
         this.battleFrame = battleFrame;
+        this.game = game;
     }
 
     /**
@@ -22,7 +24,7 @@ public class ThreadPaint extends Thread {
      */
     @Override
     public void run() {
-        while (true) {
+        while (game.isGameRunning) {
             // refresh the frame
             battleFrame.repaint();
 
