@@ -130,17 +130,12 @@ public class BattleFrame extends JFrame {
         // draw bullets
         // print all array bullets
 
-        for (Bullet b : bullets_) {
-            System.out.println(123);
-            System.out.println(b.toString());
-            System.out.println("x: " + b.getPosition().getX());
-            System.out.println("y: " + b.getPosition().getY());
-        }
+       
         g2d.setColor(Color.BLUE);
         for (Bullet b : bullets_) {
-            System.out.println("Bullet");
-            System.out.println(players[playerID].getPosition().getX() + players[playerID].getPosition().getY());
-            System.out.println(b.getPosition().getX() + b.getPosition().getY());
+           // System.out.println("Bullet");
+         //   System.out.println(players[playerID].getPosition().getX() + players[playerID].getPosition().getY());
+        //    System.out.println(b.getPosition().getX() + b.getPosition().getY());
             AffineTransform originalTransform = g2d.getTransform(); // save the original transform
             AffineTransform bulletTransform = new AffineTransform();
             bulletTransform.translate(b.getPosition().getX(), b.getPosition().getY());
@@ -173,11 +168,11 @@ public class BattleFrame extends JFrame {
                     bullet.getPosition().getX() < map.getWidth() * settings.TILE_SIZE_PX
                     && bullet.getPosition().getY() < map.getHeight() * settings.TILE_SIZE_PX) {
                 remainingBullets.add(bullet);
-                System.out.println("bullet added" + map.getWidth() * settings.TILE_SIZE_PX
-                        + map.getHeight() * settings.TILE_SIZE_PX);
+                //System.out.println("bullet added" + map.getWidth() * settings.TILE_SIZE_PX
+               //         + map.getHeight() * settings.TILE_SIZE_PX);
             } else {
                 remainingBullets.remove(bullet);
-                System.out.println("Bullet removed");
+               // System.out.println("Bullet removed");
             }
         }
         bullets = remainingBullets;
@@ -200,7 +195,12 @@ public class BattleFrame extends JFrame {
                         && bullet.getPosition().getY() < players[i].getPosition().getY() + players[i].getHeight()) {
                     System.out.println("hit");
                     //remove 1/10 of health from tank
-                    
+                    players[i].setHealth(players[i].getHealth() - 10);
+                    //if players health is 0, remove player from game
+                    System.out.println(players[i].getHealth());
+                    if (players[i].getHealth() <= 0) {
+                        removePlayer(i);
+                    }
                 }
             }
         }
