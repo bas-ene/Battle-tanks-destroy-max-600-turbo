@@ -21,14 +21,16 @@ public class ThreadNetwork extends Thread {
     private Socket socket;
     private OutputStream outputStream;
     private InputStream inputStream;
+    private Game game;
 
     /**
      * Costruttore parametrico
      * 
      * @param socket The socket to communicate over.
      */
-    public ThreadNetwork(Socket socket) {
+    public ThreadNetwork(Socket socket, Game game) {
         this.socket = socket;
+        this.game = game;
         try {
             outputStream = this.socket.getOutputStream();
             inputStream = this.socket.getInputStream();
@@ -81,7 +83,7 @@ public class ThreadNetwork extends Thread {
                     BattlePacket p = new BattlePacket(type, dataBytes);
                     if (p.getPacketType() == PacketTypes.MOVM)
                         System.out.println("Received packet at second: " + System.currentTimeMillis() / 1000);
-                    addPacketReceived(p);
+                    game.handlePacket(p);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

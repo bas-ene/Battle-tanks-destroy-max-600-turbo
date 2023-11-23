@@ -1,6 +1,7 @@
 package client;
 
 import java.awt.event.KeyEvent;
+import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
@@ -57,12 +58,12 @@ public class Game extends Thread {
      * 
      * @param threadNetwork Thread per la comunicazione con il server.
      */
-    public Game(ThreadNetwork threadNetwork, String username) {
+    public Game(Socket sockets, String username) {
         this.bullets1 = new ArrayList<>();
         this.bullets2 = new ArrayList<>();
         this.players = new Tank[settings.NUMBER_OF_CLIENTS];
         this.username = username;
-        this.threadNetwork = threadNetwork;
+        this.threadNetwork = new ThreadNetwork(sockets, this);
     }
 
     /**
@@ -89,21 +90,22 @@ public class Game extends Thread {
         long timeLastPacketSent = System.currentTimeMillis();
         final int delay = 1000 / 200;
 
-        // based on packets received, update the game
-        // process packets in parallel with the game loop
-        new Thread(() -> {
-            while (true) {
-                BattlePacket p = this.threadNetwork.getPacketReceived();
-                if (p == null)
-                    continue;
-                handlePacket(p);
-                System.out.println("Finito di processare pacchetto al secondo: " + System.currentTimeMillis() / 1000);
-                try {
-                    sleep(10);
-                } catch (InterruptedException e) {
-                }
-            }
-        }).start();
+        // // based on packets received, update the game
+        // // process packets in parallel with the game loop
+        // new Thread(() -> {
+        // while (true) {
+        // BattlePacket p = this.threadNetwork.getPacketReceived();
+        // if (p == null)
+        // continue;
+        // handlePacket(p);
+        // System.out.println("Finito di processare pacchetto al secondo: " +
+        // System.currentTimeMillis() / 1000);
+        // try {
+        // sleep(10);
+        // } catch (InterruptedException e) {
+        // }
+        // }
+        // }).start();
 
         while (true) {
 
@@ -321,7 +323,7 @@ public class Game extends Thread {
      * 
      * @param battlePacket Il BattlePacket ricevuto dal server.
      */
-    private void handlePacket(BattlePacket battlePacket) {
+    void handlePacket(BattlePacket battlePacket) {
         switch (battlePacket.getPacketType()) {
             case CONN:
                 // set the player id to the one received

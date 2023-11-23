@@ -11,7 +11,7 @@ public class Client {
 
 	public static void main(String[] args) {
 
-		Game game;
+		Game game = null;
 		String ipString = "localhost";
 		String portString = "23456";
 		String username = "you";
@@ -31,9 +31,10 @@ public class Client {
 			Socket socket = new Socket();
 			socket.connect(new InetSocketAddress(InetAddress.getByName(ipString), Integer.parseInt(portString)), 0);
 
-			game = new Game(new ThreadNetwork(socket), username);
+			game = new Game(socket, username);
 
 			game.start();
+			
 			game.join();
 
 		} catch (Exception e) {
