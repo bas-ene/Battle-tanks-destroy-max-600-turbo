@@ -9,9 +9,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.awt.Image;
 import javax.swing.JFrame;
@@ -24,7 +21,7 @@ public class BattleFrame extends JFrame {
     int playerID;
     Tank[] players;
 
-private CopyOnWriteArrayList<Bullet> bullets = new CopyOnWriteArrayList<>();
+    private CopyOnWriteArrayList<Bullet> bullets = new CopyOnWriteArrayList<>();
     BattleKey keyHandler;
 
     /**
@@ -67,9 +64,7 @@ private CopyOnWriteArrayList<Bullet> bullets = new CopyOnWriteArrayList<>();
      */
     @Override
     public void paint(Graphics g) {
-        System.out.println("paint");
-        CopyOnWriteArrayList<Bullet> bullets_= moveBullets();
-        //ArrayList<Bullet> bullets_=new ArrayList<>();
+        // ArrayList<Bullet> bullets_=new ArrayList<>();
         // super.paint(g);
         final Dimension d = getSize();
         if (offScreenImageDrawed == null) {
@@ -92,6 +87,7 @@ private CopyOnWriteArrayList<Bullet> bullets = new CopyOnWriteArrayList<>();
     public void renderOffScreen(final Graphics g) {
         super.paint(g);
         Graphics2D g2d = (Graphics2D) g;
+        CopyOnWriteArrayList<Bullet> bullets_ = moveBullets();
 
         // renderizza la mappa
         for (int i = 0; i < map.getHeight(); i++) {
@@ -131,21 +127,19 @@ private CopyOnWriteArrayList<Bullet> bullets = new CopyOnWriteArrayList<>();
             g2d.setTransform(tx);
         }
 
-
-
         // draw bullets
-        //print all array bullets
-         
-        for(Bullet b : bullets){
+        // print all array bullets
+
+        for (Bullet b : bullets_) {
             System.out.println(123);
             System.out.println(b.toString());
             System.out.println("x: " + b.getPosition().getX());
             System.out.println("y: " + b.getPosition().getY());
         }
         g2d.setColor(Color.BLUE);
-        for (Bullet b : bullets) {
+        for (Bullet b : bullets_) {
             System.out.println("Bullet");
-            System.out.println(p1.getPosition().getX() + p1.getPosition().getY());
+            System.out.println(players[playerID].getPosition().getX() + players[playerID].getPosition().getY());
             System.out.println(b.getPosition().getX() + b.getPosition().getY());
             AffineTransform originalTransform = g2d.getTransform(); // save the original transform
             AffineTransform bulletTransform = new AffineTransform();
@@ -156,7 +150,7 @@ private CopyOnWriteArrayList<Bullet> bullets = new CopyOnWriteArrayList<>();
             g2d.fillRect(0, 0, b.getWidth(), b.getHeight());
             g2d.setTransform(originalTransform); // restore the original transform
         }
-        
+
         g2d.setTransform(tx);
 
     }
@@ -164,24 +158,26 @@ private CopyOnWriteArrayList<Bullet> bullets = new CopyOnWriteArrayList<>();
     public KeyEvent getLastEvent() {
         return this.keyHandler.getLastEvent();
     }
-/* 
-    public void setBullets(ArrayList<Bullet> bullets) {
-        this.bullets = bullets;
-    }
-*/
+
+    /*
+     * public void setBullets(ArrayList<Bullet> bullets) {
+     * this.bullets = bullets;
+     * }
+     */
     public CopyOnWriteArrayList<Bullet> moveBullets() {
         CopyOnWriteArrayList<Bullet> remainingBullets = new CopyOnWriteArrayList<>();
         for (Bullet bullet : bullets) {
             bullet.move();
             if (bullet.getPosition().getX() > 0 && bullet.getPosition().getY() > 0 &&
-    bullet.getPosition().getX() < map.getWidth()* settings.TILE_SIZE_PX && bullet.getPosition().getY() < map.getHeight()* settings.TILE_SIZE_PX) {
-    remainingBullets.add(bullet);
-    System.out.println("bullet added"+map.getWidth()* settings.TILE_SIZE_PX+map.getHeight()* settings.TILE_SIZE_PX);
-}
-else{
-    remainingBullets.remove(bullet);
-    System.out.println("Bullet removed");
-}
+                    bullet.getPosition().getX() < map.getWidth() * settings.TILE_SIZE_PX
+                    && bullet.getPosition().getY() < map.getHeight() * settings.TILE_SIZE_PX) {
+                remainingBullets.add(bullet);
+                System.out.println("bullet added" + map.getWidth() * settings.TILE_SIZE_PX
+                        + map.getHeight() * settings.TILE_SIZE_PX);
+            } else {
+                remainingBullets.remove(bullet);
+                System.out.println("Bullet removed");
+            }
         }
         bullets = remainingBullets;
         return remainingBullets;

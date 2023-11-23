@@ -51,11 +51,7 @@ public class Tank {
 		Point position = new Point(this.position.getX(), this.position.getY());
 		double mirroredAngle = (2*Math.PI) - angleRotationRadian;
 		Bullet bullet_ = new Bullet(01, position, mirroredAngle);
-		System.out.println("printo la posizione del tank");
-		System.out.println(position.getX() + " " + position.getY());
-		//bullet.setPosition(position.getX(), position.getY());
-		//bullet.setDirectionRadian(mirroredAngle);
-		//bullet.setBulletType();
+		this.bullet = bullet_;
 		return bullet_;
 	}
 

@@ -3,8 +3,6 @@ package client;
 import java.awt.event.KeyEvent;
 import java.net.Socket;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-
 import tank_lib.Bullet;
 import tank_lib.Point;
 import tank_lib.Tank;
@@ -91,11 +89,12 @@ public class Game extends Thread {
         final int delay = 1000 / 25;
         while (isGameRunning) {
 
-            // move the tank if necessary
+            // prendi l'ultimo tasto premuto
             KeyEvent k = this.battleFrame.getLastEvent();
             if (k == null) {
                 continue;
             }
+            // se e` wasd
             System.out.println(k.getKeyChar());
             if (k.getKeyChar() == 'w' || k.getKeyChar() == 'a' || k.getKeyChar() == 's' || k.getKeyChar() == 'd') {
                 handleMovement(k);
@@ -107,19 +106,15 @@ public class Game extends Thread {
                             "Tempo passato da ultimo invio: "
                                     + ((System.currentTimeMillis() - timeLastPacketSent) / 1000));
                     timeLastPacketSent = System.currentTimeMillis();
-                    if (k.getKeyCode() == KeyEvent.VK_W || k.getKeyCode() == KeyEvent.VK_A
-                            || k.getKeyCode() == KeyEvent.VK_S || k.getKeyCode() == KeyEvent.VK_D) {
-                        sendMovement(k);
-                    }
+                    sendMovement(k);
                 }
                 handleClipping();
             }
-
+            // se e` z spara
             if (k.getKeyChar() == 'z') {
                 handleShooting();
                 sendBullet();
             }
-
             // handle shooting
 
             // sends the packet to the server
@@ -128,6 +123,7 @@ public class Game extends Thread {
         System.out.println("FINE PARTITA");
         this.battleFrame.setVisible(false);
         this.battleFrame.dispose();
+
         // cleanup();
     }
 
@@ -190,8 +186,8 @@ public class Game extends Thread {
 
     }
 
-    private void handleShooting(){
-        Bullet b=players[playerID].shoot();
+    private void handleShooting() {
+        Bullet b = players[playerID].shoot();
         battleFrame.addBullet(b);
     }
 
@@ -313,10 +309,13 @@ public class Game extends Thread {
             case MOVM:
                 // set the location of the tank to the one received
                 System.out.println("MOVIMENTO NEMICO RICEVUTO");
-                ByteBuffer byteBuf = ByteBuffer.wrap(battlePacket.getPacketBytes());
-                p2.setX(byteBuf.getDouble());
-                p2.setY(byteBuf.getDouble());
-                p2.setRotation(byteBuf.getDouble());
+                ByteBuffer byteBufMOVM = ByteBuffer.wrap(battlePacket.getPacketBytes());
+                int id = byteBufMOVM.getInt();
+                double x = byteBufMOVM.getDouble();
+                double y = byteBufMOVM.getDouble();
+                double angle = byteBufMOVM.getDouble();
+                this.players[id].setPosition(new Point(x, y));
+                this.players[id].setRotation(angle);
                 break;
             case SHOT:
                 System.out.println("SPARO RICEVUTO");
@@ -325,8 +324,9 @@ public class Game extends Thread {
 
                 ByteBuffer byteBufSHOT = ByteBuffer.wrap(battlePacket.getPacketBytes());
                 Bullet bullet = new Bullet(byteBufSHOT.getInt(), byteBufSHOT.getDouble(), byteBufSHOT.getDouble(),
-                byteBufSHOT.getDouble());
-                //bullets.add(bullet);
+                        -byteBufSHOT.getDouble());
+                battleFrame.addBullet(bullet);
+                // bullets.add(bullet);
                 break;
             case BDST:
                 // remove the bullet from the list of bullets and destroy the building

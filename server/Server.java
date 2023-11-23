@@ -5,6 +5,7 @@ import java.net.*;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
+import tank_lib.Bullet;
 import tank_lib.Point;
 import tank_lib.Tank;
 import tank_lib.settings;
@@ -26,6 +27,7 @@ public class Server {
 			ArrayList<TcpClientThread> clients = new ArrayList<>();
 			// lista dei tank
 			ArrayList<Tank> tanks = new ArrayList<>();
+			ArrayList<Bullet> bullets = new ArrayList<>();
 			// init clients and map
 			Map map = new Map(settings.DEFAULT_MAP_SIZE, settings.DEFAULT_MAP_SIZE);
 			// inizializza i client
@@ -49,27 +51,40 @@ public class Server {
 				clients.get(i).sendStartPacket();
 			}
 			System.out.println("Inviato pacchetto di inizio partita");
+
 			// scambio di messaggi per il gioco
-			// DEMO => il primo clietn mandato si muove al secondo
 			while (true) {
 				// per ogni client ricevo il pacchetto e lo mando a tutti gli altri
 				// aggiornando la posizione del tank e la loro vita
 				for (int i = 0; i < clients.size(); i++) {
 					BattlePacket p = clients.get(i).getPacketReceived();
-					System.out.println("Ricevuto pacchetto al secondo: " + System.currentTimeMillis() / 1000);
 
 					if (p == null)
 						continue;
+					System.out.println("Ricevuto pacchetto al secondo: " + System.currentTimeMillis() / 1000);
+
 					// aggiorno la posizione del tank
 					if (p.getPacketType() == PacketTypes.MOVM) {
 						setTankPosition(tanks.get(i), p);
 						System.out.println("Tank " + i + " si è mosso in posizione: " + tanks.get(i).getPosition());
+						for (int j = 0; j < clients.size(); j++) {
+							if (i == j)
+								continue;
+							clients.get(j).addPacketToSend(p);
+						}
 					}
-					for (int j = 0; j < clients.size(); j++) {
-						if (i == j)
-							continue;
-						clients.get(j).addPacketToSend(p);
+					if (p.getPacketType() == PacketTypes.SHOT) {
+						System.out.println("Tank " + i + " ha sparato");
+						// manda che il tank i ha sparato
+						for (int j = 0; j < clients.size(); j++) {
+							if (i == j)
+								continue;
+							clients.get(j).addPacketToSend(p);
+						}
+						// aggiungi il proiettile alla lista dei proiettili
+						bullets.add(getBulletFromPacket(p));
 					}
+
 				}
 
 			}
@@ -78,6 +93,17 @@ public class Server {
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
+	}
+
+	private static Bullet getBulletFromPacket(BattlePacket p) {
+		ByteBuffer byteBufSHOT = ByteBuffer.wrap(p.getPacketBytes());
+		// id, inutilizzato in questo caso
+		int id = byteBufSHOT.getInt();
+		double x = byteBufSHOT.getDouble();
+		double y = byteBufSHOT.getDouble();
+		double angle = byteBufSHOT.getDouble();
+		Bullet bullet = new Bullet(id, new Point(x, y), angle);
+		return bullet;
 	}
 
 	public static void setTankPosition(Tank tank, BattlePacket movmPacket) {

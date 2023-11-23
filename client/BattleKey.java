@@ -25,7 +25,8 @@ public class BattleKey extends KeyAdapter {
      */
     @Override
     public void keyPressed(KeyEvent e) {
-        keyEvents.add(e);
+        if (e.getKeyCode() != KeyEvent.VK_Z)
+            keyEvents.add(e);
     }
 
     /**
