@@ -84,6 +84,8 @@ public class ThreadNetwork extends Thread {
                     if (p.getPacketType() == PacketTypes.MOVM)
                         System.out.println("Received packet at second: " + System.currentTimeMillis() / 1000);
                     game.handlePacket(p);
+                    if (p.getPacketType() == PacketTypes.GEND)
+                        break;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
