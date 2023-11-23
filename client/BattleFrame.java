@@ -172,10 +172,15 @@ private CopyOnWriteArrayList<Bullet> bullets = new CopyOnWriteArrayList<>();
         CopyOnWriteArrayList<Bullet> remainingBullets = new CopyOnWriteArrayList<>();
         for (Bullet bullet : bullets) {
             bullet.move();
-            if (bullet.getPosition().getX() > 0 || bullet.getPosition().getY() > 0 ||
-                bullet.getPosition().getX() < map.getWidth() || bullet.getPosition().getY() < map.getHeight()) {
-                remainingBullets.add(bullet);
-            }
+            if (bullet.getPosition().getX() > 0 && bullet.getPosition().getY() > 0 &&
+    bullet.getPosition().getX() < map.getWidth()* settings.TILE_SIZE_PX && bullet.getPosition().getY() < map.getHeight()* settings.TILE_SIZE_PX) {
+    remainingBullets.add(bullet);
+    System.out.println("bullet added"+map.getWidth()* settings.TILE_SIZE_PX+map.getHeight()* settings.TILE_SIZE_PX);
+}
+else{
+    remainingBullets.remove(bullet);
+    System.out.println("Bullet removed");
+}
         }
         bullets = remainingBullets;
         return remainingBullets;
