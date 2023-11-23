@@ -27,6 +27,7 @@ public class Game extends Thread {
     ArrayList<Bullet> bullets2;
     ThreadNetwork threadNetwork;
     ThreadPaint threadPaint;
+    boolean isGameRunning = false;
 
     /**
      * Costruttore paramentrico, usato principalmente per test.
@@ -74,18 +75,18 @@ public class Game extends Thread {
         // showLobby();
         this.threadNetwork.start();
         sendConnectionPacket(this.username);
-        System.out.println("CONNESSIONE INVIATA");
-        getIdFromServer();
-        System.out.println("ID RICEVUTI");
-        getMapFromServer();
-        System.out.println("MAPPA RICEVUTA");
-        this.battleFrame = new BattleFrame(map, players, playerID);
-        this.threadPaint = new ThreadPaint(battleFrame);
+        // System.out.println("CONNESSIONE INVIATA");
+        // getIdFromServer();
+        // System.out.println("ID RICEVUTI");
+        // getMapFromServer();
+        // System.out.println("MAPPA RICEVUTA");
+
         // wait for STRT packet
         System.out.println("IN ATTESA DI START");
-        waitForStart();
+        while (!isGameRunning) {
+        }
+
         System.out.println("START RICEVUTO");
-        threadPaint.start();
         // Start the game loop
         long timeLastPacketSent = System.currentTimeMillis();
         final int delay = 1000 / 200;
@@ -107,7 +108,7 @@ public class Game extends Thread {
         // }
         // }).start();
 
-        while (true) {
+        while (isGameRunning) {
 
             // move the tank if necessary
             KeyEvent k = this.battleFrame.getLastEvent();
@@ -125,7 +126,10 @@ public class Game extends Thread {
                             "Tempo passato da ultimo invio: "
                                     + ((System.currentTimeMillis() - timeLastPacketSent) / 1000));
                     timeLastPacketSent = System.currentTimeMillis();
-                    sendMovement(k);
+                    if (k.getKeyCode() == KeyEvent.VK_W || k.getKeyCode() == KeyEvent.VK_A
+                            || k.getKeyCode() == KeyEvent.VK_S || k.getKeyCode() == KeyEvent.VK_D) {
+                        sendMovement(k);
+                    }
                 }
                 handleClipping();
             }
@@ -360,6 +364,8 @@ public class Game extends Thread {
                 break;
             case STRT:
                 // startGame();
+                startGame();
+                this.isGameRunning = true;
                 break;
             case MOVM:
                 // set the location of the tank to the one received
@@ -394,10 +400,17 @@ public class Game extends Thread {
                 break;
             case GEND:
                 // showEndGame();
+                isGameRunning = false;
                 break;
             default:
                 System.out.println("Packet type not recognized");
                 break;
         }
+    }
+
+    private void startGame() {
+        this.battleFrame = new BattleFrame(map, players, playerID);
+        this.threadPaint = new ThreadPaint(battleFrame);
+        threadPaint.start();
     }
 }

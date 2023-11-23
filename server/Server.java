@@ -48,11 +48,17 @@ public class Server {
 			// scambio di messaggi per il gioco
 			// DEMO => il primo clietn mandato si muove al secondo
 			while (true) {
-				BattlePacket p = clients.get(0).getPacketReceived();
-				if (p == null)
-					continue;
-				System.out.println("Ricevuto pacchetto al secondo: " + System.currentTimeMillis() / 1000);
-				clients.get(1).addPacketToSend(p);
+				for (int i = 0; i < clients.size(); i++) {
+					BattlePacket p = clients.get(i).getPacketReceived();
+					if (p == null)
+						continue;
+					System.out.println("Ricevuto pacchetto al secondo: " + System.currentTimeMillis() / 1000);
+					for (int j = 0; j < clients.size(); j++) {
+						if (i == j)
+							continue;
+						clients.get(j).addPacketToSend(p);
+					}
+				}
 
 			}
 

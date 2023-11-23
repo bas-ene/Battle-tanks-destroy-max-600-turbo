@@ -168,7 +168,7 @@ public class Tank {
 
 	public void setPositionInWindow(Point point) {
 		this.position = new Point(point.getX() * settings.TILE_SIZE + settings.TILE_SIZE / 2,
-				point.getY() * settings.TILE_SIZE + settings.TITLE_BAR_HEIGHT);
+				point.getY() * settings.TILE_SIZE + settings.TITLE_BAR_HEIGHT + settings.TILE_SIZE / 2);
 
 	}
 
@@ -179,4 +179,9 @@ public class Tank {
 	public void setBullet(Bullet bullet) {
 		this.bullet = bullet;
 	}
+
+	public void setHealth(float health) {
+		this.health = health;
+	}
+
 }

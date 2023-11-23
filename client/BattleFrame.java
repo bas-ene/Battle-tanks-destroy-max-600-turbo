@@ -19,7 +19,7 @@ public class BattleFrame extends JFrame {
     Map map;
     int playerID;
     Tank[] players;
-    BattleKey keyHandler = new BattleKey();
+    BattleKey keyHandler;
 
     /**
      * Costrutture parametrico
@@ -33,6 +33,7 @@ public class BattleFrame extends JFrame {
         this.players = players;
         this.playerID = playerID;
         this.initFrame();
+        this.keyHandler = new BattleKey();
         this.addKeyListener(keyHandler);
     }
 
@@ -46,6 +47,7 @@ public class BattleFrame extends JFrame {
         setResizable(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setFocusable(true);
+        requestFocusInWindow();
         this.setBackground(Color.BLACK);
         setVisible(true);
     }
