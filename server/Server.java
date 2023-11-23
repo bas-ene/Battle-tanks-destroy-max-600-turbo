@@ -84,6 +84,17 @@ public class Server {
 						// aggiungi il proiettile alla lista dei proiettili
 						bullets.add(getBulletFromPacket(p));
 					}
+					
+					if (p.getPacketType() == PacketTypes.HLTH) {
+						setTankHealth(tanks.get(i), p);
+						System.out.println("Tank " + i + " ha vita: " + tanks.get(i).getHealth());
+						for (int j = 0; j < clients.size(); j++) {
+							if (i == j)
+								continue;
+							clients.get(j).addPacketToSend(p);
+						}
+					}
+					
 
 				}
 
@@ -105,7 +116,13 @@ public class Server {
 		Bullet bullet = new Bullet(id, new Point(x, y), angle);
 		return bullet;
 	}
-
+public static void setTankHealth(Tank tank, BattlePacket hlthPacket) {
+						ByteBuffer byteBufHLTH = ByteBuffer.wrap(hlthPacket.getPacketBytes());
+						// id, inutilizzato in questo caso
+						byteBufHLTH.getInt();
+						int health = byteBufHLTH.getInt();
+						tank.setHealth(health);
+					}
 	public static void setTankPosition(Tank tank, BattlePacket movmPacket) {
 		ByteBuffer byteBufMOVM = ByteBuffer.wrap(movmPacket.getPacketBytes());
 		// id, inutilizzato in questo caso
