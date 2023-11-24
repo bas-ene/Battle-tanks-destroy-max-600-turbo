@@ -35,7 +35,7 @@ public class Client {
 			game = new Game(socket, username);
 			game.start();
 			game.join();
-			int winnerID = game.getWinnerID();
+			int winnerID = game.getWinnerID();w
 			int playerID = game.getPlayerID();
 			EndGameFrame endGameFrame = new EndGameFrame(winnerID, playerID);
 		} catch (Exception e) {

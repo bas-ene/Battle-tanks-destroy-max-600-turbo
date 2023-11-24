@@ -128,6 +128,7 @@ public class Tank {
 	 * @param pixels Numero di pixel per il quale il tank si deve muovere.
 	 */
 	public void moveBy(double pixels) {
+		pixels= pixels*3;
 		this.position.moveX(Math.cos(angleRotationRadian) * pixels);
 		this.position.moveY(-Math.sin(angleRotationRadian) * pixels);
 	}
@@ -194,4 +195,7 @@ public class Tank {
 		this.health = health;
 	}
 
+	public void decreaseHealth(float damage) {
+		this.health -= damage;
+	}
 }

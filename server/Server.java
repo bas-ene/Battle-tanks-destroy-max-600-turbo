@@ -85,16 +85,31 @@ public class Server {
 						bullets.add(getBulletFromPacket(p));
 					}
 					
-					if (p.getPacketType() == PacketTypes.HLTH) {
-						setTankHealth(tanks.get(i), p);
-						System.out.println("Tank " + i + " ha vita: " + tanks.get(i).getHealth());
-						for (int j = 0; j < clients.size(); j++) {
-							if (i == j)
-								continue;
-							clients.get(j).addPacketToSend(p);
+ 
+						// Check if the tank is hit by a bullet
+						System.out.println("Tank " + i + " has health: " + tanks.get(i).getHealth());
+
+						boolean isHit = false;
+						for (Bullet bullet : bullets) {
+							if (bullet.isInside(tanks.get(i).getPosition())) {
+								tanks.get(i).decreaseHealth(bullet.getDamage());
+								isHit = true;
+								System.out.println("Tank " + i + " is hit by a bullet. New health: " + tanks.get(i).getHealth());
+							}
 						}
-					}
-					
+						// If the tank is hit, send a HLTH packet to all players
+						if (isHit) {
+							ByteBuffer byteBufHLTH = ByteBuffer.allocate(8);
+							byteBufHLTH.putInt(i);
+							byteBufHLTH.putDouble(tanks.get(i).getHealth());
+							BattlePacket healthPacket = new BattlePacket(PacketTypes.HLTH, byteBufHLTH.array());
+
+							for (int j = 0; j < clients.size(); j++) {
+							//	if (i == j)
+							//		continue;
+								clients.get(j).addPacketToSend(healthPacket);
+							}
+						}
 
 				}
 

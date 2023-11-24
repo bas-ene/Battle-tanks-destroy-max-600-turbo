@@ -98,4 +98,17 @@ public class Bullet {
 		System.out.println("speed: " + speed);
 	}
 
+	//check if the bullet is inside the tank
+	public boolean isInside(Point p) {
+		if (p.getX() <= position.getX() + width && p.getX() >= position.getX() - width) {
+			if (p.getY() <= position.getY() + height && p.getY() >= position.getY() - height) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public int getDamage() {
+		return damage;
+	}
 }
