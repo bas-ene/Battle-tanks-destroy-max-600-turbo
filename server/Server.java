@@ -91,12 +91,23 @@ public class Server {
 
 						boolean isHit = false;
 						for (Bullet bullet : bullets) {
-							Point p_= new Point(tanks.get(i).getPosition().getX(), tanks.get(i).getPosition().getY());
-							if (bullet.isInside(p_)) {
+							Point p_ = new Point(tanks.get(i).getPosition().getX(), tanks.get(i).getPosition().getY());
+							if (bullet.getPosition().getX() > tanks.get(i).getPosition().getX()
+									&& bullet.getPosition().getX() < tanks.get(i).getPosition().getX()
+											+ tanks.get(i).getWidth()
+									&& bullet.getPosition().getY() > tanks.get(i).getPosition().getY()
+									&& bullet.getPosition().getY() < tanks.get(i).getPosition().getY()
+											+ tanks.get(i).getHeight()) {
 								tanks.get(i).decreaseHealth(bullet.getDamage());
 								isHit = true;
-								System.out.println("Tank " + i + " is hit by a bullet. New health: " + tanks.get(i).getHealth());
+								System.out.println(
+										"Tank " + i + " is hit by a bullet. New health: " + tanks.get(i).getHealth());
 							}
+						}
+						
+						//prints all bullet positions
+						for (Bullet bullet : bullets) {
+							System.out.println("Bullet position: " + bullet.getPosition());
 						}
 						// If the tank is hit, send a HLTH packet to all players
 						if (isHit) {
