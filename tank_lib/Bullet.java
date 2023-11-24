@@ -73,19 +73,19 @@ public class Bullet {
 		switch (ID) {
 			case 01:
 				speed = 10;
-				damage = 50;
+				damage = 10;
 				break;
 			case 02:
 				speed = 20;
-				damage = 100;
+				damage = 20;
 				break;
 			case 03:
 				speed = 30;
-				damage = 150;
+				damage = 30;
 				break;
 			default:
 				speed = 40;
-				damage = 200;
+				damage = 40;
 				break;
 		}
 	}
@@ -95,7 +95,6 @@ public class Bullet {
 		double y = position.getY() + speed * Math.sin(directionRadian);
 		position.setX(x);
 		position.setY(y);
-		System.out.println("speed: " + speed);
 	}
 
 	//check if the bullet is inside the tank

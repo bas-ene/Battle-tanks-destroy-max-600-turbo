@@ -99,10 +99,12 @@ public class Server {
 						}
 						// If the tank is hit, send a HLTH packet to all players
 						if (isHit) {
-							ByteBuffer byteBufHLTH = ByteBuffer.allocate(8);
+							System.out.println(12345);
+							ByteBuffer byteBufHLTH = ByteBuffer.allocate(12);
 							byteBufHLTH.putInt(i);
 							byteBufHLTH.putDouble(tanks.get(i).getHealth());
 							BattlePacket healthPacket = new BattlePacket(PacketTypes.HLTH, byteBufHLTH.array());
+														System.out.println(123456);
 
 							for (int j = 0; j < clients.size(); j++) {
 							//	if (i == j)
