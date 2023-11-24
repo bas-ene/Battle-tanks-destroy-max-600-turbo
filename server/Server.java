@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.*;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import tank_lib.Bullet;
 import tank_lib.Point;
@@ -27,7 +28,7 @@ public class Server {
 			ArrayList<TcpClientThread> clients = new ArrayList<>();
 			// lista dei tank
 			ArrayList<Tank> tanks = new ArrayList<>();
-			ArrayList<Bullet> bullets = new ArrayList<>();
+			CopyOnWriteArrayList<Bullet> bullets = new CopyOnWriteArrayList<>();
 			// init clients and map
 			Map map = new Map(settings.DEFAULT_MAP_SIZE, settings.DEFAULT_MAP_SIZE);
 			// inizializza i client
@@ -91,6 +92,16 @@ public class Server {
 
 						boolean isHit = false;
 						for (Bullet bullet : bullets) {
+							//check if bullet is out of the map
+								if (bullet.getPosition().getX() > 0 && bullet.getPosition().getY() > 0 &&
+										bullet.getPosition().getX() < map.getWidth() * settings.TILE_SIZE_PX
+										&& bullet.getPosition().getY() < map.getHeight() * settings.TILE_SIZE_PX) {
+											System.out.println("Bullet removed1");
+									bullets.remove(bullet);
+										}
+							
+							//prints bullet
+							System.out.println("Bullet position: " + bullet.toString());
 							Point p_ = new Point(tanks.get(i).getPosition().getX(), tanks.get(i).getPosition().getY());
 							if (bullet.getPosition().getX() > tanks.get(i).getPosition().getX()
 									&& bullet.getPosition().getX() < tanks.get(i).getPosition().getX()
@@ -100,9 +111,10 @@ public class Server {
 											+ tanks.get(i).getHeight()) {
 								tanks.get(i).decreaseHealth(bullet.getDamage());
 								isHit = true;
-								System.out.println(
+	System.out.println(
 										"Tank " + i + " is hit by a bullet. New health: " + tanks.get(i).getHealth());
 							}
+							
 						}
 						
 						//prints all bullet positions
