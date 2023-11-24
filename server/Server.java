@@ -91,7 +91,8 @@ public class Server {
 
 						boolean isHit = false;
 						for (Bullet bullet : bullets) {
-							if (bullet.isInside(tanks.get(i).getPosition())) {
+							Point p_= new Point(tanks.get(i).getPosition().getX(), tanks.get(i).getPosition().getY());
+							if (bullet.isInside(p_)) {
 								tanks.get(i).decreaseHealth(bullet.getDamage());
 								isHit = true;
 								System.out.println("Tank " + i + " is hit by a bullet. New health: " + tanks.get(i).getHealth());
@@ -110,6 +111,7 @@ public class Server {
 							//	if (i == j)
 							//		continue;
 								clients.get(j).addPacketToSend(healthPacket);
+								System.out.println("Tank " + i + " health sent to tank " + j);
 							}
 						}
 

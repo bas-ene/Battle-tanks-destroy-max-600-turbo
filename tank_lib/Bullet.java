@@ -56,6 +56,13 @@ public class Bullet {
 		return p;
 	}
 
+	//get the position a little bit forward in the direction of angle
+	public Point getForwardPosition() {
+		double x = position.getX() + 10 * Math.cos(directionRadian);
+		double y = position.getY() + 10 * Math.sin(directionRadian);
+		Point p = new Point(x, y);
+		return p;
+	}
 	public void setPosition(double x, double y) {
 		Point p = new Point(x, y);
 		this.position = p;
@@ -101,9 +108,13 @@ public class Bullet {
 	public boolean isInside(Point p) {
 		if (p.getX() <= position.getX() + width && p.getX() >= position.getX() - width) {
 			if (p.getY() <= position.getY() + height && p.getY() >= position.getY() - height) {
+								System.out.println("httttit");
+
 				return true;
 			}
 		}
+						System.out.println("DID NOT HIT TANK");
+
 		return false;
 	}
 

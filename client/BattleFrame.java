@@ -139,7 +139,7 @@ public class BattleFrame extends JFrame {
             //    System.out.println(b.getPosition().getX() + b.getPosition().getY());
             AffineTransform originalTransform = g2d.getTransform(); // save the original transform
             AffineTransform bulletTransform = new AffineTransform();
-            bulletTransform.translate(b.getPosition().getX(), b.getPosition().getY());
+            bulletTransform.translate(b.getForwardPosition().getX(), b.getForwardPosition().getY());
             bulletTransform.rotate(b.getDirectionRadian());
             bulletTransform.translate(-b.getWidth() / 2, -b.getHeight() / 2);
             g2d.setTransform(bulletTransform);
@@ -148,8 +148,8 @@ public class BattleFrame extends JFrame {
         }
         // draw healthbar
         for (int i = 0; i < players.length; i++) {
-              if (i == playerID)
-                    continue;
+             // if (i == playerID)
+               //     continue;
             g2d.setColor(Color.RED);
             g2d.fillRect((int) players[i].getPosition().getX(), (int) players[i].getPosition().getY() - 10,
                     (int) players[i].getHealth() / 5, 5); // Double the width by dividing by 5 instead of 10
@@ -172,7 +172,7 @@ public class BattleFrame extends JFrame {
         CopyOnWriteArrayList<Bullet> remainingBullets = new CopyOnWriteArrayList<>();
         for (Bullet bullet : bullets) {
             bullet.move();
-            checkHit();
+            //checkHit();
             if (bullet.getPosition().getX() > 0 && bullet.getPosition().getY() > 0 &&
                     bullet.getPosition().getX() < map.getWidth() * settings.TILE_SIZE_PX
                     && bullet.getPosition().getY() < map.getHeight() * settings.TILE_SIZE_PX) {
@@ -219,5 +219,9 @@ public class BattleFrame extends JFrame {
         players[id] = null;
     }
 
+    //set players health
+    public void setHealth(int id, float health) {
+        players[id].setHealth(health);
+    }
     
 }
