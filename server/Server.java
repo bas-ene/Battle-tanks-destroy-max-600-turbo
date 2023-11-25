@@ -86,19 +86,44 @@ public class Server {
 						bullets.add(getBulletFromPacket(p));
 					}
 					
- 
+					//muovi proiettili
+					 			CopyOnWriteArrayList<Bullet> remainingBullets = new CopyOnWriteArrayList<>();
+
+        for (Bullet bullet : bullets) {
+            bullet.move();
+            //checkHit();
+			//check if bullet is out of the map
+
+            if (bullet.getPosition().getX() > 0 && bullet.getPosition().getY() > 0 &&
+                    bullet.getPosition().getX() < map.getWidth() * settings.TILE_SIZE_PX
+                    && bullet.getPosition().getY() < map.getHeight() * settings.TILE_SIZE_PX) {
+                remainingBullets.add(bullet);
+                //System.out.println("bullet added" + map.getWidth() * settings.TILE_SIZE_PX
+               //         + map.getHeight() * settings.TILE_SIZE_PX);
+            } else {
+                remainingBullets.remove(bullet);
+                System.out.println("Bullet removed");
+            }
+        }
+        bullets = remainingBullets;
+        
+		
+		//sends new moved bullets to all clients
+		
+	//	for(Bullet bullet : bullets) {
+		//	for(int j = 0; j < clients.size(); j++) {
+				//clients.get(j).addPacketToSend(bullet.getPacket());
+		//		;
+		//	}
+		//}
+
+        
 						// Check if the tank is hit by a bullet
 						System.out.println("Tank " + i + " has health: " + tanks.get(i).getHealth());
 
 						boolean isHit = false;
 						for (Bullet bullet : bullets) {
-							//check if bullet is out of the map
-								if (bullet.getPosition().getX() > 0 && bullet.getPosition().getY() > 0 &&
-										bullet.getPosition().getX() < map.getWidth() * settings.TILE_SIZE_PX
-										&& bullet.getPosition().getY() < map.getHeight() * settings.TILE_SIZE_PX) {
-											System.out.println("Bullet removed1");
-									bullets.remove(bullet);
-										}
+								
 							
 							//prints bullet
 							System.out.println("Bullet position: " + bullet.toString());
@@ -124,6 +149,8 @@ public class Server {
 						// If the tank is hit, send a HLTH packet to all players
 						if (isHit) {
 							System.out.println(12345);
+														System.out.println("HIT!!!!");
+
 							ByteBuffer byteBufHLTH = ByteBuffer.allocate(12);
 							byteBufHLTH.putInt(i);
 							byteBufHLTH.putDouble(tanks.get(i).getHealth());
@@ -175,4 +202,6 @@ public static void setTankHealth(Tank tank, BattlePacket hlthPacket) {
 		tank.setPosition(new Point(x, y));
 		tank.setRotation(angle);
 	}
+
+	
 }
