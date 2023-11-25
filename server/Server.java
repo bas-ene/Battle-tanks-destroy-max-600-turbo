@@ -55,37 +55,10 @@ public class Server {
 
 			// scambio di messaggi per il gioco
 			while (true) {
+				
 				// per ogni client ricevo il pacchetto e lo mando a tutti gli altri
 				// aggiornando la posizione del tank e la loro vita
 				for (int i = 0; i < clients.size(); i++) {
-					BattlePacket p = clients.get(i).getPacketReceived();
-
-					if (p == null)
-						continue;
-					System.out.println("Ricevuto pacchetto al secondo: " + System.currentTimeMillis() / 1000);
-
-					// aggiorno la posizione del tank
-					if (p.getPacketType() == PacketTypes.MOVM) {
-						setTankPosition(tanks.get(i), p);
-						System.out.println("Tank " + i + " si è mosso in posizione: " + tanks.get(i).getPosition());
-						for (int j = 0; j < clients.size(); j++) {
-							if (i == j)
-								continue;
-							clients.get(j).addPacketToSend(p);
-						}
-					}
-					if (p.getPacketType() == PacketTypes.SHOT) {
-						System.out.println("Tank " + i + " ha sparato");
-						// manda che il tank i ha sparato
-						for (int j = 0; j < clients.size(); j++) {
-							if (i == j)
-								continue;
-							clients.get(j).addPacketToSend(p);
-						}
-						// aggiungi il proiettile alla lista dei proiettili
-						bullets.add(getBulletFromPacket(p));
-					}
-					
 					//muovi proiettili
 					 			CopyOnWriteArrayList<Bullet> remainingBullets = new CopyOnWriteArrayList<>();
 
@@ -119,14 +92,14 @@ public class Server {
 
         
 						// Check if the tank is hit by a bullet
-						System.out.println("Tank " + i + " has health: " + tanks.get(i).getHealth());
+						//System.out.println("Tank " + i + " has health: " + tanks.get(i).getHealth());
 
 						boolean isHit = false;
 						for (Bullet bullet : bullets) {
 								
 							
 							//prints bullet
-							System.out.println("Bullet position: " + bullet.toString());
+							//System.out.println("Bullet position: " + bullet.toString());
 							Point p_ = new Point(tanks.get(i).getPosition().getX(), tanks.get(i).getPosition().getY());
 							if (bullet.getPosition().getX() > tanks.get(i).getPosition().getX()
 									&& bullet.getPosition().getX() < tanks.get(i).getPosition().getX()
@@ -143,9 +116,7 @@ public class Server {
 						}
 						
 						//prints all bullet positions
-						for (Bullet bullet : bullets) {
-							System.out.println("Bullet position: " + bullet.getPosition());
-						}
+						
 						// If the tank is hit, send a HLTH packet to all players
 						if (isHit) {
 							System.out.println(12345);
@@ -164,6 +135,35 @@ public class Server {
 								System.out.println("Tank " + i + " health sent to tank " + j);
 							}
 						}
+					BattlePacket p = clients.get(i).getPacketReceived();
+
+					if (p == null)
+						continue;
+					System.out.println("Ricevuto pacchetto al secondo: " + System.currentTimeMillis() / 1000);
+
+					// aggiorno la posizione del tank
+					if (p.getPacketType() == PacketTypes.MOVM) {
+						setTankPosition(tanks.get(i), p);
+						System.out.println("Tank " + i + " si è mosso in posizione: " + tanks.get(i).getPosition());
+						for (int j = 0; j < clients.size(); j++) {
+							if (i == j)
+								continue;
+							clients.get(j).addPacketToSend(p);
+						}
+					}
+					if (p.getPacketType() == PacketTypes.SHOT) {
+						System.out.println("Tank " + i + " ha sparato");
+						// manda che il tank i ha sparato
+						for (int j = 0; j < clients.size(); j++) {
+							if (i == j)
+								continue;
+							clients.get(j).addPacketToSend(p);
+						}
+						// aggiungi il proiettile alla lista dei proiettili
+						bullets.add(getBulletFromPacket(p));
+					}
+					
+					
 
 				}
 
