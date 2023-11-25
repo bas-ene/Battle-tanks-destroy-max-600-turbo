@@ -102,11 +102,10 @@ public class Server {
 							//System.out.println("Bullet position: " + bullet.toString());
 							Point p_ = new Point(tanks.get(i).getPosition().getX(), tanks.get(i).getPosition().getY());
 							if (bullet.getPosition().getX() > tanks.get(i).getPosition().getX()
-									&& bullet.getPosition().getX() < tanks.get(i).getPosition().getX()
-											+ tanks.get(i).getWidth()
-									&& bullet.getPosition().getY() > tanks.get(i).getPosition().getY()
-									&& bullet.getPosition().getY() < tanks.get(i).getPosition().getY()
-											+ tanks.get(i).getHeight()) {
+								&& bullet.getPosition().getX() < tanks.get(i).getPosition().getX() + tanks.get(i).getWidth()
+								&& bullet.getPosition().getY() > tanks.get(i).getPosition().getY()
+								&& bullet.getPosition().getY() < tanks.get(i).getPosition().getY() + tanks.get(i).getHeight()
+								&& Math.abs(bullet.getDirectionRadian() - tanks.get(i).getAngleRotationRadian()) < 90) {
 								tanks.get(i).decreaseHealth(bullet.getDamage());
 								isHit = true;
 	System.out.println(
