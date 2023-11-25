@@ -54,9 +54,86 @@ public class Server {
 
 			// scambio di messaggi per il gioco
 			while (true) {
+				
 				// per ogni client ricevo il pacchetto e lo mando a tutti gli altri
 				// aggiornando la posizione del tank e la loro vita
 				for (int i = 0; i < clients.size(); i++) {
+					//muovi proiettili
+					 			CopyOnWriteArrayList<Bullet> remainingBullets = new CopyOnWriteArrayList<>();
+
+        for (Bullet bullet : bullets) {
+            bullet.move();
+            //checkHit();
+			//check if bullet is out of the map
+
+            if (bullet.getPosition().getX() > 0 && bullet.getPosition().getY() > 0 &&
+                    bullet.getPosition().getX() < map.getWidth() * settings.TILE_SIZE_PX
+                    && bullet.getPosition().getY() < map.getHeight() * settings.TILE_SIZE_PX) {
+                remainingBullets.add(bullet);
+                //System.out.println("bullet added" + map.getWidth() * settings.TILE_SIZE_PX
+               //         + map.getHeight() * settings.TILE_SIZE_PX);
+            } else {
+                remainingBullets.remove(bullet);
+                System.out.println("Bullet removed");
+            }
+        }
+        bullets = remainingBullets;
+        
+		
+		//sends new moved bullets to all clients
+		
+	//	for(Bullet bullet : bullets) {
+		//	for(int j = 0; j < clients.size(); j++) {
+				//clients.get(j).addPacketToSend(bullet.getPacket());
+		//		;
+		//	}
+		//}
+
+        
+						// Check if the tank is hit by a bullet
+						//System.out.println("Tank " + i + " has health: " + tanks.get(i).getHealth());
+
+						boolean isHit = false;
+						for (Bullet bullet : bullets) {
+								
+							
+							//prints bullet
+							//System.out.println("Bullet position: " + bullet.toString());
+							Point p_ = new Point(tanks.get(i).getPosition().getX(), tanks.get(i).getPosition().getY());
+							if (bullet.getPosition().getX() > tanks.get(i).getPosition().getX()
+									&& bullet.getPosition().getX() < tanks.get(i).getPosition().getX()
+											+ tanks.get(i).getWidth()
+									&& bullet.getPosition().getY() > tanks.get(i).getPosition().getY()
+									&& bullet.getPosition().getY() < tanks.get(i).getPosition().getY()
+											+ tanks.get(i).getHeight()) {
+								tanks.get(i).decreaseHealth(bullet.getDamage());
+								isHit = true;
+	System.out.println(
+										"Tank " + i + " is hit by a bullet. New health: " + tanks.get(i).getHealth());
+							}
+							
+						}
+						
+						//prints all bullet positions
+						
+						// If the tank is hit, send a HLTH packet to all players
+						if (isHit) {
+							System.out.println(12345);
+														System.out.println("HIT!!!!");
+
+							ByteBuffer byteBufHLTH = ByteBuffer.allocate(12);
+							byteBufHLTH.putInt(i);
+							byteBufHLTH.putDouble(tanks.get(i).getHealth());
+							BattlePacket healthPacket = new BattlePacket(PacketTypes.HLTH, byteBufHLTH.array());
+														System.out.println(123456);
+
+							for (int j = 0; j < clients.size(); j++) {
+							//	if (i == j)
+							//		continue;
+								clients.get(j).addPacketToSend(healthPacket);
+								System.out.println("Tank " + i + " health sent to tank " + j);
+							}
+						}
 					BattlePacket p = clients.get(i).getPacketReceived();
 
 					if (p == null)
@@ -84,57 +161,8 @@ public class Server {
 						// aggiungi il proiettile alla lista dei proiettili
 						bullets.add(getBulletFromPacket(p));
 					}
-
-					// Check if the tank is hit by a bullet
-					System.out.println("Tank " + i + " has health: " + tanks.get(i).getHealth());
-
-					boolean isHit = false;
-					for (Bullet bullet : bullets) {
-						// check if bullet is out of the map
-						if (bullet.getPosition().getX() > 0 && bullet.getPosition().getY() > 0 &&
-								bullet.getPosition().getX() < map.getWidth() * settings.TILE_SIZE_PX
-								&& bullet.getPosition().getY() < map.getHeight() * settings.TILE_SIZE_PX) {
-							System.out.println("Bullet removed1");
-							bullets.remove(bullet);
-						}
-
-						// prints bullet
-						System.out.println("Bullet position: " + bullet.toString());
-						Point p_ = new Point(tanks.get(i).getPosition().getX(), tanks.get(i).getPosition().getY());
-						if (bullet.getPosition().getX() > tanks.get(i).getPosition().getX()
-								&& bullet.getPosition().getX() < tanks.get(i).getPosition().getX()
-										+ tanks.get(i).getWidth()
-								&& bullet.getPosition().getY() > tanks.get(i).getPosition().getY()
-								&& bullet.getPosition().getY() < tanks.get(i).getPosition().getY()
-										+ tanks.get(i).getHeight()) {
-							tanks.get(i).decreaseHealth(bullet.getDamage());
-							isHit = true;
-							System.out.println(
-									"Tank " + i + " is hit by a bullet. New health: " + tanks.get(i).getHealth());
-						}
-
-					}
-
-					// prints all bullet positions
-					for (Bullet bullet : bullets) {
-						System.out.println("Bullet position: " + bullet.getPosition());
-					}
-					// If the tank is hit, send a HLTH packet to all players
-					if (isHit) {
-						System.out.println(12345);
-						ByteBuffer byteBufHLTH = ByteBuffer.allocate(12);
-						byteBufHLTH.putInt(i);
-						byteBufHLTH.putDouble(tanks.get(i).getHealth());
-						BattlePacket healthPacket = new BattlePacket(PacketTypes.HLTH, byteBufHLTH.array());
-						System.out.println(123456);
-
-						for (int j = 0; j < clients.size(); j++) {
-							// if (i == j)
-							// continue;
-							clients.get(j).addPacketToSend(healthPacket);
-							System.out.println("Tank " + i + " health sent to tank " + j);
-						}
-					}
+					
+					
 
 				}
 
@@ -175,4 +203,6 @@ public class Server {
 		tank.setPosition(new Point(x, y));
 		tank.setRotation(angle);
 	}
+
+	
 }

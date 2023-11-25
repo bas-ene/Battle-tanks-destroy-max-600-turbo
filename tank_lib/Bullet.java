@@ -1,5 +1,10 @@
 package tank_lib;
 
+import java.nio.ByteBuffer;
+
+import tank_lib.network.BattlePacket;
+import tank_lib.network.PacketTypes;
+
 /**
  * Bullet
  */
@@ -37,7 +42,8 @@ public class Bullet {
 	}
 
 	public Bullet(int ID, Point position, double direction) {
-		this.position = position;
+		Point p = new Point(position.getX(), position.getY());
+		this.position = p;
 		this.directionRadian = direction;
 		this.ID = ID;
 		setBulletType();
@@ -109,4 +115,22 @@ public class Bullet {
 	public int getDamage() {
 		return damage;
 	}
+
+	public BattlePacket getPacket(){
+			System.out.println("SPARO");
+			// send the bullet to the server
+			// tipo SHOT
+			// 1 int per id, 2 double per posizione, 1 per angolo
+			byte[] bytes = new byte[Integer.BYTES + Double.BYTES * 3];
+			ByteBuffer byteBuf = ByteBuffer.wrap(bytes);
+			byteBuf.putInt(01);
+			byteBuf.putDouble(position.getX());
+			byteBuf.putDouble(position.getY());
+			byteBuf.putDouble(directionRadian);
+			BattlePacket battlePacket = new BattlePacket(PacketTypes.SHOT, bytes);
+			return battlePacket;
+			//this.threadNetwork.addPacketToSend(battlePacket);
+		
+	}
+	
 }
