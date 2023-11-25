@@ -23,7 +23,7 @@ public class Tank {
 	public Tank(Point spawnPoint, String username) {
 		this.username = username;
 		this.position = spawnPoint;
-		bullet= new Bullet(01, position, angleRotationRadian);
+		bullet = new Bullet(01, position, angleRotationRadian);
 	}
 
 	public Tank(String username) {
@@ -43,13 +43,13 @@ public class Tank {
 	 * @return La posizione corrente del tank.
 	 */
 	public Point getPosition() {
-		Point p= new Point(position.getX(), position.getY());
+		Point p = new Point(position.getX(), position.getY());
 		return p;
 	}
 
 	public Bullet shoot() {
 		Point position = new Point(this.position.getX(), this.position.getY());
-		double mirroredAngle = (2*Math.PI) - angleRotationRadian;
+		double mirroredAngle = (2 * Math.PI) - angleRotationRadian;
 		Bullet bullet_ = new Bullet(01, position, mirroredAngle);
 		this.bullet = bullet_;
 		return bullet_;
@@ -128,7 +128,7 @@ public class Tank {
 	 * @param pixels Numero di pixel per il quale il tank si deve muovere.
 	 */
 	public void moveBy(double pixels) {
-		pixels= pixels*3;
+		pixels = pixels * 3;
 		this.position.moveX(Math.cos(angleRotationRadian) * pixels);
 		this.position.moveY(-Math.sin(angleRotationRadian) * pixels);
 	}
@@ -165,36 +165,77 @@ public class Tank {
 		this.position.setY(this.position.getY() + settings.TITLE_BAR_HEIGHT);
 	}
 
+	/**
+	 * Ritorna l'id del tank
+	 * 
+	 * @return L'id.
+	 */
 	public int getID() {
 		return id;
 	}
 
+	/**
+	 * Setta l'id del tank.
+	 * 
+	 * @param id
+	 */
 	public void setID(int id) {
 		this.id = id;
 	}
 
+	/**
+	 * Imposta lo username.
+	 * 
+	 * @param username
+	 */
 	public void setUsername(String username) {
 		this.username = username;
 	}
 
+	/**
+	 * Dato un punto, imposta la sua posizione in base a quel punto, mettendosi
+	 * pero` al centro della cella e considerando la titleBar
+	 * 
+	 * @param point
+	 */
 	public void setPositionInWindow(Point point) {
 		this.position = new Point(point.getX() * settings.TILE_SIZE + settings.TILE_SIZE / 2,
 				point.getY() * settings.TILE_SIZE + settings.TITLE_BAR_HEIGHT + settings.TILE_SIZE / 2);
 
 	}
 
+	/**
+	 * Ritorna il bullet sparato.
+	 * 
+	 * @return
+	 */
 	public Bullet getBullet() {
 		return bullet;
 	}
 
+	/**
+	 * imposta il bullet.
+	 * 
+	 * @param bullet
+	 */
 	public void setBullet(Bullet bullet) {
 		this.bullet = bullet;
 	}
 
+	/**
+	 * Imposta la vita.
+	 * 
+	 * @param health
+	 */
 	public void setHealth(float health) {
 		this.health = health;
 	}
 
+	/**
+	 * Diminuisce la vita di una certa quantita`
+	 * 
+	 * @param damage
+	 */
 	public void decreaseHealth(float damage) {
 		this.health -= damage;
 	}

@@ -17,6 +17,8 @@ public class Client {
 		String username = "you";
 		try {
 			LobbyFrame lobby = new LobbyFrame(ipString, portString, username);
+			lobby.setVisible(true);
+
 			// aspetta che la lobby si chiuda
 			while (lobby.isVisible()) {
 				Thread.sleep(100);
@@ -38,6 +40,7 @@ public class Client {
 			int winnerID = game.getWinnerID();
 			int playerID = game.getPlayerID();
 			EndGameFrame endGameFrame = new EndGameFrame(winnerID, playerID);
+			endGameFrame.setVisible(true);
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}

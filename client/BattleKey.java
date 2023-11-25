@@ -41,11 +41,11 @@ public class BattleKey extends KeyAdapter {
     }
 
     /**
-     * Ritorna e rimuove l'ultimo evento nella coda.
+     * Ritorna e rimuove il primo evento nella coda.
      * 
      * @return l'ultimo evento, o null se la coda è vuota.
      */
-    public KeyEvent getLastEvent() {
+    public KeyEvent getEvent() {
         return keyEvents.poll();
     }
 }

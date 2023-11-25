@@ -232,6 +232,13 @@ public class Map {
 		return map[i][j];
 	}
 
+	/**
+	 * Ritorna l'oggetto con interfaccia Tile in posizione p
+	 * 
+	 * @param p
+	 * @return Tile nella posizione inicata dal punto, null se il punto non e` nella
+	 *         mappa
+	 */
 	public Tile getTile(Point p) {
 		if (p.getX() < 0 || p.getY() < 0 || p.getX() > map[0].length * settings.TILE_SIZE
 				|| p.getY() > map.length * settings.TILE_SIZE)
@@ -239,11 +246,15 @@ public class Map {
 		return map[(int) ((int) p.getY() / settings.TILE_SIZE)][(int) ((int) p.getX() / settings.TILE_SIZE)];
 	}
 
+	/**
+	 * Ritorna l'oggetto con interfaccia Tile in posizione x,y
+	 * 
+	 * @param p
+	 * @return Tile nella posizione inicata dalle coordinate, null se le coordinate
+	 *         sono fuori dalla mappa
+	 */
 	public Tile getTile(double x, double y) {
-		if (x < 0 || y < 0 || x > map[0].length * settings.TILE_SIZE
-				|| y > map.length * settings.TILE_SIZE)
-			return null;
-		return map[(int) ((int) y / settings.TILE_SIZE)][(int) ((int) x / settings.TILE_SIZE)];
+		return getTile(new Point(x, y));
 	}
 
 	@Override
@@ -298,6 +309,12 @@ public class Map {
 		return bb.array();
 	}
 
+	/**
+	 * Ritorna il punto di spawn dell'i-esimo giocatore
+	 * 
+	 * @param i
+	 * @return Point di spawn
+	 */
 	public Point getSpawnPoint(int i) {
 		if (i < 0 || i > spawnPoints.length)
 			return null;
