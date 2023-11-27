@@ -7,7 +7,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.awt.Image;
@@ -173,11 +172,8 @@ public class BattleFrame extends JFrame {
 
     }
 
-    /**
-     * @return il primo evento nella coda, o null se la coda è vuota.
-     */
-    public KeyEvent getLastEvent() {
-        return this.keyHandler.getEvent();
+    public boolean isKeyPressed(int keyCode) {
+        return this.keyHandler.isPressed(keyCode);
     }
 
     /**

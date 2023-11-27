@@ -2,50 +2,44 @@ package client;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.HashSet;
 
 /**
  * Estende KeyAdapter e fornisce metodi per gestire la pressione dei tasti.
  */
 public class BattleKey extends KeyAdapter {
-    private ConcurrentLinkedQueue<KeyEvent> keyEvents;
+    private HashSet<Integer> pressedKeys;
 
     /**
      * Costruttore di default.
      */
     public BattleKey() {
-        keyEvents = new ConcurrentLinkedQueue<>();
+        pressedKeys = new HashSet<Integer>();
     }
 
     /**
      * Invocato quando un tasto viene premuto.
-     * Aggiunge l'evento alla coda.
+     * Aggiunge l'evento al set
      * 
      * @param e l'evento rappresentante la pressione del tasto.
      */
     @Override
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() != KeyEvent.VK_Z)
-            keyEvents.add(e);
+        pressedKeys.add(e.getKeyCode());
     }
 
-    /**
-     * Invocato quando un tasti viene tenuto premuto.
-     * Aggiunge l'evento alla coda.
-     * 
-     * @param e l'evento rappresentante la pressione del tasto.
-     */
     @Override
-    public void keyTyped(KeyEvent e) {
-        keyEvents.add(e);
+    public void keyReleased(KeyEvent e) {
+        pressedKeys.remove(e.getKeyCode());
     }
 
     /**
-     * Ritorna e rimuove il primo evento nella coda.
+     * Controlla se un tasto è premuto.
      * 
-     * @return l'ultimo evento, o null se la coda è vuota.
+     * @param keyCode il codice del tasto da controllare.
+     * @return true se il tasto è premuto, false altrimenti.
      */
-    public KeyEvent getEvent() {
-        return keyEvents.poll();
+    public boolean isPressed(int keyCode) {
+        return pressedKeys.contains(keyCode);
     }
 }
