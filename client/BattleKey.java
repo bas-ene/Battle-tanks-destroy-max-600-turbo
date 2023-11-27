@@ -2,19 +2,19 @@ package client;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.HashSet;
 
 /**
  * Estende KeyAdapter e fornisce metodi per gestire la pressione dei tasti.
  */
 public class BattleKey extends KeyAdapter {
-    private ConcurrentLinkedQueue<KeyEvent> keyEvents;
+    private HashSet<Integer> pressedKeys;
 
     /**
      * Costruttore di default.
      */
     public BattleKey() {
-        keyEvents = new ConcurrentLinkedQueue<>();
+        pressedKeys = new HashSet<Integer>();
     }
 
     /**
@@ -25,27 +25,35 @@ public class BattleKey extends KeyAdapter {
      */
     @Override
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() != KeyEvent.VK_Z)
-            keyEvents.add(e);
+        pressedKeys.add(e.getKeyCode());
     }
 
-    /**
-     * Invocato quando un tasti viene tenuto premuto.
-     * Aggiunge l'evento alla coda.
-     * 
-     * @param e l'evento rappresentante la pressione del tasto.
-     */
+    // /**
+    // * Invocato quando un tasti viene tenuto premuto.
+    // * Aggiunge l'evento alla coda.
+    // *
+    // * @param e l'evento rappresentante la pressione del tasto.
+    // */
+    // @Override
+    // public void keyTyped(KeyEvent e) {
+    // keyEvents.add(e);
+    // }
+
     @Override
-    public void keyTyped(KeyEvent e) {
-        keyEvents.add(e);
+    public void keyReleased(KeyEvent e) {
+        pressedKeys.remove(e.getKeyCode());
     }
 
-    /**
-     * Ritorna e rimuove l'ultimo evento nella coda.
-     * 
-     * @return l'ultimo evento, o null se la coda è vuota.
-     */
-    public KeyEvent getLastEvent() {
-        return keyEvents.poll();
+    public boolean isPressed(int keyCode) {
+        return pressedKeys.contains(keyCode);
     }
+
+    // /**
+    // * Ritorna e rimuove l'ultimo evento nella coda.
+    // *
+    // * @return l'ultimo evento, o null se la coda è vuota.
+    // */
+    // public KeyEvent getLastEvent() {
+    // return keyEvents.poll();
+    // }
 }

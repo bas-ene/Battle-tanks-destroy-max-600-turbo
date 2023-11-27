@@ -88,43 +88,33 @@ public class Game extends Thread {
         long timeLastPacketSent = System.currentTimeMillis();
         final int delay = 1000 / 25;
         while (isGameRunning) {
-
-            // prendi l'ultimo tasto premuto
-            KeyEvent k = this.battleFrame.getLastEvent();
-            if (k == null) {
-                continue;
+            handleMovement();
+            if (System.currentTimeMillis() - timeLastPacketSent > delay) {
+                System.out.println("INVIO MOVIMENTO al secondo: " + System.currentTimeMillis() / 1000);
+                System.out.println(
+                        "Tempo passato da ultimo invio: "
+                                + ((System.currentTimeMillis() - timeLastPacketSent) / 1000));
+                timeLastPacketSent = System.currentTimeMillis();
+                sendPosition();
             }
-            // se e` wasd
-            System.out.println(k.getKeyChar());
-            if (k.getKeyChar() == 'w' || k.getKeyChar() == 'a' || k.getKeyChar() == 's' || k.getKeyChar() == 'd') {
-                handleMovement(k);
-                if (System.currentTimeMillis() - timeLastPacketSent < delay)
-                    continue;
-                else {
-                    System.out.println("INVIO MOVIMENTO al secondo: " + System.currentTimeMillis() / 1000);
-                    System.out.println(
-                            "Tempo passato da ultimo invio: "
-                                    + ((System.currentTimeMillis() - timeLastPacketSent) / 1000));
-                    timeLastPacketSent = System.currentTimeMillis();
-                    sendMovement(k);
-                }
-                handleClipping();
-            }
-            // se e` z spara
-            if (k.getKeyChar() == 'z') {
+            handleClipping();
+            // se z e` stato premuto
+            if (isKeyPressed(KeyEvent.VK_Z)) {
+                // handle shooting
                 handleShooting();
+                // sends the packet to the server
                 sendBullet();
             }
-            // handle shooting
-
-            // sends the packet to the server
-
+            try {
+                sleep(10);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
         System.out.println("FINE PARTITA");
         this.battleFrame.setVisible(false);
         this.battleFrame.dispose();
-
-        // cleanup();
     }
 
     private void sendConnectionPacket(String username) {
@@ -196,10 +186,8 @@ public class Game extends Thread {
      * 
      * @param k Il KeyEvent che identifica il movimento.
      */
-    private void sendMovement(KeyEvent k) {
+    private void sendPosition() {
         // send the movement to the server
-        if (k == null)
-            return;
         // tipo MOVM
         // 2 double per posizione, 1 per angolo
         byte[] bytes = new byte[Integer.BYTES + Double.BYTES * 3];
@@ -230,35 +218,30 @@ public class Game extends Thread {
 
     /**
      * Gestisce il movimento del tank in base all'input.
-     * 
-     * @param k Il KeyEvent che identifica il movimento.
      */
-    private void handleMovement(KeyEvent k) {
+    private void handleMovement() {
         // wasd movement
         float speedMultiplier = map.getTile(this.players[playerID].getPositionInMap()).getSpeedMultiplier();
         float mov = (settings.TANK_SPEED_TILES_S * settings.TILE_SIZE_PX * speedMultiplier) * 1 / 30;
         // rotation per tick
         double rotation = 2 * Math.PI * settings.TANK_ROTATION_SPEED_RPM * 1 / 30;
-        if (k != null) {
-            switch (k.getKeyChar()) {
-                case 'w':
-                    this.players[playerID].moveBy(mov);
-                    break;
-                case 'a':
-                    this.players[playerID].rotateBy(rotation);
-                    break;
-                case 's':
-                    mov *= -1;
-                    this.players[playerID].moveBy(mov);
-                    break;
-                case 'd':
-                    rotation *= -1;
-                    this.players[playerID].rotateBy(rotation);
-                    break;
-                default:
-                    break;
-            }
+
+        if (isKeyPressed(KeyEvent.VK_W)) {
+            this.players[playerID].moveBy(mov);
         }
+        if (isKeyPressed(KeyEvent.VK_A)) {
+            this.players[playerID].rotateBy(rotation);
+        }
+        if (isKeyPressed(KeyEvent.VK_S)) {
+            this.players[playerID].moveBy(-mov);
+        }
+        if (isKeyPressed(KeyEvent.VK_D)) {
+            this.players[playerID].rotateBy(-rotation);
+        }
+    }
+
+    private boolean isKeyPressed(int vkW) {
+        return this.battleFrame.isKeyPressed(vkW);
     }
 
     /**
