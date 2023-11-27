@@ -367,11 +367,11 @@ public class Game extends Thread {
      * settando a true la variabile isGameRunning.
      */
     private void startGame() {
-        isGameRunning = true;
         this.battleFrame = new BattleFrame(map, players, playerID);
         this.threadPaint = new ThreadPaint(battleFrame, this);
         this.battleFrame.setVisible(true);
         this.threadPaint.start();
+        isGameRunning = true;
     }
 
     /**
