@@ -240,10 +240,10 @@ public class Map {
 	 *         mappa
 	 */
 	public Tile getTile(Point p) {
-		if (p.getX() < 0 || p.getY() < 0 || p.getX() > map[0].length * settings.TILE_SIZE
-				|| p.getY() > map.length * settings.TILE_SIZE)
+		if (p.getX() < 0 || p.getY() < 0 || p.getX() > map[0].length * settings.TILE_SIZE_PX
+				|| p.getY() > map.length * settings.TILE_SIZE_PX)
 			return null;
-		return map[(int) ((int) p.getY() / settings.TILE_SIZE)][(int) ((int) p.getX() / settings.TILE_SIZE)];
+		return map[(int) ((int) p.getY() / settings.TILE_SIZE_PX)][(int) ((int) p.getX() / settings.TILE_SIZE_PX)];
 	}
 
 	/**

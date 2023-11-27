@@ -26,11 +26,23 @@ public class Tank {
 		bullet = new Bullet(01, position, angleRotationRadian);
 	}
 
+	/**
+	 * Costruttore parametrico.
+	 * Imposta lo username e la posizione a (0,0)
+	 * 
+	 * @param username
+	 */
 	public Tank(String username) {
 		this.username = username;
 		this.position = new Point(0, 0);
 	}
 
+	/**
+	 * Costruttore parametrico.
+	 * Imposta lo username lo id e la posizione a (0,0).
+	 * 
+	 * @param username
+	 */
 	public Tank(String username, int id) {
 		this.username = username;
 		this.position = new Point(0, 0);
@@ -47,6 +59,16 @@ public class Tank {
 		return p;
 	}
 
+	/**
+	 *
+	 * Spara un proiettile dal tank.
+	 * Il proiettile viene sparato nella direzione opposta all'angolo di rotazione
+	 * corrente del tank.
+	 * La posizione iniziale del proiettile e` la stessa della posizione corrente
+	 * del tank.
+	 * 
+	 * @return The bullet that was just fired.
+	 */
 	public Bullet shoot() {
 		Point position = new Point(this.position.getX(), this.position.getY());
 		double mirroredAngle = (2 * Math.PI) - angleRotationRadian;
@@ -55,6 +77,11 @@ public class Tank {
 		return bullet_;
 	}
 
+	/**
+	 * Imposta la posizione del tank.
+	 * 
+	 * @param p La posizione.
+	 */
 	public void setPosition(Point p) {
 		this.position = p;
 	}
@@ -161,10 +188,6 @@ public class Tank {
 		return new Point(this.position.getX(), this.position.getY() - settings.TITLE_BAR_HEIGHT);
 	}
 
-	public void translatePositionInWindow() {
-		this.position.setY(this.position.getY() + settings.TITLE_BAR_HEIGHT);
-	}
-
 	/**
 	 * Ritorna l'id del tank
 	 * 
@@ -199,9 +222,8 @@ public class Tank {
 	 * @param point
 	 */
 	public void setPositionInWindow(Point point) {
-		this.position = new Point(point.getX() * settings.TILE_SIZE + settings.TILE_SIZE / 2,
-				point.getY() * settings.TILE_SIZE + settings.TITLE_BAR_HEIGHT + settings.TILE_SIZE / 2);
-
+		this.position = new Point(point.getX() * settings.TILE_SIZE_PX + settings.TILE_SIZE_PX / 2,
+				point.getY() * settings.TILE_SIZE_PX + settings.TITLE_BAR_HEIGHT + settings.TILE_SIZE_PX / 2);
 	}
 
 	/**

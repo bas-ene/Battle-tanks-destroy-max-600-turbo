@@ -9,6 +9,12 @@ import java.net.Socket;
  */
 public class Client {
 
+	/**
+	 * Il main si occupa di inizializzare la lobby, aspetta che questa si chiuda,
+	 * riceve l'indirizzo IP, la porta e lo username dalla lobby,
+	 * stabilisce una connessione tramite socket, crea e avvia il gioco,
+	 * aspetta che il gioco finisca e crea la finestra di fine gioco.
+	 */
 	public static void main(String[] args) {
 
 		Game game = null;

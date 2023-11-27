@@ -3,26 +3,34 @@ package tank_lib.network;
 import java.nio.ByteBuffer;
 
 /**
- * Represents a packet used in the BattleTanks game network communication.
+ * Rappresenta un pacchetto utilizzato nella comunicazione di rete.
  */
 public class BattlePacket {
+    /**
+     * Tipo di pacchetto.
+     */
     PacketTypes packetType;
+    /**
+     * Dati sotto forma di byte[].
+     */
     byte[] packetBytes;
 
     /**
-     * Constructs a BattlePacket object with the specified packet type.
+     * Costruisce un oggetto BattlePacket con il tipo di pacchetto specificato.
      * 
-     * @param packetType The type of the packet.
+     * @param packetType Il tipo di pacchetto.
      */
     public BattlePacket(PacketTypes packetType) {
         this.packetType = packetType;
+        this.packetBytes = new byte[0];
     }
 
     /**
-     * Constructs a BattlePacket object with the specified packet type and packet bytes.
+     * Costruisce un oggetto BattlePacket con il tipo di pacchetto e i byte del
+     * pacchetto specificati.
      * 
-     * @param packetType   The type of the packet.
-     * @param packetBytes  The bytes of the packet.
+     * @param packetType  Il tipo di pacchetto.
+     * @param packetBytes I dati del pacchetto.
      */
     public BattlePacket(PacketTypes packetType, byte[] packetBytes) {
         this.packetType = packetType;
@@ -30,27 +38,20 @@ public class BattlePacket {
     }
 
     /**
-     * Constructs a BattlePacket object with the specified packet bytes.
+     * Ritorna il tipo di pacchetto.
      * 
-     * @param packetBytes  The bytes of the packet.
-     */
-    public BattlePacket(byte[] packetBytes) {
-        this.packetBytes = packetBytes;
-    }
-
-    /**
-     * Returns the type of the packet.
-     * 
-     * @return The type of the packet.
+     * @return Tipo del pacchetto.
      */
     public PacketTypes getPacketType() {
         return packetType;
     }
 
     /**
-     * Converts the BattlePacket object to a byte array representation.
+     * Converte l'oggetto BattlePacket in una rappresentazione in un array di byte.
+     * Il formato e` costante: 4 byte per il numero di byte dei dati, 4 byte per il
+     * tipo di pacchetto, il resto per i dati.
      * 
-     * @return The byte array representation of the BattlePacket object.
+     * @return Il pacchetto convertito in un array di byte.
      */
     public byte[] bitify() {
         // 4 for the message length, 4 bytes for the packet type, the rest for the data
@@ -68,9 +69,9 @@ public class BattlePacket {
     }
 
     /**
-     * Returns the bytes of the packet.
+     * Ritorna i byte del pacchetto.
      * 
-     * @return The bytes of the packet.
+     * @return I byte del pacchetto.
      */
     public byte[] getPacketBytes() {
         return packetBytes;
