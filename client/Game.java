@@ -175,24 +175,23 @@ public class Game extends Thread {
         // a destra c'è un edificio
         if (map.getTile(p.getX() + this.players[playerID].getWidth() / 2, p.getY())
                 .getTileType() == TileTypes.BUILDING) {
-            this.players[playerID].setPosition(new Point(p.getX() - 1, p.getY()));
+            this.players[playerID].setPosition(new Point(p.getX() - 5, p.getY() + settings.TITLE_BAR_HEIGHT));
         }
         // a sinistra c'è un edificio
         if (map.getTile(p.getX() - this.players[playerID].getWidth() / 2, p.getY())
-                .getTileType() == TileTypes.BUILDING)
-            this.players[playerID].setPosition(new Point(p.getX() + 1, p.getY()));
+                .getTileType() == TileTypes.BUILDING) {
+            this.players[playerID].setPosition(new Point(p.getX() + 5, p.getY() + settings.TITLE_BAR_HEIGHT));
+        }
         // sopra c'è un edificio
         if (map.getTile(p.getX(), p.getY() - this.players[playerID].getHeight() / 2)
-                .getTileType() == TileTypes.BUILDING)
-            this.players[playerID].setPosition(new Point(p.getX(), p.getY() + 1));
+                .getTileType() == TileTypes.BUILDING) {
+            this.players[playerID].setPosition(new Point(p.getX(), p.getY() + 5 + settings.TITLE_BAR_HEIGHT));
+        }
         // sotto c'è un edificio
         if (map.getTile(p.getX(), p.getY() + this.players[playerID].getHeight() / 2)
-                .getTileType() == TileTypes.BUILDING)
-            this.players[playerID].setPosition(new Point(p.getX(), p.getY() - 1));
-        System.out.println(this.players[playerID].getPosition().getX() + " "
-                + this.players[playerID].getPosition().getY());
-        System.out.println(map.getTile(this.players[playerID].getPositionInMap()));
-
+                .getTileType() == TileTypes.BUILDING) {
+            this.players[playerID].setPosition(new Point(p.getX(), p.getY() - 5 + settings.TITLE_BAR_HEIGHT));
+        }
     }
 
     /**
