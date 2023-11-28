@@ -67,12 +67,6 @@ public class Game extends Thread {
         // showLobby();
         this.threadNetwork.start();
         sendConnectionPacket(this.username);
-        // System.out.println("CONNESSIONE INVIATA");
-        // getIdFromServer();
-        // System.out.println("ID RICEVUTI");
-        // getMapFromServer();
-        // System.out.println("MAPPA RICEVUTA");
-
         // wait for STRT packet
         System.out.println("IN ATTESA DI START");
         while (!isGameRunning) {
@@ -86,10 +80,14 @@ public class Game extends Thread {
         System.out.println("START RICEVUTO");
         // Start the game loop
         long timeLastPacketSent = System.currentTimeMillis();
-        final int delay = 1000 / 25;
+        long timeLastUpdate = System.currentTimeMillis();
+        long delta = 0;
+        final int delay = 1000 / 50;
+        boolean hasMoved = false;
         while (isGameRunning) {
-            handleMovement();
-            if (System.currentTimeMillis() - timeLastPacketSent > delay) {
+            delta = System.currentTimeMillis() - timeLastUpdate;
+            hasMoved = handleMovement(delta);
+            if (System.currentTimeMillis() - timeLastPacketSent > delay && hasMoved) {
                 System.out.println("INVIO MOVIMENTO al secondo: " + System.currentTimeMillis() / 1000);
                 System.out.println(
                         "Tempo passato da ultimo invio: "
@@ -108,8 +106,6 @@ public class Game extends Thread {
             try {
                 sleep(10);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
             }
         }
         System.out.println("FINE PARTITA");
@@ -218,26 +214,33 @@ public class Game extends Thread {
 
     /**
      * Gestisce il movimento del tank in base all'input.
+     * 
+     * @return
      */
-    private void handleMovement() {
+    private boolean handleMovement(long delta) {
         // wasd movement
         float speedMultiplier = map.getTile(this.players[playerID].getPositionInMap()).getSpeedMultiplier();
-        float mov = (settings.TANK_SPEED_TILES_S * settings.TILE_SIZE_PX * speedMultiplier) * 1 / 30;
+        float mov = (settings.TANK_SPEED_TILES_S * settings.TILE_SIZE_PX * speedMultiplier) * delta / 1000 / 60;
         // rotation per tick
-        double rotation = 2 * Math.PI * settings.TANK_ROTATION_SPEED_RPM * 1 / 30;
-
+        double rotation = 2 * Math.PI * settings.TANK_ROTATION_SPEED_RPM * delta / 1000 / 60;
+        boolean hasMoved = false;
         if (isKeyPressed(KeyEvent.VK_W)) {
             this.players[playerID].moveBy(mov);
+            hasMoved = true;
         }
         if (isKeyPressed(KeyEvent.VK_A)) {
             this.players[playerID].rotateBy(rotation);
+            hasMoved = true;
         }
         if (isKeyPressed(KeyEvent.VK_S)) {
             this.players[playerID].moveBy(-mov);
+            hasMoved = true;
         }
         if (isKeyPressed(KeyEvent.VK_D)) {
             this.players[playerID].rotateBy(-rotation);
+            hasMoved = true;
         }
+        return hasMoved;
     }
 
     private boolean isKeyPressed(int vkW) {
