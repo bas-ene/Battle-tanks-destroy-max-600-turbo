@@ -1,5 +1,8 @@
 package tank_lib;
 
+/**
+ * Classe che contienet variabili statiche per le diverse impostazione dell'app
+ */
 public class settings {
     public static final long MOVM_PACKET_COOLDOWN_MS = 1000 / 50;
     public static final int SHOOTING_COOLDOWN_MS = 1000;

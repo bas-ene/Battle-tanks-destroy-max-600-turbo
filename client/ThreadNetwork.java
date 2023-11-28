@@ -16,17 +16,33 @@ import java.io.OutputStream;
  * di {@link BattlePacket} su una socket.
  */
 public class ThreadNetwork extends Thread {
+    /**
+     * Coda dei {@link BattlePacket} da inviare.
+     */
     private ConcurrentLinkedQueue<BattlePacket> packetsToSend = new ConcurrentLinkedQueue<>();
+    /**
+     * @deprecated Coda dei {@link BattlePacket} ricevuti.
+     */
     private ConcurrentLinkedQueue<BattlePacket> packetsReceived = new ConcurrentLinkedQueue<>();
+    /**
+     * La socket da utilizzare per la comunicazione.
+     */
     private Socket socket;
+    /**
+     * Stream di output e input per la socket.
+     */
     private OutputStream outputStream;
     private InputStream inputStream;
+    /**
+     * Il {@link Game} che gestisce i pacchetti ricevuti.
+     */
     private Game game;
 
     /**
      * Costruttore parametrico
      * 
-     * @param socket The socket to communicate over.
+     * @param socket La socket da utilizzare per la comunicazione.
+     * @param game   Il {@link Game} che gestisce i pacchetti ricevuti.
      */
     public ThreadNetwork(Socket socket, Game game) {
         this.socket = socket;
@@ -40,9 +56,12 @@ public class ThreadNetwork extends Thread {
     }
 
     /**
-     * La logica del thread.
-     * Invia continuamente pacchetti dalla coda packetsToSend e riceve pacchetti
-     * nella coda packetsReceived.
+     * @brief La logica del thread.
+     *        Crea due thread, uno per ascoltare e uno per mandare.
+     *        Il thread per ascoltare riceve i pacchetti e li fa gestire al
+     *        {@link Game}.
+     *        Il thread per inviare controlla se ci sono pacchetti da inviare nel
+     *        buffer e li invia.
      */
     @Override
     public void run() {

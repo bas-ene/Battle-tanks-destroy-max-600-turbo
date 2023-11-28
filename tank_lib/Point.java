@@ -41,6 +41,11 @@ public class Point {
 		this.y = y;
 	}
 
+	/**
+	 * Costruttore parametrico. Costruisce un point a partire da un byte array
+	 * 
+	 * @param byteArray
+	 */
 	public Point(byte[] byteArray) {
 		ByteBuffer bb = ByteBuffer.wrap(byteArray);
 		x = bb.getDouble();
@@ -111,6 +116,10 @@ public class Point {
 		this.y = y;
 	}
 
+	/**
+	 * Ritorna x e y come byteArray.
+	 * 
+	 */
 	public byte[] bitify() {
 		ByteBuffer b = ByteBuffer.allocate(Double.BYTES * 2);
 		b.putDouble(x);

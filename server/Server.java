@@ -55,6 +55,7 @@ public class Server {
 			// scambio di messaggi per il gioco
 			while (true) {
 
+
 				// per ogni client ricevo il pacchetto e lo mando a tutti gli altri
 				// aggiornando la posizione del tank e la loro vita
 				for (int i = 0; i < clients.size(); i++) {
@@ -79,6 +80,15 @@ public class Server {
 					}
 					bullets = remainingBullets;
 
+					// sends new moved bullets to all clients
+
+					// for(Bullet bullet : bullets) {
+					// for(int j = 0; j < clients.size(); j++) {
+					// clients.get(j).addPacketToSend(bullet.getPacket());
+					// ;
+					// }
+					// }
+
 					// Check if the tank is hit by a bullet
 					// System.out.println("Tank " + i + " has health: " + tanks.get(i).getHealth());
 
@@ -93,8 +103,7 @@ public class Server {
 										+ tanks.get(i).getWidth()
 								&& bullet.getPosition().getY() > tanks.get(i).getPosition().getY()
 								&& bullet.getPosition().getY() < tanks.get(i).getPosition().getY()
-										+ tanks.get(i).getHeight()
-								&& Math.abs(bullet.getDirectionRadian() - tanks.get(i).getAngleRotationRadian()) < 90) {
+										+ tanks.get(i).getHeight()) {
 							tanks.get(i).decreaseHealth(bullet.getDamage());
 							isHit = true;
 							System.out.println(

@@ -20,7 +20,8 @@ public class ThreadPaint extends Thread {
     }
 
     /**
-     * Ogni {@link settings.REFRESH_RATE} millisecondi ridipingi il frame.
+     * Ogni {@link settings#REFRESH_RATE} millisecondi ridipingi il frame, fino a
+     * che {@link Game#isGameRunning} è true.
      */
     @Override
     public void run() {

@@ -16,11 +16,26 @@ import javax.swing.JFrame;
  * BattleFrame
  */
 public class BattleFrame extends JFrame {
+    /**
+     * Mappa da renderizzare
+     */
     Map map;
+    /**
+     * ID del giocatore per disegnarlo diverasamente e sapere la sua posizione
+     * nell'array
+     */
     int playerID;
+    /**
+     * Tutti i giocatori
+     */
     Tank[] players;
-
+    /**
+     * Lista di proiettili da renderizzare
+     */
     private CopyOnWriteArrayList<Bullet> bullets = new CopyOnWriteArrayList<>();
+    /**
+     * KeyHandler per gestire la pressione dei tasti
+     */
     BattleKey keyHandler;
 
     /**
@@ -52,7 +67,6 @@ public class BattleFrame extends JFrame {
         setFocusable(true);
         requestFocusInWindow();
         this.setBackground(Color.BLACK);
-        setVisible(true);
     }
 
     private Image offScreenImageDrawed = null;
@@ -85,7 +99,7 @@ public class BattleFrame extends JFrame {
     public void renderOffScreen(final Graphics g) {
         super.paint(g);
         Graphics2D g2d = (Graphics2D) g;
-       // drawHealthBar(g2d);
+        // drawHealthBar(g2d);
 
         CopyOnWriteArrayList<Bullet> bullets_ = moveBullets();
 //CopyOnWriteArrayList<Bullet> bullets_=bullets;
@@ -130,12 +144,12 @@ public class BattleFrame extends JFrame {
         // draw bullets
         // print all array bullets
 
-       
         g2d.setColor(Color.BLUE);
         for (Bullet b : bullets_) {
             // System.out.println("Bullet");
-            //   System.out.println(players[playerID].getPosition().getX() + players[playerID].getPosition().getY());
-            //    System.out.println(b.getPosition().getX() + b.getPosition().getY());
+            // System.out.println(players[playerID].getPosition().getX() +
+            // players[playerID].getPosition().getY());
+            // System.out.println(b.getPosition().getX() + b.getPosition().getY());
             AffineTransform originalTransform = g2d.getTransform(); // save the original transform
             AffineTransform bulletTransform = new AffineTransform();
             bulletTransform.translate(b.getForwardPosition().getX(), b.getForwardPosition().getY());
@@ -147,8 +161,8 @@ public class BattleFrame extends JFrame {
         }
         // draw healthbar
         for (int i = 0; i < players.length; i++) {
-             // if (i == playerID)
-               //     continue;
+            // if (i == playerID)
+            // continue;
             g2d.setColor(Color.RED);
             g2d.fillRect((int) players[i].getPosition().getX(), (int) players[i].getPosition().getY() - 10,
                     (int) players[i].getHealth() / 5, 5); // Double the width by dividing by 5 instead of 10
@@ -162,36 +176,44 @@ public class BattleFrame extends JFrame {
         return this.keyHandler.isPressed(keyCode);
     }
 
-    /*
-     * public void setBullets(ArrayList<Bullet> bullets) {
-     * this.bullets = bullets;
-     * }
+    /**
+     * @brief Metodo per muovere i proiettili
+     *        I movimenti sono calcolati in base alla direzione e alla velocità del
+     *        proiettile, ma potrebbero non rispecchiare quelli reali salvati sul
+     *        server
+     * @return la lista dei proiettili rimasti, spostati
      */
     public CopyOnWriteArrayList<Bullet> moveBullets() {
         CopyOnWriteArrayList<Bullet> remainingBullets = new CopyOnWriteArrayList<>();
         for (Bullet bullet : bullets) {
             bullet.move();
-            //checkHit();
+            // checkHit();
             if (bullet.getPosition().getX() > 0 && bullet.getPosition().getY() > 0 &&
                     bullet.getPosition().getX() < map.getWidth() * settings.TILE_SIZE_PX
                     && bullet.getPosition().getY() < map.getHeight() * settings.TILE_SIZE_PX) {
                 remainingBullets.add(bullet);
-                //System.out.println("bullet added" + map.getWidth() * settings.TILE_SIZE_PX
-               //         + map.getHeight() * settings.TILE_SIZE_PX);
+                // System.out.println("bullet added" + map.getWidth() * settings.TILE_SIZE_PX
+                // + map.getHeight() * settings.TILE_SIZE_PX);
             } else {
                 remainingBullets.remove(bullet);
-               // System.out.println("Bullet removed");
+                // System.out.println("Bullet removed");
             }
         }
         bullets = remainingBullets;
         return remainingBullets;
     }
 
+    /**
+     * @brief Metodo per aggiungere un proiettile alla lista
+     * @param bullet
+     */
     public void addBullet(Bullet bullet) {
         this.bullets.add(bullet);
     }
 
-    //check if tank is hit by a bullet
+    /**
+     * @brief Metodo per controllare se un proiettile ha colpito un tank
+     */
     public void checkHit() {
         for (Bullet bullet : bullets) {
             for (int i = 0; i < players.length; i++) {
@@ -202,9 +224,9 @@ public class BattleFrame extends JFrame {
                         && bullet.getPosition().getY() > players[i].getPosition().getY()
                         && bullet.getPosition().getY() < players[i].getPosition().getY() + players[i].getHeight()) {
                     System.out.println("hit");
-                    //remove 1/10 of health from tank
+                    // remove 1/10 of health from tank
                     players[i].setHealth(players[i].getHealth() - 10);
-                    //if players health is 0, remove player from game
+                    // if players health is 0, remove player from game
                     System.out.println(players[i].getHealth());
                     if (players[i].getHealth() <= 0) {
                         removePlayer(i);
@@ -214,13 +236,22 @@ public class BattleFrame extends JFrame {
         }
     }
 
+    /**
+     * @brief Metodo per rimuovere un giocatore
+     * @param id id del giocatore da rimuovere
+     */
     public void removePlayer(int id) {
         players[id] = null;
     }
 
-    //set players health
+    /**
+     * @brief Metodo per settare la vita di un giocatore, in modo da renderizzare
+     *        correttamente la barra della vita
+     * @param id
+     * @param health
+     */
     public void setHealth(int id, float health) {
         players[id].setHealth(health);
     }
-    
+
 }

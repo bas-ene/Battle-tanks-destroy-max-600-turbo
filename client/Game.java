@@ -117,6 +117,11 @@ public class Game extends Thread {
         this.battleFrame.dispose();
     }
 
+    /**
+     * Manda al server il pacchetto di connessione, contentente il nome utente.
+     * 
+     * @param username
+     */
     private void sendConnectionPacket(String username) {
         // send a connection packet to the server
         // tipo CONN
@@ -132,23 +137,30 @@ public class Game extends Thread {
     private void handleClipping() {
         // check if the tank is outside the map
         // sinistra
-        if (this.players[playerID].getPosition().getX() - this.players[playerID].getWidth() / 2 < 0) {
-            this.players[playerID].getPosition().setX(this.players[playerID].getPosition().getX() + 1);
+        if (this.players[playerID].getPosition().getX() - this.players[playerID].getWidth() / 2 <= 0) {
+            this.players[playerID].setPosition(new Point(this.players[playerID].getWidth() / 2 + 1,
+                    this.players[playerID].getPosition().getY()));
         }
         // destra
-        if (this.players[playerID].getPosition().getX() + this.players[playerID].getWidth() / 2 > battleFrame
+        if (this.players[playerID].getPosition().getX() + this.players[playerID].getWidth() / 2 >= battleFrame
                 .getWidth()) {
-            this.players[playerID].getPosition().setX(this.players[playerID].getPosition().getX() - 1);
+            this.players[playerID]
+                    .setPosition(new Point(this.battleFrame.getWidth() - this.players[playerID].getWidth() / 2 - 1,
+                            this.players[playerID].getPosition().getY()));
         }
         // sopra
         if (this.players[playerID].getPosition().getY()
                 - this.players[playerID].getWidth() / 2 < settings.TITLE_BAR_HEIGHT) {
-            this.players[playerID].getPosition().setY(this.players[playerID].getPosition().getY() + 1);
+            this.players[playerID]
+                    .setPosition(new Point(this.players[playerID].getPosition().getX(),
+                            this.players[playerID].getWidth() / 2 + 1 + settings.TITLE_BAR_HEIGHT));
         }
         // sotto
-        if (this.players[playerID].getPosition().getY() + this.players[playerID].getWidth() / 2 > battleFrame
+        if (this.players[playerID].getPosition().getY() + this.players[playerID].getWidth() / 2 >= battleFrame
                 .getHeight()) {
-            this.players[playerID].getPosition().setY(this.players[playerID].getPosition().getY() - 1);
+            this.players[playerID]
+                    .setPosition(new Point(this.players[playerID].getPosition().getX(),
+                            this.battleFrame.getHeight() - this.players[playerID].getWidth() / 2 - 1));
         }
         // check if the tank is inside a building
         // if it is, move it outside
@@ -156,26 +168,29 @@ public class Game extends Thread {
         Point p = this.players[playerID].getPositionInMap();
         // a destra c'è un edificio
         if (map.getTile(p.getX() + this.players[playerID].getWidth() / 2, p.getY())
-                .getTileType() == TileTypes.BUILDING)
-            this.players[playerID].getPosition().setX(this.players[playerID].getPosition().getX() - 1);
+                .getTileType() == TileTypes.BUILDING) {
+            this.players[playerID].setPosition(new Point(p.getX() - 5, p.getY() + settings.TITLE_BAR_HEIGHT));
+        }
         // a sinistra c'è un edificio
         if (map.getTile(p.getX() - this.players[playerID].getWidth() / 2, p.getY())
-                .getTileType() == TileTypes.BUILDING)
-            this.players[playerID].getPosition().setX(this.players[playerID].getPosition().getX() + 1);
+                .getTileType() == TileTypes.BUILDING) {
+            this.players[playerID].setPosition(new Point(p.getX() + 5, p.getY() + settings.TITLE_BAR_HEIGHT));
+        }
         // sopra c'è un edificio
         if (map.getTile(p.getX(), p.getY() - this.players[playerID].getHeight() / 2)
-                .getTileType() == TileTypes.BUILDING)
-            this.players[playerID].getPosition().setY(this.players[playerID].getPosition().getY() + 1);
+                .getTileType() == TileTypes.BUILDING) {
+            this.players[playerID].setPosition(new Point(p.getX(), p.getY() + 5 + settings.TITLE_BAR_HEIGHT));
+        }
         // sotto c'è un edificio
         if (map.getTile(p.getX(), p.getY() + this.players[playerID].getHeight() / 2)
-                .getTileType() == TileTypes.BUILDING)
-            this.players[playerID].getPosition().setY(this.players[playerID].getPosition().getY() - 1);
-        System.out.println(this.players[playerID].getPosition().getX() + " "
-                + this.players[playerID].getPosition().getY());
-        System.out.println(map.getTile(this.players[playerID].getPositionInMap()));
-
+                .getTileType() == TileTypes.BUILDING) {
+            this.players[playerID].setPosition(new Point(p.getX(), p.getY() - 5 + settings.TITLE_BAR_HEIGHT));
+        }
     }
 
+    /**
+     * Aggiunge alla lista del battleFrame il proiettile sparato dal tank.
+     */
     private void handleShooting() {
         Bullet b = players[playerID].shoot();
         battleFrame.addBullet(b);
@@ -200,6 +215,9 @@ public class Game extends Thread {
         this.threadNetwork.addPacketToSend(battlePacket);
     }
 
+    /**
+     * Manda il proiettile al server.
+     */
     private void sendBullet() {
         System.out.println("SPARO");
         // send the bullet to the server
@@ -289,12 +307,9 @@ public class Game extends Thread {
                     byteBufSMAP.get(spawnPointBytes);
                     this.players[i].setPositionInWindow(new Point(spawnPointBytes));
                 }
-
                 break;
             case STRT:
-                // startGame();
                 startGame();
-                this.isGameRunning = true;
                 break;
             case MOVM:
                 // set the location of the tank to the one received
@@ -341,20 +356,41 @@ public class Game extends Thread {
         }
     }
 
+    /**
+     * Fa partire il gioco, creando il BattleFrame e il ThreadPaint associato, e
+     * settando a true la variabile isGameRunning.
+     */
     private void startGame() {
         this.battleFrame = new BattleFrame(map, players, playerID);
         this.threadPaint = new ThreadPaint(battleFrame, this);
-        threadPaint.start();
+        this.battleFrame.setVisible(true);
+        this.threadPaint.start();
+        isGameRunning = true;
     }
 
+    /**
+     * Ritorna true se il gioco è in esecuzione, false altrimenti.
+     * 
+     * @return true se il gioco è in esecuzione, false altrimenti.
+     */
     public boolean isGameRunning() {
         return isGameRunning;
     }
 
+    /**
+     * Ritorna l'id del vincitore.
+     * 
+     * @return l'id del vincitore.
+     */
     public int getWinnerID() {
         return this.winnerID;
     }
 
+    /**
+     * Ritorna l'id del player.
+     * 
+     * @return l'id del player.
+     */
     public int getPlayerID() {
         return this.playerID;
     }

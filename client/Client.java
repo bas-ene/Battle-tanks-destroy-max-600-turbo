@@ -9,6 +9,12 @@ import java.net.Socket;
  */
 public class Client {
 
+	/**
+	 * Il main si occupa di inizializzare la lobby, aspetta che questa si chiuda,
+	 * riceve l'indirizzo IP, la porta e lo username dalla lobby,
+	 * stabilisce una connessione tramite socket, crea e avvia il gioco,
+	 * aspetta che il gioco finisca e crea la finestra di fine gioco.
+	 */
 	public static void main(String[] args) {
 
 		Game game = null;
@@ -17,6 +23,8 @@ public class Client {
 		String username = "you";
 		try {
 			LobbyFrame lobby = new LobbyFrame(ipString, portString, username);
+			lobby.setVisible(true);
+
 			// aspetta che la lobby si chiuda
 			while (lobby.isVisible()) {
 				Thread.sleep(100);
@@ -38,6 +46,7 @@ public class Client {
 			int winnerID = game.getWinnerID();
 			int playerID = game.getPlayerID();
 			EndGameFrame endGameFrame = new EndGameFrame(winnerID, playerID);
+			endGameFrame.setVisible(true);
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}

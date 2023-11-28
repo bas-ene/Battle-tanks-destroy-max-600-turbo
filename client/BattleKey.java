@@ -19,7 +19,7 @@ public class BattleKey extends KeyAdapter {
 
     /**
      * Invocato quando un tasto viene premuto.
-     * Aggiunge l'evento alla coda.
+     * Aggiunge l'evento al set
      * 
      * @param e l'evento rappresentante la pressione del tasto.
      */
@@ -28,32 +28,18 @@ public class BattleKey extends KeyAdapter {
         pressedKeys.add(e.getKeyCode());
     }
 
-    // /**
-    // * Invocato quando un tasti viene tenuto premuto.
-    // * Aggiunge l'evento alla coda.
-    // *
-    // * @param e l'evento rappresentante la pressione del tasto.
-    // */
-    // @Override
-    // public void keyTyped(KeyEvent e) {
-    // keyEvents.add(e);
-    // }
-
     @Override
     public void keyReleased(KeyEvent e) {
         pressedKeys.remove(e.getKeyCode());
     }
 
+    /**
+     * Controlla se un tasto è premuto.
+     * 
+     * @param keyCode il codice del tasto da controllare.
+     * @return true se il tasto è premuto, false altrimenti.
+     */
     public boolean isPressed(int keyCode) {
         return pressedKeys.contains(keyCode);
     }
-
-    // /**
-    // * Ritorna e rimuove l'ultimo evento nella coda.
-    // *
-    // * @return l'ultimo evento, o null se la coda è vuota.
-    // */
-    // public KeyEvent getLastEvent() {
-    // return keyEvents.poll();
-    // }
 }
