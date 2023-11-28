@@ -81,14 +81,15 @@ public class Game extends Thread {
         // Start the game loop
         long timeLastPacketSent = System.currentTimeMillis();
         long timeLastUpdate = System.currentTimeMillis();
+        long timeLastShot = System.currentTimeMillis();
         long delta = 0;
-        final int delay = 1000 / 50;
+
         boolean hasMoved = false;
         while (isGameRunning) {
             delta = System.currentTimeMillis() - timeLastUpdate;
             hasMoved = handleMovement(delta);
             handleClipping();
-            if (System.currentTimeMillis() - timeLastPacketSent > delay && hasMoved) {
+            if (System.currentTimeMillis() - timeLastPacketSent > settings.MOVM_PACKET_COOLDOWN_MS && hasMoved) {
                 System.out.println("INVIO MOVIMENTO al secondo: " + System.currentTimeMillis() / 1000);
                 System.out.println(
                         "Tempo passato da ultimo invio: "
@@ -98,11 +99,13 @@ public class Game extends Thread {
             }
             timeLastUpdate = System.currentTimeMillis();
             // se z e` stato premuto
-            if (isKeyPressed(KeyEvent.VK_Z)) {
+            if (isKeyPressed(KeyEvent.VK_Z)
+                    && System.currentTimeMillis() - timeLastShot > settings.SHOOTING_COOLDOWN_MS) {
                 // handle shooting
                 handleShooting();
                 // sends the packet to the server
                 sendBullet();
+                timeLastShot = System.currentTimeMillis();
             }
             try {
                 sleep(10);
