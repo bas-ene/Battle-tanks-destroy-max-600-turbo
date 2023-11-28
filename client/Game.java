@@ -87,6 +87,7 @@ public class Game extends Thread {
         while (isGameRunning) {
             delta = System.currentTimeMillis() - timeLastUpdate;
             hasMoved = handleMovement(delta);
+            handleClipping();
             if (System.currentTimeMillis() - timeLastPacketSent > delay && hasMoved) {
                 System.out.println("INVIO MOVIMENTO al secondo: " + System.currentTimeMillis() / 1000);
                 System.out.println(
@@ -95,7 +96,7 @@ public class Game extends Thread {
                 timeLastPacketSent = System.currentTimeMillis();
                 sendPosition();
             }
-            handleClipping();
+            timeLastUpdate = System.currentTimeMillis();
             // se z e` stato premuto
             if (isKeyPressed(KeyEvent.VK_Z)) {
                 // handle shooting
@@ -220,9 +221,9 @@ public class Game extends Thread {
     private boolean handleMovement(long delta) {
         // wasd movement
         float speedMultiplier = map.getTile(this.players[playerID].getPositionInMap()).getSpeedMultiplier();
-        float mov = (settings.TANK_SPEED_TILES_S * settings.TILE_SIZE_PX * speedMultiplier) * delta / 1000 / 60;
+        float mov = (settings.TANK_SPEED_TILES_S * settings.TILE_SIZE_PX * speedMultiplier) * delta / 1000;
         // rotation per tick
-        double rotation = 2 * Math.PI * settings.TANK_ROTATION_SPEED_RPM * delta / 1000 / 60;
+        double rotation = 2 * Math.PI * settings.TANK_ROTATION_SPEED_RPS * delta / 1000;
         boolean hasMoved = false;
         if (isKeyPressed(KeyEvent.VK_W)) {
             this.players[playerID].moveBy(mov);
