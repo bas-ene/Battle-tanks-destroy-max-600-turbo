@@ -323,6 +323,7 @@ public class Game extends Thread {
                 int idTankHit = byteBufHTLH.getInt();
                 float newHealth = byteBufHTLH.getFloat();
                 players[idTankHit].setHealth(newHealth);
+                battleFrame.setHealth(idTankHit, newHealth);
                 break;
             case GEND:
                 // showEndGame();

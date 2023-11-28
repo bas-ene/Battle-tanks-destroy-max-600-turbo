@@ -76,7 +76,6 @@ public class BattleFrame extends JFrame {
         offScreenGraphicsDrawed.fillRect(0, 0, d.width, d.height);
         renderOffScreen(offScreenImageDrawed.getGraphics());
         g.drawImage(offScreenImageDrawed, 0, 0, null);
-
     }
 
     /**
@@ -86,8 +85,10 @@ public class BattleFrame extends JFrame {
     public void renderOffScreen(final Graphics g) {
         super.paint(g);
         Graphics2D g2d = (Graphics2D) g;
-        CopyOnWriteArrayList<Bullet> bullets_ = moveBullets();
+       // drawHealthBar(g2d);
 
+        CopyOnWriteArrayList<Bullet> bullets_ = moveBullets();
+//CopyOnWriteArrayList<Bullet> bullets_=bullets;
         // renderizza la mappa
         for (int i = 0; i < map.getHeight(); i++) {
             for (int j = 0; j < map.getWidth(); j++) {
@@ -129,25 +130,28 @@ public class BattleFrame extends JFrame {
         // draw bullets
         // print all array bullets
 
-        for (Bullet b : bullets_) {
-            System.out.println(123);
-            System.out.println(b.toString());
-            System.out.println("x: " + b.getPosition().getX());
-            System.out.println("y: " + b.getPosition().getY());
-        }
+       
         g2d.setColor(Color.BLUE);
         for (Bullet b : bullets_) {
-            System.out.println("Bullet");
-            System.out.println(players[playerID].getPosition().getX() + players[playerID].getPosition().getY());
-            System.out.println(b.getPosition().getX() + b.getPosition().getY());
+            // System.out.println("Bullet");
+            //   System.out.println(players[playerID].getPosition().getX() + players[playerID].getPosition().getY());
+            //    System.out.println(b.getPosition().getX() + b.getPosition().getY());
             AffineTransform originalTransform = g2d.getTransform(); // save the original transform
             AffineTransform bulletTransform = new AffineTransform();
-            bulletTransform.translate(b.getPosition().getX(), b.getPosition().getY());
+            bulletTransform.translate(b.getForwardPosition().getX(), b.getForwardPosition().getY());
             bulletTransform.rotate(b.getDirectionRadian());
             bulletTransform.translate(-b.getWidth() / 2, -b.getHeight() / 2);
             g2d.setTransform(bulletTransform);
             g2d.fillRect(0, 0, b.getWidth(), b.getHeight());
             g2d.setTransform(originalTransform); // restore the original transform
+        }
+        // draw healthbar
+        for (int i = 0; i < players.length; i++) {
+             // if (i == playerID)
+               //     continue;
+            g2d.setColor(Color.RED);
+            g2d.fillRect((int) players[i].getPosition().getX(), (int) players[i].getPosition().getY() - 10,
+                    (int) players[i].getHealth() / 5, 5); // Double the width by dividing by 5 instead of 10
         }
 
         g2d.setTransform(tx);
@@ -167,15 +171,16 @@ public class BattleFrame extends JFrame {
         CopyOnWriteArrayList<Bullet> remainingBullets = new CopyOnWriteArrayList<>();
         for (Bullet bullet : bullets) {
             bullet.move();
+            //checkHit();
             if (bullet.getPosition().getX() > 0 && bullet.getPosition().getY() > 0 &&
                     bullet.getPosition().getX() < map.getWidth() * settings.TILE_SIZE_PX
                     && bullet.getPosition().getY() < map.getHeight() * settings.TILE_SIZE_PX) {
                 remainingBullets.add(bullet);
-                System.out.println("bullet added" + map.getWidth() * settings.TILE_SIZE_PX
-                        + map.getHeight() * settings.TILE_SIZE_PX);
+                //System.out.println("bullet added" + map.getWidth() * settings.TILE_SIZE_PX
+               //         + map.getHeight() * settings.TILE_SIZE_PX);
             } else {
                 remainingBullets.remove(bullet);
-                System.out.println("Bullet removed");
+               // System.out.println("Bullet removed");
             }
         }
         bullets = remainingBullets;
@@ -185,4 +190,37 @@ public class BattleFrame extends JFrame {
     public void addBullet(Bullet bullet) {
         this.bullets.add(bullet);
     }
+
+    //check if tank is hit by a bullet
+    public void checkHit() {
+        for (Bullet bullet : bullets) {
+            for (int i = 0; i < players.length; i++) {
+                if (i == playerID)
+                    continue;
+                if (bullet.getPosition().getX() > players[i].getPosition().getX()
+                        && bullet.getPosition().getX() < players[i].getPosition().getX() + players[i].getWidth()
+                        && bullet.getPosition().getY() > players[i].getPosition().getY()
+                        && bullet.getPosition().getY() < players[i].getPosition().getY() + players[i].getHeight()) {
+                    System.out.println("hit");
+                    //remove 1/10 of health from tank
+                    players[i].setHealth(players[i].getHealth() - 10);
+                    //if players health is 0, remove player from game
+                    System.out.println(players[i].getHealth());
+                    if (players[i].getHealth() <= 0) {
+                        removePlayer(i);
+                    }
+                }
+            }
+        }
+    }
+
+    public void removePlayer(int id) {
+        players[id] = null;
+    }
+
+    //set players health
+    public void setHealth(int id, float health) {
+        players[id].setHealth(health);
+    }
+    
 }

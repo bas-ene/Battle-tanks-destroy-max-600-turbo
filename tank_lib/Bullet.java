@@ -1,5 +1,10 @@
 package tank_lib;
 
+import java.nio.ByteBuffer;
+
+import tank_lib.network.BattlePacket;
+import tank_lib.network.PacketTypes;
+
 /**
  * Bullet
  */
@@ -37,7 +42,8 @@ public class Bullet {
 	}
 
 	public Bullet(int ID, Point position, double direction) {
-		this.position = position;
+		Point p = new Point(position.getX(), position.getY());
+		this.position = p;
 		this.directionRadian = direction;
 		this.ID = ID;
 		setBulletType();
@@ -56,6 +62,13 @@ public class Bullet {
 		return p;
 	}
 
+	//get the position a little bit forward in the direction of angle
+	public Point getForwardPosition() {
+		double x = position.getX() + 20 * Math.cos(directionRadian);
+		double y = position.getY() + 20 * Math.sin(directionRadian);
+		Point p = new Point(x, y);
+		return p;
+	}
 	public void setPosition(double x, double y) {
 		Point p = new Point(x, y);
 		this.position = p;
@@ -73,19 +86,19 @@ public class Bullet {
 		switch (ID) {
 			case 01:
 				speed = 10;
-				damage = 50;
+				damage = 10;
 				break;
 			case 02:
 				speed = 20;
-				damage = 100;
+				damage = 20;
 				break;
 			case 03:
 				speed = 30;
-				damage = 150;
+				damage = 30;
 				break;
 			default:
 				speed = 40;
-				damage = 200;
+				damage = 40;
 				break;
 		}
 	}
@@ -95,7 +108,29 @@ public class Bullet {
 		double y = position.getY() + speed * Math.sin(directionRadian);
 		position.setX(x);
 		position.setY(y);
-		System.out.println("speed: " + speed);
 	}
 
+	
+
+	public int getDamage() {
+		return damage;
+	}
+
+	public BattlePacket getPacket(){
+			System.out.println("SPARO");
+			// send the bullet to the server
+			// tipo SHOT
+			// 1 int per id, 2 double per posizione, 1 per angolo
+			byte[] bytes = new byte[Integer.BYTES + Double.BYTES * 3];
+			ByteBuffer byteBuf = ByteBuffer.wrap(bytes);
+			byteBuf.putInt(01);
+			byteBuf.putDouble(position.getX());
+			byteBuf.putDouble(position.getY());
+			byteBuf.putDouble(directionRadian);
+			BattlePacket battlePacket = new BattlePacket(PacketTypes.SHOT, bytes);
+			return battlePacket;
+			//this.threadNetwork.addPacketToSend(battlePacket);
+		
+	}
+	
 }
