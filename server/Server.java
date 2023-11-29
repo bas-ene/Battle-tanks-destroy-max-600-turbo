@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.*;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import tank_lib.Bullet;
@@ -11,6 +12,7 @@ import tank_lib.Point;
 import tank_lib.Tank;
 import tank_lib.settings;
 import tank_lib.map_lib.Map;
+import tank_lib.map_lib.TileTypes;
 import tank_lib.network.BattlePacket;
 import tank_lib.network.PacketTypes;
 
@@ -55,7 +57,6 @@ public class Server {
 			// scambio di messaggi per il gioco
 			while (true) {
 
-
 				// per ogni client ricevo il pacchetto e lo mando a tutti gli altri
 				// aggiornando la posizione del tank e la loro vita
 				for (int i = 0; i < clients.size(); i++) {
@@ -80,17 +81,7 @@ public class Server {
 					}
 					bullets = remainingBullets;
 
-					// sends new moved bullets to all clients
-
-					// for(Bullet bullet : bullets) {
-					// for(int j = 0; j < clients.size(); j++) {
-					// clients.get(j).addPacketToSend(bullet.getPacket());
-					// ;
-					// }
-					// }
-
 					// Check if the tank is hit by a bullet
-					// System.out.println("Tank " + i + " has health: " + tanks.get(i).getHealth());
 
 					boolean isHit = false;
 					for (Bullet bullet : bullets) {
@@ -109,7 +100,20 @@ public class Server {
 							System.out.println(
 									"Tank " + i + " is hit by a bullet. New health: " + tanks.get(i).getHealth());
 						}
-
+						// check if the bullet has hit a building
+						if (map.getTile(new Point(bullet.getPosition().getX(),
+								bullet.getPosition().getY() - settings.TITLE_BAR_HEIGHT))
+								.getTileType() == TileTypes.BUILDING) {
+							Entry<Integer, Integer> tile = map.getTileCoordinates(new Point(bullet.getPosition().getX(),
+									bullet.getPosition().getY() - settings.TITLE_BAR_HEIGHT));
+							System.out.println("Bullet hit a building");
+							map.buildTile(tile.getKey(), tile.getValue(), TileTypes.RUBBLE);
+							BattlePacket rubblePacket = buildBDSTPacket(tile.getKey(), tile.getValue());
+							// send packet that signals that a building is destroyed
+							for (int j = 0; j < clients.size(); j++) {
+								clients.get(j).addPacketToSend(rubblePacket);
+							}
+						}
 					}
 
 					// prints all bullet positions
@@ -132,6 +136,7 @@ public class Server {
 							System.out.println("Tank " + i + " health sent to tank " + j);
 						}
 					}
+
 					BattlePacket p = clients.get(i).getPacketReceived();
 
 					if (p == null)
@@ -168,6 +173,15 @@ public class Server {
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
+	}
+
+	private static BattlePacket buildBDSTPacket(Integer key, Integer value) {
+		ByteBuffer byteBufSHOT = ByteBuffer.allocate(2 * Integer.BYTES);
+		// id, inutilizzato in questo caso
+		byteBufSHOT.putInt(key);
+		byteBufSHOT.putInt(value);
+		BattlePacket bulletPacket = new BattlePacket(PacketTypes.BDST, byteBufSHOT.array());
+		return bulletPacket;
 	}
 
 	private static Bullet getBulletFromPacket(BattlePacket p) {

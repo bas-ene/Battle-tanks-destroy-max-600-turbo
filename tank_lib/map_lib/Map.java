@@ -1,7 +1,10 @@
 package tank_lib.map_lib;
 
 import java.nio.ByteBuffer;
+import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Map.Entry;
+
 import tank_lib.Point;
 import tank_lib.settings;
 
@@ -131,7 +134,7 @@ public class Map {
 	 * @param j    Posizione della colonna della cella
 	 * @param type Tipo della cella da costruire.
 	 */
-	private void buildTile(int i, int j, TileTypes type) {
+	public void buildTile(int i, int j, TileTypes type) {
 		switch (type) {
 			case GRASS:
 				this.map[i][j] = new TileGrass();
@@ -144,8 +147,10 @@ public class Map {
 				break;
 			case RUBBLE:
 				this.map[i][j] = new TileRubble();
+				break;
 			case WATER:
 				this.map[i][j] = new TileWater();
+				break;
 			default:
 				break;
 		}
@@ -319,5 +324,11 @@ public class Map {
 		if (i < 0 || i > spawnPoints.length)
 			return null;
 		return spawnPoints[i];
+	}
+
+	public Entry<Integer, Integer> getTileCoordinates(Point p) {
+		int i = (int) ((int) p.getY() / settings.TILE_SIZE_PX);
+		int j = (int) ((int) p.getX() / settings.TILE_SIZE_PX);
+		return new AbstractMap.SimpleEntry<Integer, Integer>(i, j);
 	}
 }

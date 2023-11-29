@@ -2,7 +2,6 @@ package client;
 
 import tank_lib.*;
 import tank_lib.map_lib.Map;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -102,7 +101,7 @@ public class BattleFrame extends JFrame {
         // drawHealthBar(g2d);
 
         CopyOnWriteArrayList<Bullet> bullets_ = moveBullets();
-//CopyOnWriteArrayList<Bullet> bullets_=bullets;
+        // CopyOnWriteArrayList<Bullet> bullets_=bullets;
         // renderizza la mappa
         for (int i = 0; i < map.getHeight(); i++) {
             for (int j = 0; j < map.getWidth(); j++) {

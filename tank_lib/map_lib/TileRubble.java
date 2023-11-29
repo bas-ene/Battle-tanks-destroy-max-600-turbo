@@ -28,6 +28,6 @@ public class TileRubble implements Tile {
 
 	@Override
 	public Color getColor() {
-		return Color.ORANGE;
+		return new Color(188, 74, 60);
 	}
 }

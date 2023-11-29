@@ -335,6 +335,11 @@ public class Game extends Thread {
                 break;
             case BDST:
                 // remove the bullet from the list of bullets and destroy the building
+                System.out.println("Edificio distrutto");
+                ByteBuffer byteBufBDST = ByteBuffer.wrap(battlePacket.getPacketBytes());
+                int iBDST = byteBufBDST.getInt();
+                int jBDST = byteBufBDST.getInt();
+                map.buildTile(iBDST, jBDST, TileTypes.RUBBLE);
                 break;
             case HLTH:
                 ByteBuffer byteBufHTLH = ByteBuffer.wrap(battlePacket.getPacketBytes());
