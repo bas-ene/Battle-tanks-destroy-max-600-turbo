@@ -1,0 +1,45 @@
+@startuml Sequence Diagram
+skinparam Shadowing false
+actor  Player1
+participant Server
+actor Player2
+
+
+
+Player1 -> Server: Connect to server
+Server -> Player1: Acknowledge connection
+Server <- Player2: Connect to server
+Server -> Player2: Acknowledge connection
+
+Player1 -> Server: Join game
+Server -> Player1: Acknowledge join
+Server <- Player2: Join game
+Server -> Player2: Acknowledge join
+
+|||
+
+Player1 -> Server: Shoot
+Server -> Player2: Notify Player1's shot
+Server <- Player2: Shoot
+Server -> Player1: Notify Player2's shot
+
+Player1 -> Server: Move
+Server -> Player2: Notify Player1's movement
+Server <- Player2: Move
+Server -> Player1: Notify Player2's movement
+
+Server -> Player1: Updated game state
+Server -> Player2: Updated game state
+
+|||
+
+Server -> Player1: Game over
+Server -> Player2: Game over
+
+Player1 -> Server: Disconnect
+Server -> Player1: Acknowledge disconnection
+Server <- Player2: Disconnect
+Server -> Player2: Acknowledge disconnection
+
+
+@enduml
