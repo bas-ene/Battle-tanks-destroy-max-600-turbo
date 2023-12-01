@@ -17,7 +17,7 @@ public class Map {
 	 * determinato in modo procedurale.
 	 *
 	 */
-	private Tile[][] map;
+	public Tile[][] map;
 
 	private Point[] spawnPoints;
 

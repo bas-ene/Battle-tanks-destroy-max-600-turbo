@@ -5,7 +5,7 @@ package tank_lib;
  */
 public class Tank {
 	private Point position;
-	private float health = 100.0f;
+	private double health = 100.0f;
 	private boolean canShoot = true;
 	private String username;
 	private int width = 25;
@@ -91,7 +91,7 @@ public class Tank {
 	 * 
 	 * @return Vita del tank.
 	 */
-	public float getHealth() {
+	public double getHealth() {
 		return health;
 	}
 
@@ -249,7 +249,7 @@ public class Tank {
 	 * 
 	 * @param health
 	 */
-	public void setHealth(float health) {
+	public void setHealth(double health) {
 		this.health = health;
 	}
 

@@ -108,8 +108,52 @@ public class BattleFrame extends JFrame {
             for (int j = 0; j < map.getWidth(); j++) {
                 // draw map
                 g2d.setColor(map.getTile(i, j).getColor());
-                g2d.fillRect(j * settings.TILE_SIZE_PX, i * settings.TILE_SIZE_PX + settings.TITLE_BAR_HEIGHT,
-                        settings.TILE_SIZE_PX, settings.TILE_SIZE_PX);
+               // g2d.fillRect(j * settings.TILE_SIZE_PX, i * settings.TILE_SIZE_PX + settings.TITLE_BAR_HEIGHT,
+                      //  settings.TILE_SIZE_PX, settings.TILE_SIZE_PX);
+                        // tank_lib/tilesjpg/TileGrass.jpg
+                        //Image img = new javax.swing.ImageIcon("tank_lib/map_lib/tilesjpg/TileGrass.jpg").getImage();
+                        Image img;
+                      //  g2d.drawImage(img, j * settings.TILE_SIZE_PX,
+                        //        i * settings.TILE_SIZE_PX + settings.TITLE_BAR_HEIGHT, settings.TILE_SIZE_PX,
+                        //        settings.TILE_SIZE_PX, null);
+                        switch (map.getTile(i, j).getTileType()) {
+                            case BUILDING:
+                                img = new javax.swing.ImageIcon("tank_lib/map_lib/tilesjpg/TileBuilding.jpg").getImage();
+                                g2d.drawImage(img, j * settings.TILE_SIZE_PX,
+                                        i * settings.TILE_SIZE_PX + settings.TITLE_BAR_HEIGHT, settings.TILE_SIZE_PX,
+                                        settings.TILE_SIZE_PX, null);
+                                break;
+                            case GRASS:
+                                img = new javax.swing.ImageIcon("tank_lib/map_lib/tilesjpg/TileGrass.jpg").getImage();
+                                g2d.drawImage(img, j * settings.TILE_SIZE_PX,
+                                        i * settings.TILE_SIZE_PX + settings.TITLE_BAR_HEIGHT, settings.TILE_SIZE_PX,
+                                        settings.TILE_SIZE_PX, null);
+                                break;
+                            case RUBBLE:
+                                img = new javax.swing.ImageIcon("tank_lib/map_lib/tilesjpg/TileRubble.jpg").getImage();
+                                g2d.drawImage(img, j * settings.TILE_SIZE_PX,
+                                        i * settings.TILE_SIZE_PX + settings.TITLE_BAR_HEIGHT, settings.TILE_SIZE_PX,
+                                        settings.TILE_SIZE_PX, null);
+                                break;
+                            case SAND:
+                                img = new javax.swing.ImageIcon("tank_lib/map_lib/tilesjpg/TileSand.jpg").getImage();
+                                g2d.drawImage(img, j * settings.TILE_SIZE_PX,
+                                        i * settings.TILE_SIZE_PX + settings.TITLE_BAR_HEIGHT, settings.TILE_SIZE_PX,
+                                        settings.TILE_SIZE_PX, null);
+                                break;
+                            case WATER:
+                                img = new javax.swing.ImageIcon("tank_lib/map_lib/tilesjpg/TileWater.jpg").getImage();
+                                g2d.drawImage(img, j * settings.TILE_SIZE_PX,
+                                        i * settings.TILE_SIZE_PX + settings.TITLE_BAR_HEIGHT, settings.TILE_SIZE_PX,
+                                        settings.TILE_SIZE_PX, null);
+                                break;
+                            default:
+                                img = new javax.swing.ImageIcon("tank_lib/map_lib/tilesjpg/TileUnknown.jpg").getImage();
+                                g2d.drawImage(img, j * settings.TILE_SIZE_PX,
+                                        i * settings.TILE_SIZE_PX + settings.TITLE_BAR_HEIGHT, settings.TILE_SIZE_PX,
+                                        settings.TILE_SIZE_PX, null);
+                }
+                
             }
         }
 
@@ -164,8 +208,8 @@ public class BattleFrame extends JFrame {
             // if (i == playerID)
             // continue;
             g2d.setColor(Color.RED);
-            g2d.fillRect((int) players[i].getPosition().getX(), (int) players[i].getPosition().getY() - 10,
-                    (int) players[i].getHealth() / 5, 5); // Double the width by dividing by 5 instead of 10
+            g2d.fillRect((int) players[i].getPosition().getX() - 15, (int) players[i].getPosition().getY() - 20,
+                    (int) players[i].getHealth() / 2, 6); // Double the width by dividing by 5 instead of 10
         }
 
         g2d.setTransform(tx);
@@ -249,8 +293,9 @@ public class BattleFrame extends JFrame {
      * @param id
      * @param health
      */
-    public void setHealth(int id, float health) {
+    public void setHealth(int id, double health) {
         players[id].setHealth(health);
+        System.out.println("Health set to " + players[id].getHealth());
     }
 
 }
