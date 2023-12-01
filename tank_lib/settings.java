@@ -13,5 +13,5 @@ public class settings {
     public static int TILE_SIZE = 30;
     public static float TANK_ROTATION_SPEED_RPS = 0.5f;
     public static int REFRESH_RATE = 10;
-    public static int NUMBER_OF_CLIENTS = 1;
+    public static int NUMBER_OF_CLIENTS = 2;
 }

@@ -23,6 +23,7 @@ public class ThreadNetwork extends Thread {
     /**
      * @deprecated Coda dei {@link BattlePacket} ricevuti.
      */
+    @Deprecated
     private ConcurrentLinkedQueue<BattlePacket> packetsReceived = new ConcurrentLinkedQueue<>();
     /**
      * La socket da utilizzare per la comunicazione.
