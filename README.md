@@ -45,11 +45,11 @@ Molti parametri possono essere modificati dal file settings.java nel package `ta
 
 ### Known issues e feature future
 
--Il movimemento dei proiettili nei client non corrisponde a quello del server, cio' e' dovuto dalla mancaza della gestione della loro velictita' con il meccanismo del delta time.
--Power up
--A volte due client "possiedono" lo stesso tank
--Fine del gioco non implementata del tutto correttamente server-side, per qualche motivo non manda il pacchetto di fine partita nel modo corretto
--Vero Wave Function Collapse
+- Il movimemento dei proiettili nei client non corrisponde a quello del server, cio' e' dovuto dalla mancaza della gestione della loro velictita' con il meccanismo del delta time.
+- Power up
+- A volte due client "possiedono" lo stesso tank
+- Fine del gioco non implementata del tutto correttamente server-side, per qualche motivo non manda il pacchetto di fine partita nel modo corretto
+- Vero Wave Function Collapse
 
 ---
 
