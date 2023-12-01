@@ -164,8 +164,8 @@ public class BattleFrame extends JFrame {
             // if (i == playerID)
             // continue;
             g2d.setColor(Color.RED);
-            g2d.fillRect((int) players[i].getPosition().getX(), (int) players[i].getPosition().getY() - 10,
-                    (int) players[i].getHealth() / 5, 5); // Double the width by dividing by 5 instead of 10
+            g2d.fillRect((int) players[i].getPosition().getX() - 15, (int) players[i].getPosition().getY() - 20,
+                    (int) players[i].getHealth() / 2, 6); // Double the width by dividing by 5 instead of 10
         }
 
         g2d.setTransform(tx);
