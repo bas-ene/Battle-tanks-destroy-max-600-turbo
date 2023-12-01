@@ -85,21 +85,20 @@ public class Server {
 
 					boolean isHit = false;
 					for (Bullet bullet : bullets) {
-
-						// prints bullet
-						// System.out.println("Bullet position: " + bullet.toString());
-						Point p_ = new Point(tanks.get(i).getPosition().getX(), tanks.get(i).getPosition().getY());
-						if (bullet.getPosition().getX() > tanks.get(i).getPosition().getX()
-								&& bullet.getPosition().getX() < tanks.get(i).getPosition().getX()
-										+ tanks.get(i).getWidth()
-								&& bullet.getPosition().getY() > tanks.get(i).getPosition().getY()
-								&& bullet.getPosition().getY() < tanks.get(i).getPosition().getY()
-										+ tanks.get(i).getHeight()) {
-							tanks.get(i).decreaseHealth(bullet.getDamage());
-							isHit = true;
-							System.out.println(
-									"Tank " + i + " is hit by a bullet. New health: " + tanks.get(i).getHealth());
-						}
+						
+							// prints bullet
+							// System.out.println("Bullet position: " + bullet.toString());
+							Point p_ = new Point(tanks.get(i).getPosition().getX(), tanks.get(i).getPosition().getY());
+							//create a circle around the tank center, to make the hitbox detection simplier
+							double circleRadius = tanks.get(i).getWidth() / 2;
+							//check if bullet is inside the circle
+							if (isPointInsideCircle(bullet.getPosition(), p_, circleRadius)) {
+								tanks.get(i).decreaseHealth(bullet.getDamage());
+								isHit = true;
+								System.out.println(
+										"Tank " + i + " is hit by a bullet. New health: " + tanks.get(i).getHealth());
+							}
+						
 						// check if the bullet has hit a building
 						if (map.getTile_1(new Point(bullet.getPosition().getX(),
 								bullet.getPosition().getY() - settings.TITLE_BAR_HEIGHT))
@@ -215,4 +214,9 @@ public class Server {
 		tank.setRotation(angle);
 	}
 
+	private static boolean isPointInsideCircle(Point point, Point circleCenter, double circleRadius) {
+		double distance = Math.sqrt(Math.pow(point.getX() - circleCenter.getX(), 2) +
+				Math.pow(point.getY() - circleCenter.getY(), 2));
+		return distance <= circleRadius;
+	}
 }
