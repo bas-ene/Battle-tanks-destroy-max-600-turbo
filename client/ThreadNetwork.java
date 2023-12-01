@@ -38,6 +38,7 @@ public class ThreadNetwork extends Thread {
      * Il {@link Game} che gestisce i pacchetti ricevuti.
      */
     private Game game;
+    private boolean running;
 
     /**
      * Costruttore parametrico
@@ -68,14 +69,17 @@ public class ThreadNetwork extends Thread {
     public void run() {
         // Create a thread for sending packets
         Thread sendThread = new Thread(() -> {
-            while (true) {
+            while (running) {
                 BattlePacket battlePacket = packetsToSend.poll();
                 if (battlePacket != null) {
                     byte[] packetBytes = battlePacket.bitify();
 
                     try {
-                        outputStream.write(packetBytes);
-                        outputStream.flush();
+                        if (running) {
+                            outputStream.write(packetBytes);
+                            outputStream.flush();
+                        }
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -85,7 +89,7 @@ public class ThreadNetwork extends Thread {
 
         // Create a thread for receiving packets
         Thread receiveThread = new Thread(() -> {
-            while (true) {
+            while (running) {
                 try {
                     byte[] pLengthBytes = new byte[4];
                     inputStream.read(pLengthBytes);
@@ -102,11 +106,10 @@ public class ThreadNetwork extends Thread {
                     byte[] dataBytes = new byte[packetLength];
                     inputStream.read(dataBytes);
                     BattlePacket p = new BattlePacket(type, dataBytes);
-                    if (p.getPacketType() == PacketTypes.MOVM)
-                        System.out.println("Received packet at second: " + System.currentTimeMillis() / 1000);
+                    System.out.println("Received packet at second: " + System.currentTimeMillis() / 1000);
                     game.handlePacket(p);
                     if (p.getPacketType() == PacketTypes.GEND)
-                        break;
+                        running = false;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -114,6 +117,7 @@ public class ThreadNetwork extends Thread {
         });
 
         // Start both threads
+        running = true;
         sendThread.start();
         receiveThread.start();
 
@@ -121,7 +125,12 @@ public class ThreadNetwork extends Thread {
         try {
             sendThread.join();
             receiveThread.join();
+            this.inputStream.close();
+            this.outputStream.close();
+            this.socket.close();
         } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

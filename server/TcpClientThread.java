@@ -8,8 +8,6 @@ import tank_lib.network.PacketTypes;
 
 import java.net.Socket;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -24,6 +22,7 @@ public class TcpClientThread extends Thread {
     private Socket socket;
     private OutputStream outputStream;
     private InputStream inputStream;
+    private boolean running;
 
     /**
      * Constructs a TcpClientThread object with the specified socket.
@@ -49,10 +48,10 @@ public class TcpClientThread extends Thread {
     @Override
     public void run() {
         // init
-
+        running = true;
         // Create a thread for sending packets
         Thread sendThread = new Thread(() -> {
-            while (true) {
+            while (running) {
                 BattlePacket battlePacket = packetsToSend.poll();
                 if (battlePacket != null) {
                     byte[] packetBytes = battlePacket.bitify();
@@ -73,7 +72,7 @@ public class TcpClientThread extends Thread {
 
         // Create a thread for receiving packets
         Thread receiveThread = new Thread(() -> {
-            while (true) {
+            while (running) {
                 try {
                     // parsing
                     byte[] pLengthBytes = new byte[4];
@@ -108,7 +107,13 @@ public class TcpClientThread extends Thread {
         try {
             sendThread.join();
             receiveThread.join();
+            this.inputStream.close();
+            this.outputStream.close();
+            this.socket.close();
         } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -192,5 +197,18 @@ public class TcpClientThread extends Thread {
     public void sendMap(Map map) {
         BattlePacket packet = new BattlePacket(PacketTypes.SMAP, map.bitify());
         addPacketToSend(packet);
+    }
+
+    public void closeConnection() {
+        running = false;
+        try {
+            sleep(100);
+        } catch (InterruptedException e) {
+        }
+
+    }
+
+    public boolean isRunning() {
+        return running;
     }
 }
