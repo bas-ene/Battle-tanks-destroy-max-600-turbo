@@ -1,0 +1,221 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class BattlePacket {
+  + BattlePacket(PacketTypes, byte[]):
+  + BattlePacket(PacketTypes):
+  ~ packetBytes: byte[]
+  ~ packetType: PacketTypes
+  + bitify(): byte[]
+  packetType: PacketTypes
+  packetBytes: byte[]
+}
+class Bullet {
+  + Bullet(int, Point, double):
+  + Bullet(int, double, double, double):
+  - height: int
+  - width: int
+  - directionRadian: double
+  - position: Point
+  - damage: int
+  + setBulletType(): void
+  + move_inverse(): void
+  + setPosition(double, double): void
+  + move(): void
+  forwardPosition: Point
+  width: int
+  directionRadian: double
+  packet: BattlePacket
+  damage: int
+  height: int
+  position: Point
+  id: int
+}
+class Map {
+  + Map():
+  + Map(byte[], int, int):
+  + Map(int, int):
+  + getTileCoordinates(Point): Entry<Integer, Integer>
+  + getTile(Point): Tile
+  ~ getSquare(int, int): TileTypes[][]
+  + getTile(int, int): Tile
+  + bitify(): byte[]
+  + generateMap(int, int): void
+  + getTile_1(Point): Tile
+  + getTile(double, double): Tile
+  + toString(): String
+  + getSpawnPoint(int): Point
+  + buildTile(int, int, TileTypes): void
+  height: int
+  width: int
+}
+enum PacketTypes << enumeration >> {
+  + PacketTypes():
+  + values(): PacketTypes[]
+  + valueOf(String): PacketTypes
+}
+class Point {
+  + Point(double, double):
+  + Point(int, int):
+  + Point(byte[]):
+  + Point():
+  - x: double
+  - y: double
+  + getDistance(Point): double
+  + moveX(double): void
+  + moveY(double): void
+  + bitify(): byte[]
+  y: double
+  x: double
+}
+class PowerUp {
+  + PowerUp():
+}
+class Server {
+  + Server():
+  + setTankPosition(Tank, BattlePacket): void
+  - getBulletFromPacket(BattlePacket): Bullet
+  + setTankHealth(Tank, BattlePacket): void
+  + main(String[]): void
+  - buildBDSTPacket(Integer, Integer): BattlePacket
+}
+class Tank {
+  + Tank(String):
+  + Tank(String, int):
+  + Tank(Point, String):
+  - health: float
+  - bullet: Bullet
+  - width: int
+  - angleRotationRadian: double
+  - username: String
+  - height: int
+  - position: Point
+  + decreaseHealth(float): void
+  + rotateBy(double): void
+  + shoot(): Bullet
+  + moveBy(double): void
+  width: int
+  positionInWindow: Point
+  rotation: double
+  angleRotationRadian: double
+  y: double
+  x: double
+  ID: int
+  bullet: Bullet
+  health: float
+  positionInMap: Point
+  username: String
+  height: int
+  position: Point
+}
+class TcpClientThread {
+  + TcpClientThread(Socket):
+  + run(): void
+  + addPacketReceived(BattlePacket): void
+  + sendIDs(int, int): void
+  + sendStartPacket(): void
+  + addPacketToSend(BattlePacket): void
+  + sendMap(Map): void
+  tankUsername: String
+  packetReceived: BattlePacket
+}
+interface Tile << interface >> {
+  tileType: TileTypes
+  color: Color
+  speedMultiplier: float
+}
+class TileBuilding {
+  + TileBuilding():
+  - speedMultiplier: float
+  tileType: TileTypes
+  color: Color
+  speedMultiplier: float
+}
+class TileGrass {
+  + TileGrass():
+  - speedMultiplier: float
+  tileType: TileTypes
+  color: Color
+  speedMultiplier: float
+}
+class TileRubble {
+  + TileRubble():
+  - speedMultiplier: float
+  tileType: TileTypes
+  color: Color
+  speedMultiplier: float
+}
+class TileSand {
+  + TileSand():
+  - speedMultiplier: float
+  tileType: TileTypes
+  color: Color
+  speedMultiplier: float
+}
+enum TileTypes << enumeration >> {
+  + TileTypes():
+  + values(): TileTypes[]
+  + valueOf(String): TileTypes
+}
+class TileUnknown {
+  + TileUnknown(Map):
+  - speedMultiplier: float
+  + canBePlaced(int, int): ArrayList<TileTypes>
+  tileType: TileTypes
+  color: Color
+  speedMultiplier: float
+}
+class TileWater {
+  + TileWater():
+  - speedMultiplier: float
+  tileType: TileTypes
+  color: Color
+  speedMultiplier: float
+}
+class settings {
+  + settings():
+}
+
+Bullet           -[#595959,dashed]->  BattlePacket    : "«create»"
+Bullet           -[#595959,dashed]->  Point           : "«create»"
+Bullet          "1" *-[#595959,plain]-> "position\n1" Point
+Map              -[#595959,dashed]->  Point           : "«create»"
+Map             "1" *-[#595959,plain]-> "spawnPoints\n*" Point
+Map             "1" *-[#595959,plain]-> "map\n*" Tile
+Map              -[#595959,dashed]->  Tile            : "«create»"
+Map              -[#595959,dashed]->  TileBuilding    : "«create»"
+Map              -[#595959,dashed]->  TileGrass       : "«create»"
+Map              -[#595959,dashed]->  TileRubble      : "«create»"
+Map              -[#595959,dashed]->  TileSand        : "«create»"
+Map              -[#595959,dashed]->  TileTypes       : "«create»"
+Map              -[#595959,dashed]->  TileUnknown     : "«create»"
+Map              -[#595959,dashed]->  TileWater       : "«create»"
+PacketTypes      +-[#820000,plain]-  Point
+Server           -[#595959,dashed]->  BattlePacket    : "«create»"
+Server           -[#595959,dashed]->  Bullet          : "«create»"
+Server           -[#595959,dashed]->  Map             : "«create»"
+Server           -[#595959,dashed]->  Point           : "«create»"
+Server           -[#595959,dashed]->  Tank            : "«create»"
+Server           -[#595959,dashed]->  TcpClientThread : "«create»"
+Tank            "1" *-[#595959,plain]-> "bullet\n1" Bullet
+Tank             -[#595959,dashed]->  Bullet          : "«create»"
+Tank            "1" *-[#595959,plain]-> "position\n1" Point
+Tank             -[#595959,dashed]->  Point           : "«create»"
+TcpClientThread  -[#595959,dashed]->  BattlePacket    : "«create»"
+TileBuilding     -[#008200,dashed]-^  Tile
+TileBuilding    "1" *-[#595959,plain]-> "type\n1" TileTypes
+TileGrass        -[#008200,dashed]-^  Tile
+TileGrass       "1" *-[#595959,plain]-> "type\n1" TileTypes
+TileRubble       -[#008200,dashed]-^  Tile
+TileRubble      "1" *-[#595959,plain]-> "type\n1" TileTypes
+TileSand         -[#008200,dashed]-^  Tile
+TileSand        "1" *-[#595959,plain]-> "type\n1" TileTypes
+TileUnknown     "1" *-[#595959,plain]-> "map\n1" Map
+TileUnknown      -[#008200,dashed]-^  Tile
+TileUnknown     "1" *-[#595959,plain]-> "type\n1" TileTypes
+TileWater        -[#008200,dashed]-^  Tile
+TileWater       "1" *-[#595959,plain]-> "type\n1" TileTypes
+@enduml

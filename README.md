@@ -24,7 +24,14 @@ Una volta connessi al server, bisogna aspettare che gli altri giocatori si conne
 Il carro armato si muove con `WASD`, mentre spara (in fronte a se) con `Z`. 
 ### Impostazioni
 Molti parametri possono essere modificati dal file settings.java nel package `tank_lib`, come velocita` di rotazione e di movimento, numero di giocatori e dimensioni della mappa.
-
+___
+### Known issues e feature future
+-Il movimemento dei proiettili nei client non corrisponde a quello del server, cio' e' dovuto dalla mancaza della gestione della loro velictita' con il meccanismo del delta time.
+-Power up
+-Grafica migliorata
+-A volte due client "possiedono" lo stesso tank
+-Fine del gioco non implementata del tutto correttamente server-side, per qualche motivo non manda il pacchetto di fine partita nel modo corretto
+-Vero Wave Function Collapse
 ___
 #### Contributors
 >[Enea Basilico](https://github.com/bas-ene/) 

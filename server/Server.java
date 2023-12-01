@@ -53,9 +53,9 @@ public class Server {
 				clients.get(i).sendStartPacket();
 			}
 			System.out.println("Inviato pacchetto di inizio partita");
-
+			int tanks_left = settings.NUMBER_OF_CLIENTS;
 			// scambio di messaggi per il gioco
-			while (true) {
+			while (tanks_left > 1) {
 
 				// per ogni client ricevo il pacchetto e lo mando a tutti gli altri
 				// aggiornando la posizione del tank e la loro vita
@@ -110,7 +110,8 @@ public class Server {
 							BattlePacket rubblePacket = buildBDSTPacket(tile.getKey(), tile.getValue());
 							// send packet that signals that a building is destroyed
 							for (int j = 0; j < clients.size(); j++) {
-								clients.get(j).addPacketToSend(rubblePacket);
+								if (clients.get(j).isRunning())
+									clients.get(j).addPacketToSend(rubblePacket);
 							}
 							bullets.remove(bullet); // Remove the bullet after hitting a building
 						}
@@ -132,8 +133,28 @@ public class Server {
 						for (int j = 0; j < clients.size(); j++) {
 							// if (i == j)
 							// continue;
-							clients.get(j).addPacketToSend(healthPacket);
-							System.out.println("Tank " + i + " health sent to tank " + j);
+							if (clients.get(j).isRunning()) {
+								clients.get(j).addPacketToSend(healthPacket);
+								System.out.println("Tank " + i + " health sent to tank " + j);
+							}
+						}
+						if (tanks.get(i).getHealth() <= 0) {
+							if (!clients.get(i).isRunning())
+								continue;
+							System.out.println("Tank " + i + " is dead");
+							// send him a gend packet, if it is the last one send a gend with its code
+							// and close the connection with him
+							ByteBuffer byteBufGEND = ByteBuffer.allocate(4);
+							if (tanks_left == 1)
+								byteBufGEND.putInt(i);
+							else {
+								byteBufGEND.putInt(-1);
+							}
+							BattlePacket gendPacket = new BattlePacket(PacketTypes.GEND, byteBufGEND.array());
+							clients.get(i).addPacketToSend(gendPacket);
+							// close connection with the dead tank
+							clients.get(i).closeConnection();
+							tanks_left--;
 						}
 					}
 
@@ -148,7 +169,7 @@ public class Server {
 						setTankPosition(tanks.get(i), p);
 						System.out.println("Tank " + i + " si è mosso in posizione: " + tanks.get(i).getPosition());
 						for (int j = 0; j < clients.size(); j++) {
-							if (i == j)
+							if (i == j || !clients.get(j).isRunning())
 								continue;
 							clients.get(j).addPacketToSend(p);
 						}
@@ -157,7 +178,7 @@ public class Server {
 						System.out.println("Tank " + i + " ha sparato");
 						// manda che il tank i ha sparato
 						for (int j = 0; j < clients.size(); j++) {
-							if (i == j)
+							if (i == j || !clients.get(j).isRunning())
 								continue;
 							clients.get(j).addPacketToSend(p);
 						}
@@ -169,10 +190,23 @@ public class Server {
 
 			}
 
+			// trova il vincitore
+			for (int i = 0; i < clients.size(); i++) {
+				if (clients.get(i).isRunning()) {
+					ByteBuffer byteBufGEND = ByteBuffer.allocate(4);
+					byteBufGEND.putInt(i);
+					BattlePacket gendPacket = new BattlePacket(PacketTypes.GEND, byteBufGEND.array());
+					clients.get(i).addPacketToSend(gendPacket);
+					// close connection with the dead tank
+					clients.get(i).closeConnection();
+				}
+			}
+			serverSocket.close();
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
+
 	}
 
 	private static BattlePacket buildBDSTPacket(Integer key, Integer value) {
