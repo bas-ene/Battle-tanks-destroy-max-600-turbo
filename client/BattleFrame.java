@@ -100,7 +100,8 @@ public class BattleFrame extends JFrame {
         Graphics2D g2d = (Graphics2D) g;
         // drawHealthBar(g2d);
 
-        CopyOnWriteArrayList<Bullet> bullets_ = moveBullets();
+        // CopyOnWriteArrayList<Bullet> bullets_ = moveBullets();
+        moveBullets();
         // CopyOnWriteArrayList<Bullet> bullets_=bullets;
         // renderizza la mappa
         for (int i = 0; i < map.getHeight(); i++) {
@@ -144,7 +145,7 @@ public class BattleFrame extends JFrame {
         // print all array bullets
 
         g2d.setColor(Color.BLUE);
-        for (Bullet b : bullets_) {
+        for (Bullet b : bullets) {
             // System.out.println("Bullet");
             // System.out.println(players[playerID].getPosition().getX() +
             // players[playerID].getPosition().getY());
@@ -182,24 +183,23 @@ public class BattleFrame extends JFrame {
      *        server
      * @return la lista dei proiettili rimasti, spostati
      */
-    public CopyOnWriteArrayList<Bullet> moveBullets() {
+    public void moveBullets() {
         CopyOnWriteArrayList<Bullet> remainingBullets = new CopyOnWriteArrayList<>();
         for (Bullet bullet : bullets) {
-            bullet.move();
+            bullet.move_inverse();
             // checkHit();
             if (bullet.getPosition().getX() > 0 && bullet.getPosition().getY() > 0 &&
                     bullet.getPosition().getX() < map.getWidth() * settings.TILE_SIZE_PX
                     && bullet.getPosition().getY() < map.getHeight() * settings.TILE_SIZE_PX) {
-                remainingBullets.add(bullet);
-                // System.out.println("bullet added" + map.getWidth() * settings.TILE_SIZE_PX
+                ;                // System.out.println("bullet added" + map.getWidth() * settings.TILE_SIZE_PX
                 // + map.getHeight() * settings.TILE_SIZE_PX);
             } else {
-                remainingBullets.remove(bullet);
+                bullets.remove(bullet);
                 // System.out.println("Bullet removed");
             }
         }
-        bullets = remainingBullets;
-        return remainingBullets;
+      //  bullets = remainingBullets;
+        ;
     }
 
     /**

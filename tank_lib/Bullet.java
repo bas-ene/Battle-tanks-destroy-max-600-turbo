@@ -109,6 +109,13 @@ public class Bullet {
 		position.setX(x);
 		position.setY(y);
 	}
+	//map on client is different that the one on the server (y are inverted)
+	public void move_inverse() {
+		double x = position.getX() + speed * Math.cos(directionRadian);
+		double y = position.getY() + speed * Math.sin(directionRadian); // Fix the 'y' calculation
+		position.setX(x);
+		position.setY(y);
+	}
 
 	public int getDamage() {
 		return damage;
