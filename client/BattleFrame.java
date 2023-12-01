@@ -249,8 +249,9 @@ public class BattleFrame extends JFrame {
      * @param id
      * @param health
      */
-    public void setHealth(int id, float health) {
+    public void setHealth(int id, double health) {
         players[id].setHealth(health);
+        System.out.println("Health set to " + players[id].getHealth());
     }
 
 }

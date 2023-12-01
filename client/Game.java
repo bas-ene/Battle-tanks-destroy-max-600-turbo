@@ -313,7 +313,7 @@ public class Game extends Thread {
                 break;
             case MOVM:
                 // set the location of the tank to the one received
-                System.out.println("MOVIMENTO NEMICO RICEVUTO");
+                //System.out.println("MOVIMENTO NEMICO RICEVUTO");
                 ByteBuffer byteBufMOVM = ByteBuffer.wrap(battlePacket.getPacketBytes());
                 int id = byteBufMOVM.getInt();
                 double x = byteBufMOVM.getDouble();
@@ -342,10 +342,11 @@ public class Game extends Thread {
                 map.buildTile(iBDST, jBDST, TileTypes.RUBBLE);
                 break;
             case HLTH:
+                System.out.println("RICEVUTA VITA");
                 ByteBuffer byteBufHTLH = ByteBuffer.wrap(battlePacket.getPacketBytes());
                 // update the tank health
                 int idTankHit = byteBufHTLH.getInt();
-                float newHealth = byteBufHTLH.getFloat();
+                double newHealth = byteBufHTLH.getDouble();
                 players[idTankHit].setHealth(newHealth);
                 battleFrame.setHealth(idTankHit, newHealth);
                 break;
