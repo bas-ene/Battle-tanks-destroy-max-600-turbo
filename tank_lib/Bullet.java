@@ -105,12 +105,10 @@ public class Bullet {
 
 	public void move() {
 		double x = position.getX() + speed * Math.cos(directionRadian);
-		double y = position.getY() + speed * Math.sin(directionRadian);
+		double y = position.getY() - speed * Math.sin(directionRadian); // Fix the 'y' calculation
 		position.setX(x);
 		position.setY(y);
 	}
-
-	
 
 	public int getDamage() {
 		return damage;

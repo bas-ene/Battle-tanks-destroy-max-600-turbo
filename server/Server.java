@@ -113,6 +113,7 @@ public class Server {
 							for (int j = 0; j < clients.size(); j++) {
 								clients.get(j).addPacketToSend(rubblePacket);
 							}
+							bullets.remove(bullet); // Remove the bullet after hitting a building
 						}
 					}
 
