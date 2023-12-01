@@ -55,4 +55,5 @@ Molti parametri possono essere modificati dal file settings.java nel package `ta
 
 #### Contributors
 
-> [Enea Basilico](https://github.com/bas-ene/) > [Evan Gervasio](https://github.com/evangerva/)
+> [Enea Basilico](https://github.com/bas-ene/)
+> [Evan Gervasio](https://github.com/evangerva/)
