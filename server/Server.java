@@ -101,7 +101,7 @@ public class Server {
 									"Tank " + i + " is hit by a bullet. New health: " + tanks.get(i).getHealth());
 						}
 						// check if the bullet has hit a building
-						if (map.getTile(new Point(bullet.getPosition().getX(),
+						if (map.getTile_1(new Point(bullet.getPosition().getX(),
 								bullet.getPosition().getY() - settings.TITLE_BAR_HEIGHT))
 								.getTileType() == TileTypes.BUILDING) {
 							Entry<Integer, Integer> tile = map.getTileCoordinates(new Point(bullet.getPosition().getX(),

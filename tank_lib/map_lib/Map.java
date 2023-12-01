@@ -251,6 +251,13 @@ public class Map {
 		return map[(int) ((int) p.getY() / settings.TILE_SIZE_PX)][(int) ((int) p.getX() / settings.TILE_SIZE_PX)];
 	}
 
+	public Tile getTile_1(Point p) {
+		if (p.getX() < 0 || p.getY() < 0 || p.getX() > map[0].length * settings.TILE_SIZE_PX
+				|| p.getY() > map.length * settings.TILE_SIZE_PX)
+			return new TileUnknown(this);
+		return map[(int) ((int) p.getY() / settings.TILE_SIZE_PX)][(int) ((int) p.getX() / settings.TILE_SIZE_PX)];
+	}
+
 	/**
 	 * Ritorna l'oggetto con interfaccia Tile in posizione x,y
 	 * 
