@@ -1,7 +1,9 @@
 # Battle tanks destroy max 600 turbo
-![Lobby](https://github.com/bas-ene/Battle-tanks-destroy-max-600-turbo/assets/68295216/4c6a043b-ae39-4a4a-96d6-c5673c10c389)
+
+![Lobby](https://github.com/bas-ene/Battle-tanks-destroy-max-600-turbo/assets/68295216/5d237a0e-59fd-4240-a964-151ab66afbc3)\
 Lobby
-![MainGame](https://github.com/bas-ene/Battle-tanks-destroy-max-600-turbo/assets/68295216/bcd80f0c-a0a3-4cfa-a543-37e2b46ef469)
+
+![MainGame](https://github.com/bas-ene/Battle-tanks-destroy-max-600-turbo/assets/68295216/bcd80f0c-a0a3-4cfa-a543-37e2b46ef469)\
 Mappa di gioco con due giocatori
 
 ## Panoramica del progetto
