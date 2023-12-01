@@ -1,0 +1,16 @@
+@startuml Use Case Diagram
+left to right direction
+actor Player
+actor Server
+rectangle "Game" {
+    Player -- (Connect to Server)
+    (Start Game) -- Server
+    Player -- (Shoot)
+    Player -- (Move)
+    (Update Game State) .> (End Game) : <<extends>>
+    (Shoot) -- Server : Sends Bullet Position
+    (Move) -- Server : Sends Player Position
+    Server -- (Update Game State)
+    (Start Game) .> (Update Game State) : <<extends>>
+}
+@enduml
