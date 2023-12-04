@@ -1,0 +1,29 @@
+OGGETTO di classe BattlePacket
+Struttura: Tipo (enum), byte[]
+In base al tipo si parsa il byte[].
+Tipi:   
+    CONN:
+        quando un client si connette al server invia un messaggio di questo tipo, 
+        nel byte[] e` contenuta una stringa che e` lo username del client
+        Mentre se e` mandato dal server conterra` per primo l'id del client, e poi a seguire tutti gli altri 
+    SMAP: 
+        dopo essersi connesso, il client riceve dal server questo messaggio,
+        nel byte[] e` presente in questo formato: 4B per numero di righe della mappa + 4B per numero di colonne + (righe*colonne)B, 
+        un byte per ogni cella che identifica il tipo di quella cella. 
+        16B per giocatore, che identificano la posizione di spawn dell'iesimo client.
+    STRT:
+        quando tutti i client sono connessi al server, il server invia questo messaggio a tutti i client
+    MOVM: quando un tank si sposta, invia le sue nuove cordinate al server
+        byte[]: 24B, 8 per X, 8 per Y, 8 per angolo di rotazione.
+    SHOT: quando un tank spara, invia da dove ha sparato e verso dove, quindi due Point e un ID che identifica il tipo di proiettile
+        byte[]: 36B: 16 per punto + 4 per ID.
+    BDST: quando un edificio viene colpito e distrutto, il server invia le coordinate di quel edificio in modo che i client possano renderizzarlo in modo corretto.
+        byte[]: due int per i e j dell'edificio 
+    HLTH: aggiorna sulla vita di un tank tutti i tank, viene inviato ogni volta che uno dei due e` colpito, composto da nuova vita e id
+        byte[]: 8B, 4B per vita (float), 4B per id del tank
+    GEND: indica la fine della partita, contiene l'id del vincitore.
+        byte[]: 4B per id
+
+
+
+     

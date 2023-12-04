@@ -24,10 +24,10 @@ git clone https://github.com/bas-ene/Battle-tanks-destroy-max-600-turbo/
   - Avviare `settings.java` istanze di Client.java, inserendo nella lobby l'indirizzo e la porta del Server.
 
 - ##### Tramite CLI
-  -Compilare il client con `javac client/Client.java`
-  -Compilare il server con `javac server/Server.java`
-  -Avviare il server con `java server.Server`
-  -Avviare `settings.java` client ripetendo altrettante volte il comando `java client.Client`
+  - Compilare il client con `javac client/Client.java`
+  - Compilare il server con `javac server/Server.java`
+  - Avviare il server con `java server.Server`
+  - Avviare `settings.java` client ripetendo altrettante volte il comando `java client.Client`
 
 ### Gameplay
 
@@ -39,20 +39,21 @@ Il carro armato si muove con `WASD`, mentre spara (in fronte a se) con `Z`.
 
 ### Impostazioni
 
-Molti parametri possono essere modificati dal file settings.java nel package `tank_lib`, come velocita` di rotazione e di movimento, numero di giocatori e dimensioni della mappa.
+Molti parametri possono essere modificati dal file settings.java nel package `tank_lib`, come velocita' di rotazione e di movimento, numero di giocatori e dimensioni della mappa.
 
 ---
 
 ### Known issues e feature future
 
--Il movimemento dei proiettili nei client non corrisponde a quello del server, cio' e' dovuto dalla mancaza della gestione della loro velictita' con il meccanismo del delta time.
--Power up
--A volte due client "possiedono" lo stesso tank
--Fine del gioco non implementata del tutto correttamente server-side, per qualche motivo non manda il pacchetto di fine partita nel modo corretto
--Vero Wave Function Collapse
+- Il movimemento dei proiettili nei client non corrisponde a quello del server, cio' e' dovuto dalla mancaza della gestione della loro velictita' con il meccanismo del delta time.
+- Power up
+- A volte due client "possiedono" lo stesso tank
+- Fine del gioco non implementata del tutto correttamente server-side, per qualche motivo non manda il pacchetto di fine partita nel modo corretto
+- Vero Wave Function Collapse
 
 ---
 
 #### Contributors
 
-> [Enea Basilico](https://github.com/bas-ene/) > [Evan Gervasio](https://github.com/evangerva/)
+> [Enea Basilico](https://github.com/bas-ene/)
+> [Evan Gervasio](https://github.com/evangerva/)
